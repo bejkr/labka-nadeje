@@ -2,6 +2,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import { useAuth } from './contexts/AuthContext';
 import Logo from './components/Logo';
 
@@ -314,6 +315,7 @@ const App: React.FC = () => {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Navbar />
+        <Analytics />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
