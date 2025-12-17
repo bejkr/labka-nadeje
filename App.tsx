@@ -2,6 +2,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import { useAuth } from './contexts/AuthContext';
 import Logo from './components/Logo';
 
@@ -333,6 +334,7 @@ const App: React.FC = () => {
         </main>
         <Footer />
         <AdoptionAssistant />
+        <Analytics />
       </div>
     </Router>
   );
