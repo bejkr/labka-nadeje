@@ -9,13 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/genai": "*",
+    "@supabase/supabase-js": "^2.39.7",
+    "@vercel/analytics": "^1.6.1",
+    "lucide-react": "^0.344.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.0",
+<<<<<<< HEAD
     "lucide-react": "^0.344.0",
     "recharts": "^2.12.0",
     "@google/genai": "^0.1.0",
     "@supabase/supabase-js": "^2.39.7"
+=======
+    "recharts": "^2.12.0"
+>>>>>>> a60125ff980ef664a36cb420b4c3a37405cee54b
   },
   "devDependencies": {
     "@types/react": "^18.2.55",
