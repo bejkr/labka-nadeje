@@ -11,8 +11,10 @@ interface AuthContextType {
   
   login: (email: string, password?: string) => Promise<boolean>;
   logout: () => void;
-  registerUser: (name: string, email: string, password?: string) => Promise<void>;
-  registerShelter: (name: string, location: string, email: string, password?: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
+  registerUser: (name: string, email: string, password?: string) => Promise<any>;
+  registerShelter: (name: string, location: string, email: string, password?: string) => Promise<any>;
 
   updateUserProfile: (data: Partial<User> | Partial<Shelter>) => Promise<void>;
   adoptVirtually: (petId: string, amount: number) => void;
@@ -65,23 +67,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUserRole(null);
   };
 
+  const resetPassword = async (email: string) => {
+    await api.resetPassword(email);
+  };
+
+  const updatePassword = async (password: string) => {
+    await api.updatePassword(password);
+  };
+
   const registerUser = async (name: string, email: string, password?: string) => {
-     const user = await api.register(email, password || 'password', { role: 'user', name });
-     if (user) {
-         setCurrentUser(user);
+     const result = await api.register(email, password || 'password', { role: 'user', name });
+     if (result.user) {
+         setCurrentUser(result.user);
          setUserRole('user');
      }
+     return result;
   };
 
   const registerShelter = async (name: string, location: string, email: string, password?: string) => {
-     // Passing location as part of name or handled in update, but simple for now
-     const user = await api.register(email, password || 'password', { role: 'shelter', name });
-     if (user) {
+     const result = await api.register(email, password || 'password', { role: 'shelter', name });
+     if (result.user) {
          // Update location immediately as it's not in metadata
-         await api.updateProfile(user.id, { location } as Shelter, 'shelter');
-         setCurrentUser({ ...user, location } as Shelter);
+         await api.updateProfile(result.user.id, { location } as Shelter, 'shelter');
+         const updatedUser = { ...result.user, location } as Shelter;
+         setCurrentUser(updatedUser);
          setUserRole('shelter');
+         return { ...result, user: updatedUser };
      }
+     return result;
   };
 
   // --- User Specific Actions ---
@@ -154,7 +167,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return (
     <AuthContext.Provider value={{ 
       currentUser, userRole, 
-      login, logout, registerUser, registerShelter, updateUserProfile,
+      login, logout, resetPassword, updatePassword, registerUser, registerShelter, updateUserProfile,
       adoptVirtually, updateAdoptionAmount, cancelAdoption, toggleFavorite, isFavorite 
     }}>
       {children}

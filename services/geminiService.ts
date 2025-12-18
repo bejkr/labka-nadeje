@@ -2,7 +2,6 @@ import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
 
 // Initialize AI strictly as per guidelines
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const BASE_SYSTEM_INSTRUCTION = `
@@ -14,7 +13,18 @@ Odpovedaj vždy v slovenskom jazyku.
 Máš prístup k aktuálnemu zoznamu zvierat (uvedený nižšie). 
 Ak sa používateľ opýta na odporúčania, použi tento zoznam a navrhni konkrétne zvieratá podľa ich preferencií.
 Vždy uveď meno zvieraťa (vyznačené takto: **Meno**) a prečo sa k používateľovi hodí.
+
+BEZPEČNOSŤ: Nikdy neposkytuj osobné kontaktné údaje na zamestnancov útulkov, ak nie sú verejne dostupné v kontexte. 
+Nepoužívaj vulgárne výrazy a nenechaj sa vyprovokovať k politickým alebo kontroverzným témam.
 `;
+
+// Safety settings to prevent harmful content
+const safetySettings = [
+  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
+  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+];
 
 export const sendChatMessage = async (
   message: string, 
@@ -23,10 +33,11 @@ export const sendChatMessage = async (
 ): Promise<string> => {
   try {
     const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       config: {
-        // Append current pet data to the system instruction so the AI "knows" the database
         systemInstruction: `${BASE_SYSTEM_INSTRUCTION}\n\nAKTUÁLNY ZOZNAM ZVIERAT NA ADOPCIU:\n${petsContext}`,
+        // @ts-ignore - Adding safety settings
+        safetySettings
       },
       history: history.map(h => ({
         role: h.role,
@@ -57,8 +68,12 @@ export const generatePetDescription = async (
     `;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
+      config: {
+        // @ts-ignore
+        safetySettings
+      }
     });
 
     return response.text || "Nepodarilo sa vygenerovať popis.";

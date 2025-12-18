@@ -186,6 +186,18 @@ const PetDetailPage: React.FC = () => {
     }
   };
 
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      showToast("Pre ukladanie obľúbených sa prosím prihláste.", "info");
+      return;
+    }
+    toggleFavorite(pet.id);
+    if (!isFavorite(pet.id)) {
+      showToast("Pridané do obľúbených", "success");
+    }
+  };
+
   const handleApplicationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser || !pet) return;
@@ -404,11 +416,7 @@ const PetDetailPage: React.FC = () => {
                  
                  {!isShelter && (
                      <button 
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(pet.id);
-                            if (!isFavorite(pet.id)) showToast("Pridané do obľúbených", "success");
-                        }}
+                        onClick={handleFavoriteToggle}
                         className={`p-2.5 rounded-full shadow-sm border transition ${
                             isFavorite(pet.id) 
                             ? 'bg-red-50 text-red-500 border-red-100' 

@@ -16,11 +16,15 @@ interface ErrorBoundaryState {
 }
 
 // Simple Error Boundary to catch crash on load
+// FIX: Using React.Component and property initializer for state to fix TypeScript 'props' and 'state' not found errors
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  // FIX: Explicitly define props and state property to resolve "Property 'props' does not exist" and "Property 'state' does not exist" errors in specific TS environments
+  public props: ErrorBoundaryProps;
   public state: ErrorBoundaryState = { hasError: false, error: null };
 
   constructor(props: ErrorBoundaryProps) {
     super(props);
+    this.props = props;
   }
 
   static getDerivedStateFromError(error: any): ErrorBoundaryState {
@@ -38,10 +42,14 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   render() {
-    if (this.state.hasError) {
-      const errorMsg = this.state.error instanceof Error 
-        ? this.state.error.message 
-        : (typeof this.state.error === 'object' ? 'Unknown error occurred' : String(this.state.error));
+    // FIX: Destructuring from this.props and this.state now correctly identified via explicit member definitions to resolve Property 'props' does not exist error on line 41
+    const { children } = this.props;
+    const { hasError, error } = this.state;
+
+    if (hasError) {
+      const errorMsg = error instanceof Error 
+        ? error.message 
+        : (typeof error === 'object' ? 'Unknown error occurred' : String(error));
 
       return (
         <div style={{ padding: '40px', color: '#B91C1C', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
@@ -60,7 +68,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       );
     }
 
-    return this.props.children;
+    return children;
   }
 }
 

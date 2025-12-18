@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, PawPrint, Heart, Building2, User, Calendar, Gift, ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles, ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook, Instagram } from 'lucide-react';
@@ -505,13 +504,13 @@ const HomePage: React.FC = () => {
              Sledujte nás na sociálnych sieťach pre denné dávky roztomilosti, úspešné príbehy adopcií a novinky z útulkov.
            </p>
            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-center gap-3 px-8 py-4 bg-[#1877F2] text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:shadow-xl transition transform hover:-translate-y-1">
+              <a href="https://www.facebook.com/profile.php?id=61584849571446" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-center gap-3 px-8 py-4 bg-[#1877F2] text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:shadow-xl transition transform hover:-translate-y-1">
                   <div className="bg-white/20 p-2 rounded-full group-hover:bg-white/30 transition">
                     <Facebook size={24} />
                   </div>
                   <span>Sledovať na Facebooku</span>
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-tr from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-2xl font-bold shadow-lg shadow-pink-200 hover:shadow-xl transition transform hover:-translate-y-1">
+              <a href="https://www.instagram.com/labka_nadeje/" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-tr from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white rounded-2xl font-bold shadow-lg shadow-pink-200 hover:shadow-xl transition transform hover:-translate-y-1">
                   <div className="bg-white/20 p-2 rounded-full group-hover:bg-white/30 transition">
                     <Instagram size={24} />
                   </div>
@@ -521,26 +520,26 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Blog Teaser Section - DARK MODE */}
-      <section className="py-24 bg-gray-900 text-white relative overflow-hidden">
-        {/* Subtle background glow */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-brand-600 rounded-full blur-[120px] opacity-20"></div>
-            <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-blue-600 rounded-full blur-[120px] opacity-20"></div>
+      {/* Blog Teaser Section - ORANGE MODE */}
+      <section className="py-24 bg-brand-600 text-white relative overflow-hidden">
+        {/* Abstract shapes for texture */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-10">
+            <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-white rounded-full blur-[120px]"></div>
+            <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-yellow-400 rounded-full blur-[120px]"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-extrabold text-white mb-4">Najnovšie z blogu</h2>
-            <p className="text-xl text-gray-400">Užitočné rady, tipy a novinky zo sveta zvierat.</p>
+            <p className="text-xl text-brand-100">Užitočné rady, tipy a novinky zo sveta zvierat.</p>
           </div>
           
           {recentPosts.length > 0 ? (
             <div className="grid gap-8 md:grid-cols-3">
                {recentPosts.map((post) => (
-                 <Link key={post.id} to={`/blog/${post.id}`} className="flex flex-col bg-white overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-700 group h-full">
+                 <Link key={post.id} to={`/blog/${post.id}`} className="flex flex-col bg-white overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-transparent group h-full">
                    <div className="flex-shrink-0 h-52 overflow-hidden relative">
-                     <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition z-10"></div>
+                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition z-10"></div>
                      <img className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700" src={post.imageUrl} alt={post.title} />
                    </div>
                    <div className="flex-1 p-8 flex flex-col justify-between">
@@ -576,13 +575,13 @@ const HomePage: React.FC = () => {
                ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-gray-400 bg-gray-800 rounded-2xl border border-dashed border-gray-700">
+            <div className="text-center py-12 text-brand-100 bg-brand-700/30 rounded-2xl border border-dashed border-brand-400">
                 Zatiaľ žiadne články.
             </div>
           )}
 
           <div className="mt-16 text-center">
-            <Link to="/blog" className="inline-flex items-center px-8 py-3 rounded-full border border-gray-700 text-white font-bold hover:bg-gray-800 transition bg-transparent backdrop-blur-sm">
+            <Link to="/blog" className="inline-flex items-center px-8 py-3 rounded-full border border-brand-400 text-white font-bold hover:bg-brand-700 transition bg-transparent backdrop-blur-sm">
               Zobraziť všetky články <ArrowRight size={20} className="ml-2" />
             </Link>
           </div>
@@ -626,7 +625,7 @@ const HomePage: React.FC = () => {
                                 <div>
                                     <a 
                                         href={slide.link} 
-                                        className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                        className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-brand-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                                     >
                                         <Icon size={20} className={colors.text ? "" : "text-brand-400"} />
                                         {slide.cta}

@@ -1,3 +1,4 @@
+
 import { supabase } from './supabaseClient';
 import { Pet, User, Shelter, AdoptionInquiry, VirtualAdoption, PetType, Gender, Size, Volunteer, ShelterSupply, BlogPost, InquiryMessage, PromoSlide } from '../types';
 import { MOCK_PETS, MOCK_BLOG_POSTS } from '../constants';
@@ -221,11 +222,25 @@ export const api = {
 
     if (error) throw new Error(error.message);
     
+    // Ak sa po registrácii nevytvorila session, znamená to, že sa čaká na overenie e-mailu
     if (!data.session) {
-        throw new Error("Registrácia úspešná, ale vyžaduje sa potvrdenie emailu. Skontrolujte si schránku.");
+        return { verificationRequired: true };
     }
 
-    return this.getCurrentSession();
+    const sessionUser = await this.getCurrentSession();
+    return { verificationRequired: false, user: sessionUser };
+  },
+
+  async resetPassword(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/#/auth?mode=update-password`,
+    });
+    if (error) throw new Error(error.message);
+  },
+
+  async updatePassword(password: string) {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw new Error(error.message);
   },
 
   async updateProfile(id: string, updates: any, role: 'user' | 'shelter') {
@@ -344,6 +359,7 @@ export const api = {
           adoption_fee: Number(pet.adoptionFee || 0),
           adoption_status: pet.adoptionStatus,
           is_visible: pet.isVisible,
+          // FIX: Changed pet.needs_foster to pet.needsFoster
           needs_foster: pet.needsFoster,
           tags: pet.tags || [],
           posted_date: new Date().toISOString(),
@@ -744,7 +760,7 @@ export const api = {
 
   async deletePromoSlide(id: string) {
       const { error } = await supabase.from('promo_slides').delete().eq('id', id);
-      if (error) throw new Error(error.message);
+      if (error) throw error;
   },
 
   // --- ADMIN & SEEDING ---

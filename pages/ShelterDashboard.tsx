@@ -242,7 +242,7 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
                   placeholder="Hľadať podľa mena..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none text-gray-900"
                 />
             </div>
             <div className="flex items-center gap-2">
@@ -433,11 +433,11 @@ const InquiriesSection = ({ inquiries, updateStatus }: { inquiries: AdoptionInqu
                                   <div className="text-xs text-gray-400 font-bold uppercase">Kontakt</div>
                                   <div className="flex items-center gap-2 mt-1">
                                       <Mail size={14} className="text-gray-400"/> 
-                                      <a href={`mailto:${selectedInquiry.email}`} className="text-sm truncate hover:text-brand-600">{selectedInquiry.email}</a>
+                                      <a href={`mailto:${selectedInquiry.email}`} className="text-sm truncate hover:text-brand-600 text-gray-900">{selectedInquiry.email}</a>
                                   </div>
                                   <div className="flex items-center gap-2 mt-1">
                                       <Phone size={14} className="text-gray-400"/> 
-                                      <a href={`tel:${selectedInquiry.phone}`} className="text-sm hover:text-brand-600">{selectedInquiry.phone || 'Neuvedený'}</a>
+                                      <a href={`tel:${selectedInquiry.phone}`} className="text-sm hover:text-brand-600 text-gray-900">{selectedInquiry.phone || 'Neuvedený'}</a>
                                   </div>
                               </div>
                               {applicant?.location && (
@@ -456,7 +456,7 @@ const InquiriesSection = ({ inquiries, updateStatus }: { inquiries: AdoptionInqu
                           </div>
                       </div>
 
-                      {/* User Household/Details Card - NEW */}
+                      {/* User Household/Details Card */}
                       {applicant?.household && (
                           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                               <h3 className="text-gray-900 font-bold mb-4 flex items-center gap-2">
@@ -666,6 +666,14 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        
+        // Strict phone validation
+        if (name === 'phone') {
+            const cleanVal = value.replace(/[^0-9+]/g, '');
+            setFormData(prev => ({ ...prev, [name]: cleanVal }));
+            return;
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -722,7 +730,7 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                 </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-gray-900">
                 <div className="flex flex-col md:flex-row gap-8 items-start mb-8">
                     <div className="flex flex-col items-center gap-3">
                         <div className="flex-shrink-0 relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
@@ -751,14 +759,14 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                              <label className="block text-sm font-bold text-gray-700 mb-2">Email</label>
                              <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18}/>
-                                <input name="email" type="text" value={formData.email} onChange={handleChange} className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none" />
+                                <input name="email" type="email" value={formData.email} onChange={handleChange} className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none" />
                              </div>
                         </div>
                         <div>
                              <label className="block text-sm font-bold text-gray-700 mb-2">Telefón</label>
                              <div className="relative">
                                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18}/>
-                                <input name="phone" type="text" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="+421..." />
+                                <input name="phone" type="tel" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="+421..." />
                              </div>
                         </div>
                         <div>
@@ -879,9 +887,9 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2"><Plus className="text-brand-600"/> Pridať člena</h3>
                         <form onSubmit={handleAdd} className="space-y-4">
-                            <input required placeholder="Meno" value={newName} onChange={e => setNewName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"/>
-                            <input required placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"/>
-                            <input required placeholder="Rola (napr. Venčenie)" value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"/>
+                            <input required placeholder="Meno" value={newName} onChange={e => setNewName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"/>
+                            <input required type="email" placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"/>
+                            <input required placeholder="Rola (napr. Venčenie)" value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition"/>
                             <button type="submit" className="w-full bg-brand-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-200">Pridať do tímu</button>
                         </form>
                     </div>
@@ -966,8 +974,8 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                 <div className="p-6 bg-gray-50 border-b border-gray-100">
                      <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 flex gap-4">
-                            <input required placeholder="Položka (napr. Granule pre šteňatá)" value={newItem} onChange={e => setNewItem(e.target.value)} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none text-sm"/>
-                            <select value={newPriority} onChange={e => setNewPriority(e.target.value)} className="w-40 px-4 py-2.5 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none text-sm cursor-pointer">
+                            <input required placeholder="Položka (napr. Granule pre šteňatá)" value={newItem} onChange={e => setNewItem(e.target.value)} className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none text-sm"/>
+                            <select value={newPriority} onChange={e => setNewPriority(e.target.value)} className="w-40 px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none text-sm cursor-pointer">
                                 <option value="Nízka">Nízka priorita</option>
                                 <option value="Stredná">Stredná priorita</option>
                                 <option value="Vysoká">Vysoká priorita</option>
@@ -976,7 +984,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                         <div className="flex-1 flex gap-4">
                             <div className="flex-1 relative">
                                 <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                                <input placeholder="Link na e-shop (voliteľné)" value={newLink} onChange={e => setNewLink(e.target.value)} className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none text-sm"/>
+                                <input placeholder="Link na e-shop (voliteľné)" value={newLink} onChange={e => setNewLink(e.target.value)} className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none text-sm"/>
                             </div>
                             <button type="submit" className="bg-brand-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-700 shadow-md whitespace-nowrap">Pridať</button>
                         </div>
@@ -984,7 +992,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                 </div>
                 <ul className="divide-y divide-gray-100">
                     {supplies.map(s => (
-                        <li key={s.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition">
+                        <li key={s.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition group">
                             <div className="flex items-center gap-4">
                                 <div className={`w-3 h-3 rounded-full ${s.priority === 'Vysoká' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : s.priority === 'Stredná' ? 'bg-yellow-500' : 'bg-green-500'}`}></div>
                                 <div>
@@ -1205,7 +1213,7 @@ const ShelterDashboard: React.FC = () => {
           fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col transform transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-screen
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="p-6 md:pb-8 flex items-center justify-between md:justify-start gap-3">
+        <div className="p-6 md:pb-8 flex items-center justify-between md:justify-start gap-3 text-gray-900">
            <div className="flex items-center gap-3">
                <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-200">
                   <LayoutDashboard size={20} />

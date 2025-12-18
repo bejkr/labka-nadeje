@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Upload, Sparkles, Loader2, Info, Video, Film, Star } from 'lucide-react';
 import { Pet, PetType, Gender, Size } from '../types';
@@ -321,10 +322,10 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                     <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Plemeno</label><input value={petBreed} onChange={e => setPetBreed(e.target.value)} type="text" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" placeholder="Napr. Kríženec"/></div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6 text-gray-900">
                      <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Druh</label>
-                        <select value={petType} onChange={e => setPetType(e.target.value as PetType)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer text-gray-900">
+                        <select value={petType} onChange={e => setPetType(e.target.value as PetType)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
                             <option value={PetType.DOG}>Pes</option>
                             <option value={PetType.CAT}>Mačka</option>
                             <option value={PetType.OTHER}>Iné</option>
@@ -332,21 +333,29 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                      </div>
                      <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Pohlavie</label>
-                        <select value={petGender} onChange={e => setPetGender(e.target.value as Gender)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer text-gray-900">
+                        <select value={petGender} onChange={e => setPetGender(e.target.value as Gender)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
                             <option value={Gender.MALE}>Samec</option>
                             <option value={Gender.FEMALE}>Samica</option>
                         </select>
                      </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6 text-gray-900">
                      <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Vek (roky)</label>
-                        <input value={petAge} onChange={e => setPetAge(e.target.value)} type="number" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" />
+                        <input 
+                            value={petAge} 
+                            onChange={e => setPetAge(e.target.value)} 
+                            type="number" 
+                            min="0"
+                            step="0.1"
+                            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 transition" 
+                            onKeyDown={(e) => ['e', 'E', '-', '+'].includes(e.key) && e.preventDefault()}
+                        />
                      </div>
                      <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Veľkosť</label>
-                        <select value={petSize} onChange={e => setPetSize(e.target.value as Size)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer text-gray-900">
+                        <select value={petSize} onChange={e => setPetSize(e.target.value as Size)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
                             <option value={Size.SMALL}>Malý</option>
                             <option value={Size.MEDIUM}>Stredný</option>
                             <option value={Size.LARGE}>Veľký</option>
@@ -426,7 +435,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                     </div>
                 </div>
                 
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-gray-900">
                      <label className="block text-sm font-bold text-gray-700 mb-3">Status a Viditeľnosť</label>
                      <div className="flex flex-wrap gap-6">
                          <div className="flex gap-4">
@@ -473,7 +482,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                       />
                   </div>
                   
-                  <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                  <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-gray-900">
                      <h4 className="font-bold text-gray-900 mb-4">Sociálne návyky</h4>
                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                          <div>
@@ -501,7 +510,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
 
           {/* TAB: HEALTH */}
           {modalTab === 'health' && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 text-gray-900">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      {['Očkovaný', 'Čipovaný', 'Kastrovaný', 'Odčervený'].map((label, i) => {
                          const keys = ['isVaccinated', 'isChipped', 'isCastrated', 'isDewormed'];
@@ -519,7 +528,14 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                   
                   <div>
                       <label className="block text-sm font-bold text-gray-700 mb-1.5">Adopčný poplatok (€)</label>
-                      <input type="number" value={adoptionFee} onChange={e => setAdoptionFee(e.target.value)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900" />
+                      <input 
+                        type="number" 
+                        min="0"
+                        value={adoptionFee} 
+                        onChange={e => setAdoptionFee(e.target.value)} 
+                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900" 
+                        onKeyDown={(e) => ['e', 'E', '-', '+'].includes(e.key) && e.preventDefault()}
+                      />
                       <p className="text-xs text-gray-500 mt-2">Zadajte 0 ak je adopcia bezplatná.</p>
                   </div>
               </div>

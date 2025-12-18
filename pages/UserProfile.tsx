@@ -8,7 +8,7 @@ import {
   ShieldCheck, Award, Briefcase, Home, Clock, Phone, Mail, CheckCircle, 
   AlertCircle, Dog, Navigation, FileText, Bell, Lock, LogOut, X, Info,
   User as UserIcon, Save, MessageSquare, Check, XCircle, Calendar, Building2, Loader2,
-  ChevronRight, Sparkles, Search, Camera
+  ChevronRight, Sparkles, Search, Camera, ChevronLeft
 } from 'lucide-react';
 import { User, PetType, Size, Gender, HousingType, WorkMode, ExperienceLevel, AdoptionInquiry, Pet } from '../types';
 import ChatWindow from '../components/ChatWindow';
@@ -86,11 +86,13 @@ const EditAdoptionModal: React.FC<EditAdoptionModalProps> = ({ petName, currentA
           <div className="mb-6">
             <label className="block text-xs font-medium text-gray-500 mb-1">Vlastná suma (€)</label>
             <input 
-              type="number" 
+              type="number"
+              min="1"
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
               placeholder="Zadajte sumu"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none bg-white text-gray-900"
+              onKeyDown={(e) => ['e', 'E', '-', '+'].includes(e.key) && e.preventDefault()}
             />
           </div>
 
@@ -158,7 +160,7 @@ const EditHouseholdModal: React.FC<EditHouseholdModalProps> = ({ user, onSave, o
                 <select 
                   value={housingType} 
                   onChange={(e) => setHousingType(e.target.value as HousingType)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
                 >
                   <option value="">Nevybraté</option>
                   <option value="Byt">Byt</option>
@@ -173,7 +175,7 @@ const EditHouseholdModal: React.FC<EditHouseholdModalProps> = ({ user, onSave, o
                 <select 
                   value={workMode} 
                   onChange={(e) => setWorkMode(e.target.value as WorkMode)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
                 >
                   <option value="">Nevybraté</option>
                   <option value="Práca z domu">Práca z domu</option>
@@ -189,7 +191,7 @@ const EditHouseholdModal: React.FC<EditHouseholdModalProps> = ({ user, onSave, o
               <select 
                 value={experienceLevel} 
                 onChange={(e) => setExperienceLevel(e.target.value as ExperienceLevel)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
               >
                 <option value="">Nevybraté</option>
                 <option value="Začiatočník">Začiatočník</option>
@@ -223,10 +225,13 @@ const EditHouseholdModal: React.FC<EditHouseholdModalProps> = ({ user, onSave, o
               <label className="block text-sm font-medium text-gray-700 mb-1">Rok narodenia (pre overenie veku)</label>
               <input 
                 type="number"
+                min="1900"
+                max={new Date().getFullYear()}
                 value={birthYear}
                 onChange={(e) => setBirthYear(e.target.value)}
                 placeholder="napr. 1990"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
+                onKeyDown={(e) => ['e', 'E', '-', '+', '.'].includes(e.key) && e.preventDefault()}
               />
            </div>
 
@@ -277,7 +282,7 @@ const EditAvailabilityModal: React.FC<EditAvailabilityModalProps> = ({ user, onS
                 value={availability}
                 onChange={(e) => setAvailability(e.target.value)}
                 placeholder="napr. Víkendy, Poobedia po 17:00"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
               />
            </div>
 
@@ -285,10 +290,12 @@ const EditAvailabilityModal: React.FC<EditAvailabilityModalProps> = ({ user, onS
               <label className="block text-sm font-medium text-gray-700 mb-1">Max. vzdialenosť pre adopciu (km)</label>
               <input 
                 type="number"
+                min="0"
                 value={maxTravelDistance}
                 onChange={(e) => setMaxTravelDistance(e.target.value)}
                 placeholder="napr. 50"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
+                onKeyDown={(e) => ['e', 'E', '-', '+', '.'].includes(e.key) && e.preventDefault()}
               />
            </div>
 
@@ -297,7 +304,7 @@ const EditAvailabilityModal: React.FC<EditAvailabilityModalProps> = ({ user, onS
               <select 
                 value={preferredContact} 
                 onChange={(e) => setPreferredContact(e.target.value as any)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 bg-white text-gray-900"
               >
                 <option value="">Nevybraté</option>
                 <option value="Email">Email</option>
@@ -403,7 +410,7 @@ const EditPreferencesModal: React.FC<EditPreferencesModalProps> = ({ preferences
                          <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer bg-gray-50">
                               <input 
                                 type="checkbox" 
-                                className="w-5 h-5 text-brand-600 rounded" 
+                                className="w-5 h-5 text-brand-600 rounded focus:ring-brand-500" 
                                 checked={localPrefs.specialNeedsAccepted}
                                 onChange={(e) => setLocalPrefs(prev => ({...prev, specialNeedsAccepted: e.target.checked}))}
                               />
@@ -507,7 +514,9 @@ const UserProfilePage: React.FC = () => {
   };
 
   const savePhone = () => {
-      updateUserProfile({ phone: phoneInput });
+      // Allow only numbers and plus
+      const cleanPhone = phoneInput.replace(/[^0-9+]/g, '');
+      updateUserProfile({ phone: cleanPhone });
       setIsEditingPhone(false);
   };
 
@@ -670,7 +679,7 @@ const UserProfilePage: React.FC = () => {
                   <div className="w-full space-y-3">
                     <div className="flex justify-between items-center text-sm">
                        <span className="text-gray-500 flex items-center gap-2"><Mail size={14}/> Email</span>
-                       <span className="font-medium flex items-center gap-1">
+                       <span className="font-medium flex items-center gap-1 text-gray-900">
                          {user.email} 
                          {user.verification.email ? <CheckCircle size={14} className="text-green-500"/> : <AlertCircle size={14} className="text-yellow-500"/>}
                        </span>
@@ -681,9 +690,9 @@ const UserProfilePage: React.FC = () => {
                         <div className="flex items-center gap-2 animate-in fade-in duration-200">
                             <span className="text-gray-500"><Phone size={14}/></span>
                             <input 
-                                type="text"
+                                type="tel"
                                 value={phoneInput}
-                                onChange={(e) => setPhoneInput(e.target.value)}
+                                onChange={(e) => setPhoneInput(e.target.value.replace(/[^0-9+]/g, ''))}
                                 className="w-full text-sm border border-brand-200 rounded px-2 py-1 outline-none focus:border-brand-500 bg-white text-gray-900"
                                 placeholder="+421..."
                                 autoFocus
@@ -695,7 +704,7 @@ const UserProfilePage: React.FC = () => {
                         <div className="flex justify-between items-center text-sm group">
                            <span className="text-gray-500 flex items-center gap-2"><Phone size={14}/> Telefón</span>
                            <div className="flex items-center gap-2">
-                               <span className="font-medium flex items-center gap-1">
+                               <span className="font-medium flex items-center gap-1 text-gray-900">
                                  {user.phone || '-'}
                                  {user.verification.phone ? <CheckCircle size={14} className="text-green-500"/> : <AlertCircle size={14} className="text-gray-300"/>}
                                </span>
@@ -741,7 +750,7 @@ const UserProfilePage: React.FC = () => {
                      <CheckCircle size={16} />
                    </div>
                    <div className="text-sm">
-                     <div className="font-medium">Overený Email</div>
+                     <div className="font-medium text-gray-900">Overený Email</div>
                      <div className="text-xs text-gray-500">Základné overenie</div>
                    </div>
                  </div>
@@ -750,7 +759,7 @@ const UserProfilePage: React.FC = () => {
                      <CheckCircle size={16} />
                    </div>
                    <div className="text-sm">
-                     <div className="font-medium">Overený Telefón</div>
+                     <div className="font-medium text-gray-900">Overený Telefón</div>
                      <div className="text-xs text-gray-500">Pre rýchlejšiu komunikáciu</div>
                    </div>
                  </div>
@@ -759,7 +768,7 @@ const UserProfilePage: React.FC = () => {
                      <CheckCircle size={16} />
                    </div>
                    <div className="text-sm">
-                     <div className="font-medium">Overená Identita</div>
+                     <div className="font-medium text-gray-900">Overená Identita</div>
                      <div className="text-xs text-gray-500">Zvyšuje šancu na adopciu</div>
                    </div>
                    {!user.verification.identity && (
@@ -800,7 +809,7 @@ const UserProfilePage: React.FC = () => {
                               <textarea 
                                 value={bioInput}
                                 onChange={(e) => setBioInput(e.target.value)}
-                                className="w-full p-4 border border-brand-200 rounded-xl bg-white focus:ring-2 focus:ring-brand-500 outline-none text-gray-700 shadow-inner"
+                                className="w-full p-4 border border-brand-200 rounded-xl bg-white focus:ring-2 focus:ring-brand-500 outline-none text-gray-900 shadow-inner"
                                 rows={4}
                                 placeholder="Napíšte niečo o sebe..."
                               ></textarea>
@@ -900,7 +909,7 @@ const UserProfilePage: React.FC = () => {
                   </div>
                 )}
 
-                {/* TAB: ACTIVITY (Pets, Favorites, Adoptions) - REDESIGNED */}
+                {/* TAB: ACTIVITY */}
                 {activeTab === 'activity' && (
                   <div className="space-y-12 animate-in fade-in duration-500">
                     
@@ -918,10 +927,6 @@ const UserProfilePage: React.FC = () => {
                                     onClick={() => setChatInquiry(app)}
                                     className="group relative bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-lg transition cursor-pointer overflow-hidden"
                                 >
-                                    <div className="absolute top-0 right-0 p-4">
-                                        <ChevronRight className="text-gray-300 group-hover:text-brand-600 transition" />
-                                    </div>
-
                                     <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
                                         <div className="bg-blue-50 p-3 rounded-xl">
                                             <Dog className="text-blue-600" size={24} />
@@ -983,7 +988,7 @@ const UserProfilePage: React.FC = () => {
                        </div>
                     </div>
 
-                    {/* 2. VIRTUAL ADOPTIONS (Money) */}
+                    {/* 2. VIRTUAL ADOPTIONS */}
                     <div>
                         <h3 className="text-lg font-extrabold text-gray-900 mb-6 flex items-center gap-2">
                           <Heart className="text-brand-600" size={24} /> Moje virtuálne adopcie
@@ -1040,14 +1045,14 @@ const UserProfilePage: React.FC = () => {
                         )}
                     </div>
 
-                    {/* 3. FAVORITES (Bookmarks) */}
+                    {/* 3. FAVORITES */}
                     <div>
                        <h3 className="text-lg font-extrabold text-gray-900 mb-6 flex items-center gap-2">
                           <Heart className="text-red-500 fill-red-500" size={24} /> Uložené zvieratá
                        </h3>
                        
                        {favoritePets.length > 0 ? (
-                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {favoritePets.map(pet => (
                                <Link key={pet.id} to={`/pets/${pet.id}`} className="group relative bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-lg transition">
                                   <div className="relative h-48 overflow-hidden bg-gray-100">
@@ -1065,11 +1070,13 @@ const UserProfilePage: React.FC = () => {
                                          <Trash2 size={16} />
                                       </button>
                                   </div>
-                                  <div className="p-4 flex justify-between items-center">
-                                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide ${pet.adoptionStatus === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                  <div className="p-4 flex flex-wrap items-center justify-between gap-3">
+                                      <span className={`flex-shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider ${pet.adoptionStatus === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
                                           {pet.adoptionStatus === 'Available' ? 'Na adopciu' : pet.adoptionStatus}
                                       </span>
-                                      <span className="text-xs font-bold text-brand-600 group-hover:underline">Zobraziť detail</span>
+                                      <span className="flex-shrink-0 whitespace-nowrap text-xs font-extrabold text-brand-600 group-hover:text-brand-700 transition-colors flex items-center gap-1">
+                                          Zobraziť detail <ChevronRight size={14} />
+                                      </span>
                                   </div>
                                </Link>
                             ))}
@@ -1172,7 +1179,7 @@ const UserProfilePage: React.FC = () => {
                                         {chatPet && <div className="text-xs text-gray-500">{chatPet.breed} • {chatPet.age}r</div>}
                                     </div>
                                 </div>
-                                <Link to={`/pets/${chatInquiry.petId}`} className="mt-4 block text-center w-full py-2 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-100 transition">
+                                <Link to={`/pets/${chatInquiry.petId}`} className="mt-4 block text-center w-full py-2 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg hover:bg-brand-100 transition">
                                     Zobraziť inzerát
                                 </Link>
                             </div>

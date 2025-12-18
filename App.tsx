@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram } from 'lucide-react';
+import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram, Shield } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Logo from './components/Logo';
 
@@ -11,15 +10,17 @@ import PetListPage from './pages/PetList';
 import PetDetailPage from './pages/PetDetail';
 import ShelterDashboard from './pages/ShelterDashboard';
 import ShelterDetailPage from './pages/ShelterDetail'; 
-import ShelterListPage from './pages/ShelterList'; // New Page
+import ShelterListPage from './pages/ShelterList';
 import BlogPage from './pages/Blog';
 import BlogDetailPage from './pages/BlogDetail';
 import SupportPage from './pages/Support';
 import UserProfilePage from './pages/UserProfile';
 import AuthPage from './pages/Auth';
-import AdminDashboard from './pages/AdminDashboard'; // New Page
-import PaymentSuccess from './pages/PaymentSuccess'; // New Page
+import AdminDashboard from './pages/AdminDashboard';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import AdoptionAssistant from './components/AdoptionAssistant';
+import GDPRConsent from './components/GDPRConsent';
 import ScrollToTop from './components/ScrollToTop';
 
 const Navbar: React.FC = () => {
@@ -35,21 +36,19 @@ const Navbar: React.FC = () => {
     { name: 'Podpora', path: '/support', icon: Heart },
   ];
 
-  // Robust check for shelter role
   const isShelter = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
   const isSuperAdmin = (currentUser as any)?.isSuperAdmin;
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20"> {/* Increased height slightly for the new logo */}
+        <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
               <Logo className="h-12" />
             </Link>
           </div>
           
-          {/* Desktop Menu - Center Links */}
           <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
@@ -69,10 +68,7 @@ const Navbar: React.FC = () => {
             })}
           </div>
 
-          {/* Desktop Menu - Right Action Area */}
           <div className="hidden md:flex items-center gap-3">
-             
-             {/* SUPER ADMIN LINK */}
              {isSuperAdmin && (
                 <Link
                   to="/admin"
@@ -83,7 +79,6 @@ const Navbar: React.FC = () => {
                 </Link>
              )}
 
-             {/* SHELTER VIEW */}
              {isShelter ? (
                 <Link
                   to="/shelter"
@@ -97,7 +92,6 @@ const Navbar: React.FC = () => {
                   Môj Útulok
                 </Link>
              ) : (
-               /* REGULAR USER / GUEST VIEW */
                <>
                  {!currentUser && (
                    <Link
@@ -146,7 +140,6 @@ const Navbar: React.FC = () => {
              )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -158,11 +151,9 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 shadow-xl">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -246,7 +237,6 @@ const Navbar: React.FC = () => {
                 </>
               )}
             </div>
-
           </div>
         </div>
       )}
@@ -266,10 +256,10 @@ const Footer: React.FC = () => (
             Spájame opustené srdcia s milujúcimi domovmi. Pomáhame útulkom po celom Slovensku.
           </p>
           <div className="flex gap-4">
-             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-brand-600 transition text-white">
+             <a href="https://www.facebook.com/profile.php?id=61584849571446" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-brand-600 transition text-white">
                <Facebook size={18} />
              </a>
-             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-brand-600 transition text-white">
+             <a href="https://www.instagram.com/labka_nadeje/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-brand-600 transition text-white">
                <Instagram size={18} />
              </a>
           </div>
@@ -279,7 +269,7 @@ const Footer: React.FC = () => (
           <ul className="space-y-2 text-gray-400 text-sm">
             <li><Link to="/pets" className="hover:text-white">Hľadám psa</Link></li>
             <li><Link to="/shelters" className="hover:text-white">Zoznam útulkov</Link></li>
-            <li><Link to="/auth" className="hover:text-white">Pre útulky</Link></li>
+            <li><Link to="/privacy" className="hover:text-white">Ochrana údajov (GDPR)</Link></li>
             <li><Link to="/blog" className="hover:text-white">Blog</Link></li>
             <li><Link to="/support" className="hover:text-white">Podpora</Link></li>
           </ul>
@@ -295,14 +285,25 @@ const Footer: React.FC = () => (
         <div>
           <h3 className="text-lg font-semibold mb-4 text-brand-400">Novinky</h3>
           <p className="text-gray-400 text-sm mb-4">Prihláste sa na odber noviniek a príbehov.</p>
-          <div className="flex">
-            <input type="email" placeholder="Váš email" className="px-3 py-2 bg-gray-800 rounded-l text-sm w-full focus:outline-none focus:ring-1 focus:ring-brand-500" />
-            <button className="bg-brand-600 px-4 py-2 rounded-r hover:bg-brand-700 text-sm font-medium">OK</button>
+          <div className="flex shadow-sm">
+            <input 
+                type="email" 
+                placeholder="Váš email" 
+                className="px-4 py-2 bg-white text-gray-900 rounded-l-xl text-sm w-full focus:outline-none focus:ring-2 focus:ring-brand-500" 
+            />
+            <button className="bg-brand-600 px-5 py-2 rounded-r-xl hover:bg-brand-700 text-sm font-bold transition">OK</button>
           </div>
         </div>
       </div>
-      <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
-        &copy; {new Date().getFullYear()} LabkaNádeje. Všetky práva vyhradené.
+      <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
+        <div className="flex items-center gap-2">
+            <Shield size={14} />
+            <span>&copy; {new Date().getFullYear()} LabkaNádeje. Všetky dáta sú chránené.</span>
+        </div>
+        <div className="flex gap-6">
+            <Link to="/privacy" className="hover:text-white transition">GDPR</Link>
+            <Link to="/support" className="hover:text-white transition">Podmienky používania</Link>
+        </div>
       </div>
     </div>
   </footer>
@@ -329,10 +330,12 @@ const App: React.FC = () => {
             <Route path="/profile" element={<UserProfilePage />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
         </main>
         <Footer />
         <AdoptionAssistant />
+        <GDPRConsent />
       </div>
     </Router>
   );
