@@ -1,9 +1,5 @@
 import React, { useState, useMemo } from 'react';
-<<<<<<< HEAD
 import { Link, useNavigate } from 'react-router-dom';
-=======
-import { Link } from 'react-router-dom';
->>>>>>> a60125ff980ef664a36cb420b4c3a37405cee54b
 import { Filter, MapPin, Calendar, Ruler, Tag, X, Heart, Activity, ArrowRight, Dog, Cat, ChevronDown, ChevronUp } from 'lucide-react';
 import { PetType, Size, Gender } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -63,7 +59,6 @@ const PetListPage: React.FC = () => {
     setFilterTag('all');
   };
 
-<<<<<<< HEAD
   const handleFavoriteClick = (e: React.MouseEvent, petId: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -79,8 +74,6 @@ const PetListPage: React.FC = () => {
     }
   };
 
-=======
->>>>>>> a60125ff980ef664a36cb420b4c3a37405cee54b
   // Calculate active filters count for badge
   const activeFiltersCount = [
     filterType !== 'all',

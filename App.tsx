@@ -1,11 +1,6 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-<<<<<<< HEAD
 import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram, Shield } from 'lucide-react';
-=======
-import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram } from 'lucide-react';
-import { Analytics } from '@vercel/analytics/react';
->>>>>>> a60125ff980ef664a36cb420b4c3a37405cee54b
 import { useAuth } from './contexts/AuthContext';
 import Logo from './components/Logo';
 
@@ -320,7 +315,6 @@ const App: React.FC = () => {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <Navbar />
-        <Analytics />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
