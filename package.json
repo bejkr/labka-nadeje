@@ -15,7 +15,8 @@
     "lucide-react": "^0.469.0",
     "recharts": "^2.15.0",
     "@google/genai": "^1.31.0",
-    "@supabase/supabase-js": "^2.47.10"
+    "@supabase/supabase-js": "^2.47.10",
+    "@vercel/analytics": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

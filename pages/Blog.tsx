@@ -6,12 +6,15 @@ import { Calendar, User, Trash2, Loader2, PlusCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const BlogPage: React.FC = () => {
   const { currentUser } = useAuth();
   const { showToast } = useApp();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [blogToDelete, setBlogToDelete] = useState<{id: string, title: string} | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const isSuperAdmin = (currentUser as any)?.isSuperAdmin;
 
@@ -23,35 +26,31 @@ const BlogPage: React.FC = () => {
       try {
           const data = await api.getBlogPosts();
           setPosts(data);
-      } catch (e) {
-          console.error(e);
-      } finally {
-          setLoading(false);
-      }
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
   };
 
-  const handleDelete = async (e: React.MouseEvent, id: string) => {
-      e.preventDefault(); // Prevent link click
-      if (!window.confirm("Naozaj vymazať tento článok?")) return;
-      
+  const confirmDelete = async () => {
+      if (!blogToDelete) return;
+      setIsDeleting(true);
       try {
-          await api.deleteBlogPost(id);
-          setPosts(prev => prev.filter(p => p.id !== id));
+          await api.deleteBlogPost(blogToDelete.id);
+          setPosts(prev => prev.filter(p => p.id !== blogToDelete.id));
           showToast("Článok bol vymazaný", "success");
+          setBlogToDelete(null);
       } catch (e) {
-          console.error(e);
           showToast("Chyba pri mazaní", "error");
+      } finally {
+          setIsDeleting(false);
       }
   };
 
   return (
-    <div className="bg-white min-h-screen py-16">
+    <div className="bg-white min-h-screen py-16 font-sans text-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-4">Blog & Príbehy</h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto">
-            Rady pre nových majiteľov, šťastné konce adopcií a novinky zo sveta útulkov.
-          </p>
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto">Zaujimavosti zo sveta zvierat.</p>
         </div>
 
         {loading ? (
@@ -59,61 +58,41 @@ const BlogPage: React.FC = () => {
         ) : (
             <div className="grid gap-12 lg:grid-cols-3">
             {posts.length > 0 ? posts.map((post) => (
-                <Link key={post.id} to={`/blog/${post.id}`} className="group flex flex-col overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative border border-gray-100">
+                <Link key={post.id} to={`/blog/${post.id}`} className="group flex flex-col overflow-hidden rounded-2xl shadow-lg border border-gray-100 relative">
                 
                 {isSuperAdmin && (
                     <button 
-                        onClick={(e) => handleDelete(e, post.id)}
-                        className="absolute top-3 right-3 z-20 bg-white/90 text-red-600 p-2 rounded-full hover:bg-red-500 hover:text-white transition shadow-sm border border-red-100"
-                        title="Vymazať článok (Admin)"
+                        onClick={(e) => { e.preventDefault(); setBlogToDelete({id: post.id, title: post.title}); }}
+                        className="absolute top-3 right-3 z-20 bg-white/90 text-red-600 p-2 rounded-full shadow-sm hover:bg-red-500 hover:text-white transition"
                     >
                         <Trash2 size={18} />
                     </button>
                 )}
 
                 <div className="flex-shrink-0 h-48 overflow-hidden">
-                    <img className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-500" src={post.imageUrl} alt={post.title} />
+                    <img className="h-full w-full object-cover transform group-hover:scale-105 transition duration-500" src={post.imageUrl} alt={post.title} />
                 </div>
                 <div className="flex-1 bg-white p-6 flex flex-col justify-between">
-                    <div className="flex-1">
-                    <p className="text-sm font-medium text-brand-600 mb-2">
-                        Článok
-                    </p>
-                    <div className="block mt-2">
-                        <p className="text-xl font-semibold text-gray-900 group-hover:text-brand-600 transition">
-                        {post.title}
-                        </p>
-                        <p className="mt-3 text-base text-gray-500 line-clamp-3">
-                        {post.summary}
-                        </p>
-                    </div>
-                    </div>
-                    <div className="mt-6 flex items-center pt-4 border-t border-gray-100">
-                    <div className="flex-shrink-0">
-                        <span className="sr-only">{post.author}</span>
-                        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                        <User size={20} />
-                        </div>
-                    </div>
-                    <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">
-                        {post.author || 'Redakcia'}
-                        </p>
-                        <div className="flex space-x-1 text-sm text-gray-500">
-                        <time dateTime={post.date}>{new Date(post.date).toLocaleDateString('sk-SK')}</time>
-                        </div>
-                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-600 transition">{post.title}</h3>
+                    <p className="mt-3 text-gray-500 line-clamp-3 text-sm">{post.summary}</p>
+                    <div className="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400">
+                        {new Date(post.date).toLocaleDateString('sk-SK')}
                     </div>
                 </div>
                 </Link>
-            )) : (
-                <div className="col-span-3 text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-                    <p className="text-gray-500">Zatiaľ žiadne články. {isSuperAdmin ? 'Nahrajte ich cez stránku Podpora.' : ''}</p>
-                </div>
-            )}
+            )) : <p className="col-span-3 text-center py-20 text-gray-400">Zatiaľ žiadne články.</p>}
             </div>
         )}
       </div>
+
+      <ConfirmationModal 
+        isOpen={!!blogToDelete}
+        onClose={() => setBlogToDelete(null)}
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+        title="Vymazať článok?"
+        message={`Naozaj chcete vymazať článok "${blogToDelete?.title}"?`}
+      />
     </div>
   );
 };

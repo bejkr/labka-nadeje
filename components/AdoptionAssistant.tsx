@@ -11,7 +11,7 @@ const AdoptionAssistant: React.FC = () => {
     {
       id: 'init',
       role: 'model',
-      text: 'Ahoj! 👋 Ja som tvoj adopčný asistent. Ako ti môžem dnes pomôcť s hľadaním nového priateľa?',
+      text: 'Ahoj! 👋 Ja som tvoj Labka asistent. Ako ti môžem dnes pomôcť s hľadaním nového priateľa?',
       timestamp: Date.now()
     }
   ]);
@@ -21,7 +21,7 @@ const AdoptionAssistant: React.FC = () => {
   // Get live pets data
   const { pets } = usePets();
 
-  // Format pets into a context string for the AI
+  // Format pets into a context string for the model
   const petsContextString = useMemo(() => {
     const availablePets = pets.filter(p => p.adoptionStatus === 'Available' && p.isVisible);
     if (availablePets.length === 0) return "Momentálne nie sú dostupné žiadne zvieratá.";
@@ -86,7 +86,7 @@ const AdoptionAssistant: React.FC = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 ${
-          isOpen ? 'bg-red-500 rotate-90' : 'bg-brand-600 hover:bg-brand-700'
+          isOpen ? 'bg-red-50 rotate-90' : 'bg-brand-600 hover:bg-brand-700'
         } text-white`}
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={28} />}
@@ -99,8 +99,8 @@ const AdoptionAssistant: React.FC = () => {
           <div className="bg-brand-600 p-4 flex items-center text-white">
             <Bot className="mr-2" size={20} />
             <div>
-              <h3 className="font-bold">Adopčný Asistent</h3>
-              <p className="text-xs text-brand-100">Poznám všetky zvieratká v ponuke</p>
+              <h3 className="font-bold">Labka Asistent</h3>
+              <p className="text-xs text-brand-100">Pomáham nájsť najlepšiu Labka zhodu</p>
             </div>
           </div>
 

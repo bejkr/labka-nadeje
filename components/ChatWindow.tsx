@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, Loader2, User as UserIcon } from 'lucide-react';
 import { InquiryMessage, User } from '../types';
 import { api } from '../services/api';
 
@@ -8,14 +8,25 @@ interface ChatWindowProps {
   inquiryId: string;
   currentUser: User | any; 
   className?: string;
+  inverted?: boolean; // Flipping alignment (Sent = Left, Received = Right)
+  myAvatarUrl?: string;
+  otherAvatarUrl?: string;
   initialMessage?: {
       content: string;
       date: string;
-      senderId?: string; // Optional, defaults to 'applicant'
+      senderId?: string;
   };
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ inquiryId, currentUser, className, initialMessage }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ 
+    inquiryId, 
+    currentUser, 
+    className, 
+    inverted = false, 
+    myAvatarUrl, 
+    otherAvatarUrl, 
+    initialMessage 
+}) => {
   const [messages, setMessages] = useState<InquiryMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -23,29 +34,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ inquiryId, currentUser, classNa
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initial load with scroll
     loadMessages(true);
-    
-    // Polling without scroll
     const interval = setInterval(() => {
         loadMessages(false);
     }, 10000); 
-    
     return () => clearInterval(interval);
   }, [inquiryId]);
 
   const loadMessages = async (shouldScroll = false) => {
     try {
         const dbMessages = await api.getInquiryMessages(inquiryId);
-        
-        // If we have an initial message (from the inquiry form), prepend it
         let allMessages = [...dbMessages];
         
         if (initialMessage && initialMessage.content) {
             const firstMsg: InquiryMessage = {
                 id: 'initial-msg',
                 inquiryId: inquiryId,
-                senderId: initialMessage.senderId || 'applicant-placeholder', // Needs to NOT match currentUser.id if viewed by Shelter
+                senderId: initialMessage.senderId || 'applicant-placeholder',
                 content: initialMessage.content,
                 createdAt: initialMessage.date,
                 isRead: true
@@ -55,13 +60,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ inquiryId, currentUser, classNa
 
         setMessages(allMessages);
         setLoading(false);
-        
-        if (shouldScroll) {
-            scrollToBottom();
-        }
-    } catch (e) {
-        console.error("Failed to load messages", e);
-    }
+        if (shouldScroll) { scrollToBottom(); }
+    } catch (e) { console.error("Failed to load messages", e); }
   };
 
   const scrollToBottom = () => {
@@ -81,16 +81,27 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ inquiryId, currentUser, classNa
         setNewMessage('');
         scrollToBottom();
     } catch (e) {
-        console.error(e);
         alert("Nepodarilo sa odoslať správu.");
     } finally {
         setSending(false);
     }
   };
 
+  const renderAvatar = (url?: string) => {
+      return (
+          <div className="w-9 h-9 rounded-full bg-white border border-gray-100 shadow-sm flex items-center justify-center overflow-hidden flex-shrink-0">
+              {url ? (
+                  <img src={url} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                  <UserIcon size={18} className="text-gray-300" />
+              )}
+          </div>
+      );
+  };
+
   return (
     <div className={`flex flex-col bg-gray-50 rounded-xl border border-gray-200 overflow-hidden ${className || 'h-[400px]'}`}>
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
             {loading ? (
                 <div className="flex justify-center items-center h-full text-gray-400">
                     <Loader2 className="animate-spin" size={24} />
@@ -102,14 +113,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ inquiryId, currentUser, classNa
             ) : (
                 messages.map((msg, index) => {
                     const isMe = msg.senderId === currentUser.id;
+                    
+                    // Alignment logic based on inverted prop
+                    const justifyClass = inverted 
+                        ? (isMe ? 'flex-row' : 'flex-row-reverse') 
+                        : (isMe ? 'flex-row-reverse' : 'flex-row');
+                    
+                    const bubbleStyle = inverted
+                        ? (isMe ? 'bg-brand-600 text-white rounded-bl-none ml-2' : 'bg-white text-gray-800 border border-gray-200 rounded-br-none mr-2')
+                        : (isMe ? 'bg-brand-600 text-white rounded-br-none mr-2' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none ml-2');
+
+                    const avatarUrl = isMe ? myAvatarUrl : otherAvatarUrl;
+
                     return (
-                        <div key={msg.id || index} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
-                                isMe 
-                                ? 'bg-brand-600 text-white rounded-br-none' 
-                                : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none'
-                            }`}>
-                                <p>{msg.content}</p>
+                        <div key={msg.id || index} className={`flex items-end gap-2 ${justifyClass}`}>
+                            {renderAvatar(avatarUrl)}
+                            <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${bubbleStyle}`}>
+                                <p className="leading-relaxed">{msg.content}</p>
                                 <span className={`text-[10px] block mt-1 ${isMe ? 'text-brand-200' : 'text-gray-400'}`}>
                                     {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                                     {msg.id === 'initial-msg' && ` • ${new Date(msg.createdAt).toLocaleDateString()}`}
@@ -122,7 +142,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ inquiryId, currentUser, classNa
             <div ref={messagesEndRef} />
         </div>
 
-        <form onSubmit={handleSend} className="p-3 bg-white border-t border-gray-200 flex gap-2">
+        <form onSubmit={handleSend} className="p-3 bg-white border-t border-gray-100 flex gap-2">
             <input 
                 type="text" 
                 value={newMessage}

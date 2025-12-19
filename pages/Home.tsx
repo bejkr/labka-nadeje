@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
               <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 leading-[1.1]">
                 Nájdi svojho <br />
                 <span className="relative inline-block text-brand-600">
-                  najlepšieho priateľa
+                  nového priateľa
                   <svg className="absolute w-full h-3 -bottom-1 left-0 text-brand-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                      <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
                   </svg>

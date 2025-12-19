@@ -34,7 +34,7 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const updatePet = async (updatedPet: Pet) => {
     try {
         await api.updatePet(updatedPet);
-        setPets(prev => prev.map(p => p.id === updatedPet.id ? updatedPet : p));
+        await loadPets(); // Force refresh from DB
     } catch (e) {
         console.error(e);
         alert("Chyba pri ukladaní");
@@ -43,8 +43,8 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const addPet = async (newPet: Pet) => {
     try {
-        const created = await api.createPet(newPet);
-        setPets(prev => [created, ...prev]);
+        await api.createPet(newPet);
+        await loadPets(); // Force refresh from DB
     } catch (e) {
         console.error(e);
         alert("Chyba pri vytváraní");
@@ -54,10 +54,11 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const deletePet = async (petId: string) => {
     try {
         await api.deletePet(petId);
-        setPets(prev => prev.filter(p => p.id !== petId));
-    } catch (e) {
+        // Po úspešnom zmazaní v DB okamžite načítame nový zoznam
+        await loadPets();
+    } catch (e: any) {
         console.error("PetContext Delete Error:", e);
-        throw e; // RETHROW to let UI handle the specific error message
+        throw e; // RETHROW pre zobrazenie Toast v UI
     }
   };
 

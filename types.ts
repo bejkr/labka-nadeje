@@ -42,8 +42,8 @@ export interface PetTraining {
 
 export interface PetRequirements {
   activityLevel: 'Nízka' | 'Stredná' | 'Vysoká';
-  suitableFor: string[]; // e.g. "Seniori", "Dom so záhradou"
-  unsuitableFor: string[]; // e.g. "Malé deti", "Byt"
+  suitableFor: string[]; 
+  unsuitableFor: string[];
 }
 
 export interface Pet {
@@ -51,39 +51,34 @@ export interface Pet {
   name: string;
   type: PetType;
   breed: string;
-  age: number; // in years
+  age: number;
   gender: Gender;
   size: Size;
   location: string;
   imageUrl: string;
-  gallery?: string[]; // Array of additional images (Base64 or URLs)
+  gallery?: string[];
   description: string;
-  
-  // New structured fields
   health: PetHealth;
   social: PetSocial;
   training: PetTraining;
   requirements: PetRequirements;
-  
   adoptionFee: number;
   videoUrl?: string;
-
   shelterId: string;
-  tags: string[]; // e.g. "Vhodný k deťom", "Aktívny"
+  tags: string[];
   postedDate: string;
   importantNotes?: string;
   adoptionStatus: 'Available' | 'Reserved' | 'Adopted';
   isVisible: boolean;
-  needsFoster: boolean; // New field for temporary care
-  views: number; // Real view count
+  needsFoster: boolean;
+  views: number;
 }
 
 export interface Shelter {
   id: string;
-  role: 'shelter'; // Added role
-  isSuperAdmin?: boolean; // Admin flag
-  isVerified?: boolean; // Verification status
-  password?: string; // Simulated password
+  role: 'shelter';
+  isSuperAdmin?: boolean;
+  isVerified?: boolean;
   name: string;
   location: string;
   email: string;
@@ -91,7 +86,7 @@ export interface Shelter {
   description?: string;
   openingHours?: string;
   bankAccount?: string;
-  shippingAddress?: string; // New field for full address
+  shippingAddress?: string;
   logoUrl?: string;
   socials?: {
     facebook?: string;
@@ -105,9 +100,73 @@ export interface Shelter {
   };
 }
 
+export interface UserPreferences {
+  types: PetType[];
+  sizes: Size[];
+  genders: Gender[];
+  ageRange: string[];
+  temperament: string[];
+  preferredBreeds: string[]; 
+  activityLevel: 'Nízka (Gaučák)' | 'Stredná (Prechádzky)' | 'Vysoká (Športovec)';
+  socialRequirements: string[];
+  specialNeedsAccepted: boolean;
+}
+
+export interface UserHousehold {
+  housingType: HousingType;
+  hasChildren: boolean;
+  hasOtherPets: boolean;
+  workMode: WorkMode;
+  experienceLevel: ExperienceLevel;
+}
+
+export type HousingType = 'Byt' | 'Dom' | 'Dom so záhradou' | 'Farma';
+export type WorkMode = 'Práca z domu' | 'Hybrid' | 'V kancelárii/Terén' | 'Študent/Doma' | 'V kancelárii';
+export type ExperienceLevel = 'Začiatočník' | 'Mierne pokročilý' | 'Skúsený';
+
+export interface VirtualAdoption {
+  petId: string;
+  amount: number;
+  startDate: string;
+}
+
+export interface User {
+  id: string;
+  role: 'user';
+  isSuperAdmin?: boolean;
+  name: string;
+  email: string;
+  phone?: string;
+  avatarUrl?: string;
+  bio?: string;
+  location?: string;
+  birthYear?: number;
+  availability?: string;
+  maxTravelDistance?: number;
+  isFosterParent?: boolean;
+  verification: { email: boolean; phone: boolean; identity: boolean };
+  household?: UserHousehold;
+  preferences?: UserPreferences;
+  badges: string[];
+  virtualAdoptions: VirtualAdoption[];
+  favorites: string[];
+  applications?: AdoptionInquiry[];
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  summary: string;
+  content: string | string[];
+  imageUrl: string;
+  date: string;
+  author: string;
+}
+
 export interface AdoptionInquiry {
   id: string;
-  shelterId: string; // Linked to specific shelter
+  shelterId: string;
+  applicantId?: string;
   petId: string;
   petName: string;
   applicantName: string;
@@ -116,47 +175,30 @@ export interface AdoptionInquiry {
   date: string;
   status: 'Nová' | 'Kontaktovaný' | 'Schválená' | 'Zamietnutá';
   message: string;
-  // Extended info about applicant from their profile
   applicantDetails?: {
-      location?: string;
-      household?: UserHousehold;
-      availability?: string;
-      bio?: string;
+    location?: string;
+    bio?: string;
+    avatarUrl?: string;
+    household?: UserHousehold;
+    availability?: string;
   };
-}
-
-export interface InquiryMessage {
-  id: string;
-  inquiryId: string;
-  senderId: string;
-  content: string;
-  createdAt: string;
-  isRead: boolean;
 }
 
 export interface Volunteer {
   id: string;
+  shelterId: string;
   name: string;
   email: string;
-  role: string; // e.g. "Venčenie", "Upratovanie"
-  status: 'Aktívny' | 'Čakateľ';
+  role: string;
+  status: string;
 }
 
 export interface ShelterSupply {
   id: string;
+  shelterId: string;
   item: string;
   priority: 'Nízka' | 'Stredná' | 'Vysoká';
-  link?: string; // Optional URL to buy the item
-}
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  summary: string;
-  content: string[]; // Array of paragraphs
-  imageUrl: string;
-  date: string;
-  author: string;
+  link?: string;
 }
 
 export interface PromoSlide {
@@ -170,6 +212,15 @@ export interface PromoSlide {
   iconType: 'shopping' | 'health' | 'shield' | 'star';
 }
 
+export interface InquiryMessage {
+  id: string;
+  inquiryId: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+  isRead: boolean;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
@@ -177,79 +228,5 @@ export interface ChatMessage {
   timestamp: number;
 }
 
-export interface VirtualAdoption {
-  petId: string;
-  amount: number;
-  startDate: string;
-}
-
-// --- New User Interfaces ---
-
-export type HousingType = 'Byt' | 'Dom' | 'Dom so záhradou' | 'Farma';
-export type WorkMode = 'Práca z domu' | 'Hybrid' | 'V kancelárii/Terén' | 'Študent/Doma';
-export type ExperienceLevel = 'Začiatočník' | 'Mierne pokročilý' | 'Skúsený';
-
-export interface UserPreferences {
-  types: PetType[];
-  sizes: Size[];
-  genders: Gender[];
-  ageRange: string[]; // e.g. 'Mláďa', 'Dospelý'
-  temperament: string[];
-  specialNeedsAccepted: boolean;
-}
-
-export interface UserHousehold {
-  housingType: HousingType;
-  hasChildren: boolean;
-  hasOtherPets: boolean;
-  workMode: WorkMode;
-  experienceLevel: ExperienceLevel;
-}
-
-export interface UserVerification {
-  email: boolean;
-  phone: boolean;
-  identity: boolean; // e.g. ID card check
-}
-
-export interface User {
-  id: string;
-  role: 'user'; // Added role
-  isSuperAdmin?: boolean; // Admin flag
-  password?: string; // Simulated password
-  name: string;
-  email: string;
-  phone?: string;
-  avatarUrl?: string;
-  
-  // Basic Info
-  bio?: string;
-  location?: string;
-  birthYear?: number;
-  preferredContact?: 'Email' | 'Telefón' | 'Chat';
-  
-  // Availability
-  availability?: string; // e.g. 'Víkendy', 'Poobedia'
-  maxTravelDistance?: number; // km
-  isFosterParent?: boolean; // Ochota byť dočasnou opaterou
-
-  // Complex Data
-  verification: UserVerification;
-  household?: UserHousehold;
-  preferences?: UserPreferences;
-  badges: string[]; // Gamification badges
-
-  // Activity
-  virtualAdoptions: VirtualAdoption[];
-  favorites: string[]; // List of pet IDs
-  applications?: AdoptionInquiry[]; // History of applications sent
-}
-
-// Toast Notification Types
 export type ToastType = 'success' | 'error' | 'info';
-
-export interface ToastMessage {
-  id: string;
-  message: string;
-  type: ToastType;
-}
+export interface ToastMessage { id: string; message: string; type: ToastType; }

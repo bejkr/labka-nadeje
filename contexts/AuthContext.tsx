@@ -123,12 +123,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     setCurrentUser({ ...currentUser, favorites: newFavorites });
 
-    // API call
+    // API call for persistent storage
     try {
         await api.toggleFavorite(currentUser.id, petId, isFav);
     } catch (e) {
-        // Revert on error would go here
-        console.error(e);
+        console.error("Failed to sync favorites with database:", e);
+        // Revert UI on error if needed
+        const revertedFavorites = isFav 
+            ? [...currentUser.favorites, petId]
+            : currentUser.favorites.filter(id => id !== petId);
+        setCurrentUser({ ...currentUser, favorites: revertedFavorites });
     }
   };
 

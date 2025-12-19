@@ -1,13 +1,15 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Heart, Menu, X, Home, Search, BookOpen, Building2, User as UserIcon, LogIn, ShieldAlert, Map, Facebook, Instagram, Shield } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import Logo from './components/Logo';
+import { Analytics } from '@vercel/analytics/react';
 
 // Pages imports
 import HomePage from './pages/Home';
 import PetListPage from './pages/PetList';
-import PetDetailPage from './pages/PetDetail';
+import PetDetailPage from './pages/PetDetailPage';
 import ShelterDashboard from './pages/ShelterDashboard';
 import ShelterDetailPage from './pages/ShelterDetail'; 
 import ShelterListPage from './pages/ShelterList';
@@ -336,6 +338,7 @@ const App: React.FC = () => {
         <Footer />
         <AdoptionAssistant />
         <GDPRConsent />
+        <Analytics />
       </div>
     </Router>
   );

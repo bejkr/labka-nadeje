@@ -1,30 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
-import { ChatMessage } from "../types";
+import { ChatMessage, Pet, User } from "../types";
 
-// Initialize AI strictly as per guidelines
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const BASE_SYSTEM_INSTRUCTION = `
-Si virtuálny asistent pre slovenskú adopčnú platformu "LabkaNádeje". 
-Tvojím cieľom je pomáhať ľuďom nájsť ideálne zvieratko, odpovedať na otázky o starostlivosti, 
-adopčnom procese a fungovaní útulkov. Buď empatický, milý a nápomocný. 
-Odpovedaj vždy v slovenskom jazyku.
-
-Máš prístup k aktuálnemu zoznamu zvierat (uvedený nižšie). 
-Ak sa používateľ opýta na odporúčania, použi tento zoznam a navrhni konkrétne zvieratá podľa ich preferencií.
-Vždy uveď meno zvieraťa (vyznačené takto: **Meno**) a prečo sa k používateľovi hodí.
-
-BEZPEČNOSŤ: Nikdy neposkytuj osobné kontaktné údaje na zamestnancov útulkov, ak nie sú verejne dostupné v kontexte. 
-Nepoužívaj vulgárne výrazy a nenechaj sa vyprovokovať k politickým alebo kontroverzným témam.
+Si Labka asistent pre slovenskú adopčnú platformu "LabkaNádeje". 
+Tvojím cieľom je pomáhať ľuďom nájsť ideálne zvieratko. 
+Si expert na etológiu zvierat a psychológiu majiteľov.
+Odpovedaj vždy v slovenskom jazyku, empaticky a profesionálne.
 `;
-
-// Safety settings to prevent harmful content
-const safetySettings = [
-  { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-  { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
-  { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-];
 
 export const sendChatMessage = async (
   message: string, 
@@ -36,49 +20,65 @@ export const sendChatMessage = async (
       model: 'gemini-3-flash-preview',
       config: {
         systemInstruction: `${BASE_SYSTEM_INSTRUCTION}\n\nAKTUÁLNY ZOZNAM ZVIERAT NA ADOPCIU:\n${petsContext}`,
-        // @ts-ignore - Adding safety settings
-        safetySettings
       },
       history: history.map(h => ({
         role: h.role,
         parts: [{ text: h.text }]
       }))
     });
-
     const result = await chat.sendMessage({ message });
     return result.text || "Ospravedlňujeme sa, nerozumel som.";
   } catch (error) {
-    console.error("Gemini Chat Error:", error);
-    return "Nastala chyba pri komunikácii s asistentom. Skúste to prosím neskôr.";
+    return "Nastala chyba pri komunikácii.";
   }
 };
 
-export const generatePetDescription = async (
-  name: string,
-  breed: string,
-  traits: string[]
-): Promise<string> => {
+export const getMatchAnalysis = async (pet: Pet, user: User): Promise<{ score: number, reason: string }> => {
   try {
     const prompt = `
-      Napíš pútavý, emotívny a krátky (max 3 vety) inzerát pre adopciu zvieraťa.
-      Meno: ${name}
-      Plemeno: ${breed}
-      Vlastnosti: ${traits.join(', ')}
-      Jazyk: Slovenčina.
+      Analyzuj zhodu (Match) medzi človekom a zvieratkom pre funkciu "Labka zhoda".
+      
+      ZVIERA (${pet.name}):
+      - Plemeno: ${pet.breed}, Druh: ${pet.type}, Veľkosť: ${pet.size}
+      - Aktivita: ${pet.requirements.activityLevel}, Samota: ${pet.training.aloneTime ? 'Áno' : 'Nie'}
+      - Sociálne: Deti (${pet.social.children}), Psi (${pet.social.dogs})
+
+      ČLOVEK (Preferencie):
+      - Chce plemená: ${user.preferences?.preferredBreeds?.join(', ') || 'Akékoľvek'}
+      - Životný štýl (Aktivita): ${user.preferences?.activityLevel || 'Stredná'}
+      - Bývanie: ${user.household?.housingType || 'Neuvedené'}
+      - Domácnosť: Deti (${user.household?.hasChildren ? 'Áno' : 'Nie'}), Zvieratá (${user.household?.hasOtherPets ? 'Áno' : 'Nie'})
+      - Hľadaná povaha: ${user.preferences?.temperament?.join(', ') || 'Akékoľvek'}
+
+      KRITÉRIÁ SKÓRE:
+      1. Ak plemeno psa sedí s "Chce plemená", daj +20 bodov.
+      2. Ak je človek "Gaučák" a pes má "Vysokú aktivitu", daj -30 bodov.
+      3. Ak má človek deti a pes je "Nevhodný k deťom", daj -50 bodov.
+      4. Ak býva v byte a pes je veľký a neznáša samotu, daj -20 bodov.
+
+      Vráť JSON:
+      {
+        "score": number (0-100),
+        "reason": "Krátke slovenské zdôvodnenie Labka zhody (max 180 znakov)."
+      }
     `;
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: {
-        // @ts-ignore
-        safetySettings
-      }
+      config: { responseMimeType: "application/json" }
     });
 
-    return response.text || "Nepodarilo sa vygenerovať popis.";
+    return JSON.parse(response.text || '{"score": 0, "reason": "Chýbajúce dáta pre výpočet Labka zhody."}');
   } catch (error) {
-    console.error("Gemini Description Error:", error);
-    return "Chyba pri generovaní popisu.";
+    return { score: 50, reason: "Na výpočet presnej Labka zhody potrebujeme viac údajov o vašich preferenciách." };
   }
+};
+
+export const generatePetDescription = async (name: string, breed: string, traits: string[]): Promise<string> => {
+  try {
+    const prompt = `Si Labka asistent. Napíš pútavý inzerát pre ${name} (${breed}). Vlastnosti: ${traits.join(', ')}. Max 3 vety, slovensky.`;
+    const response = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });
+    return response.text || "";
+  } catch (error) { return ""; }
 };
