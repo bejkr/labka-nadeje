@@ -326,13 +326,13 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Meno</label><input value={petName} onChange={e => setPetName(e.target.value)} type="text" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" placeholder="Napr. Bary"/></div>
-                    <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Plemeno</label><input value={petBreed} onChange={e => setPetBreed(e.target.value)} type="text" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" placeholder="Napr. Kríženec"/></div>
+                    <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Meno <span className="text-red-500">*</span></label><input value={petName} onChange={e => setPetName(e.target.value)} type="text" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" placeholder="Napr. Bary"/></div>
+                    <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Plemeno <span className="text-red-500">*</span></label><input value={petBreed} onChange={e => setPetBreed(e.target.value)} type="text" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" placeholder="Napr. Kríženec"/></div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-6 text-gray-900">
                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Druh</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Druh <span className="text-red-500">*</span></label>
                         <select value={petType} onChange={e => setPetType(e.target.value as PetType)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
                             <option value={PetType.DOG}>Pes</option>
                             <option value={PetType.CAT}>Mačka</option>
@@ -340,7 +340,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                         </select>
                      </div>
                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Pohlavie</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Pohlavie <span className="text-red-500">*</span></label>
                         <select value={petGender} onChange={e => setPetGender(e.target.value as Gender)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
                             <option value={Gender.MALE}>Samec</option>
                             <option value={Gender.FEMALE}>Samica</option>
@@ -350,11 +350,11 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
 
                 <div className="grid grid-cols-2 gap-6 text-gray-900">
                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Vek (roky)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Vek (roky) <span className="text-red-500">*</span></label>
                         <input value={petAge} onChange={e => setPetAge(e.target.value)} type="number" min="0" step="0.1" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 transition" onKeyDown={(e) => ['e', 'E', '-', '+'].includes(e.key) && e.preventDefault()} />
                      </div>
                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Veľkosť</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1.5">Veľkosť <span className="text-red-500">*</span></label>
                         <select value={petSize} onChange={e => setPetSize(e.target.value as Size)} className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer">
                             <option value={Size.SMALL}>Malý</option>
                             <option value={Size.MEDIUM}>Stredný</option>
@@ -364,7 +364,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Lokalita</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Lokalita <span className="text-red-500">*</span></label>
                     <input value={petLocation} onChange={e => setPetLocation(e.target.value)} type="text" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 text-gray-900 transition" placeholder="Napr. Bratislava - Ružinov"/>
                 </div>
 
@@ -532,7 +532,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                           <button onClick={handleGenerateBio} disabled={isGenerating} className="text-xs bg-white text-blue-600 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow transition">{isGenerating ? 'Generujem...' : 'Vygenerovať popis'}</button>
                       </div>
                   </div>
-                  <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Príbeh (Popis)</label><textarea value={petBio} onChange={e => setPetBio(e.target.value)} className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl outline-none h-32 focus:ring-2 focus:ring-brand-500 transition" placeholder="Napíšte niečo o zvieratku..."></textarea></div>
+                  <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Príbeh (Popis) <span className="text-red-500">*</span></label><textarea value={petBio} onChange={e => setPetBio(e.target.value)} className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl outline-none h-32 focus:ring-2 focus:ring-brand-500 transition" placeholder="Napíšte niečo o zvieratku..."></textarea></div>
                   <div><label className="block text-sm font-bold text-gray-700 mb-1.5">Interné poznámky / Dôležité info</label><textarea value={petNotes} onChange={e => setPetNotes(e.target.value)} className="w-full px-4 py-3 bg-white text-gray-900 border border-amber-200 rounded-xl outline-none h-24 placeholder-amber-700/50 focus:ring-2 focus:ring-amber-400 transition" placeholder="Napr. vyžaduje špeciálnu stravu, lieky..."></textarea></div>
               </div>
           )}

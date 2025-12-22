@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import { User, Shelter, Pet, BlogPost, PromoSlide } from '../types';
-import { ShieldAlert, Users, Building2, Loader2, Search, Dog, Trash2, Edit2, BookOpen, Plus, CheckCircle, XCircle, Megaphone } from 'lucide-react';
+import { ShieldAlert, Users, Building2, Loader2, Search, Dog, Trash2, Edit2, BookOpen, Plus, CheckCircle, XCircle, Megaphone, Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PetFormModal from '../components/PetFormModal';
 import BlogFormModal from '../components/BlogFormModal';
@@ -158,20 +158,86 @@ const AdminDashboard: React.FC = () => {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50 text-gray-500">
                             <tr>
-                                {activeTab === 'users' ? (<><th className="px-6 py-4 font-bold">Meno</th><th className="px-6 py-4 font-bold">Email</th><th className="px-6 py-4 font-bold">Admin</th></>) : 
+                                {activeTab === 'users' ? (<><th className="px-6 py-4 font-bold">Užívateľ</th><th className="px-6 py-4 font-bold">Email</th><th className="px-6 py-4 font-bold">Admin</th></>) : 
                                  activeTab === 'shelters' ? (<><th className="px-6 py-4 font-bold">Útulok</th><th className="px-6 py-4 font-bold">Lokalita</th><th className="px-6 py-4 font-bold">Status</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) : 
                                  activeTab === 'pets' ? (<><th className="px-6 py-4 font-bold">Zviera</th><th className="px-6 py-4 font-bold">Útulok</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) : 
-                                 activeTab === 'blog' ? (<><th className="px-6 py-4 font-bold">Názov</th><th className="px-6 py-4 font-bold">Autor</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) : 
-                                 (<><th className="px-6 py-4 font-bold">Názov</th><th className="px-6 py-4 font-bold">Badge</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>)}
+                                 activeTab === 'blog' ? (<><th className="px-6 py-4 font-bold">Článok</th><th className="px-6 py-4 font-bold">Autor</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) : 
+                                 (<><th className="px-6 py-4 font-bold">Banner / Partner</th><th className="px-6 py-4 font-bold">Badge</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>)}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {loading ? (<tr><td colSpan={5} className="p-12 text-center"><Loader2 className="animate-spin mx-auto text-brand-600"/></td></tr>) : 
-                             activeTab === 'users' ? (filteredUsers.map(user => (<tr key={user.id} className="hover:bg-gray-50 transition"><td className="px-6 py-4 font-bold">{user.name}</td><td className="px-6 py-4">{user.email}</td><td className="px-6 py-4 font-bold">{user.isSuperAdmin ? 'ÁNO' : 'Nie'}</td></tr>))) : 
-                             activeTab === 'shelters' ? ((filteredShelters as Shelter[]).map(shelter => (<tr key={shelter.id} className="hover:bg-gray-50 transition"><td className="px-6 py-4 font-bold">{shelter.name}</td><td className="px-6 py-4">{shelter.location}</td><td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-bold ${shelter.isVerified ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>{shelter.isVerified ? 'Overený' : 'Neoverený'}</span></td><td className="px-6 py-4 text-right"><button onClick={() => handleVerifyShelter(shelter.id, shelter.isVerified)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${shelter.isVerified ? 'bg-red-50 text-red-600' : 'bg-green-600 text-white'}`}>{shelter.isVerified ? 'Zrušiť overenie' : 'Overiť'}</button></td></tr>))) : 
-                             activeTab === 'pets' ? (filteredPets.map(pet => (<tr key={pet.id} className="hover:bg-gray-50 transition"><td className="px-6 py-4 font-bold">{pet.name}</td><td className="px-6 py-4">{pet.shelterName}</td><td className="px-6 py-4 text-right flex justify-end gap-2"><button onClick={() => handleEditPet(pet)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"><Edit2 size={18} /></button><button onClick={() => setConfirmDelete({ id: pet.id, type: 'pet', name: pet.name })} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 size={18} /></button></td></tr>))) : 
-                             activeTab === 'blog' ? (filteredPosts.map(post => (<tr key={post.id} className="hover:bg-gray-50 transition"><td className="px-6 py-4 font-bold">{post.title}</td><td className="px-6 py-4">{post.author}</td><td className="px-6 py-4 text-right flex justify-end gap-2"><button onClick={() => { setEditingPost(post); setIsBlogModalOpen(true); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"><Edit2 size={18} /></button><button onClick={() => setConfirmDelete({ id: post.id, type: 'blog', name: post.title })} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 size={18} /></button></td></tr>))) : 
-                             (promoSlides.map(slide => (<tr key={slide.id} className="hover:bg-gray-50 transition"><td className="px-6 py-4 font-bold">{slide.title}</td><td className="px-6 py-4"><span className="bg-gray-100 px-2 py-1 rounded text-xs font-bold">{slide.badge}</span></td><td className="px-6 py-4 text-right flex justify-end gap-2"><button onClick={() => { setEditingSlide(slide); setIsPromoModalOpen(true); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"><Edit2 size={18} /></button><button onClick={() => setConfirmDelete({ id: slide.id, type: 'promo', name: slide.title })} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 size={18} /></button></td></tr>)))}
+                             activeTab === 'users' ? (filteredUsers.map(user => (
+                                <tr key={user.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-brand-50 border border-brand-100 overflow-hidden flex items-center justify-center">
+                                                { (user as User).avatarUrl ? <img src={(user as User).avatarUrl} className="w-full h-full object-cover" alt="" /> : <UserIcon className="text-brand-300" size={18} /> }
+                                            </div>
+                                            <span className="font-bold">{user.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">{user.email}</td>
+                                    <td className="px-6 py-4 font-bold">{user.isSuperAdmin ? 'ÁNO' : 'Nie'}</td>
+                                </tr>
+                             ))) : 
+                             activeTab === 'shelters' ? ((filteredShelters as Shelter[]).map(shelter => (
+                                <tr key={shelter.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-lg bg-white border border-gray-100 overflow-hidden flex items-center justify-center p-1">
+                                                { shelter.logoUrl ? <img src={shelter.logoUrl} className="w-full h-full object-contain" alt="" /> : <Building2 className="text-gray-300" size={18} /> }
+                                            </div>
+                                            <span className="font-bold">{shelter.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">{shelter.location}</td>
+                                    <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-bold ${shelter.isVerified ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>{shelter.isVerified ? 'Overený' : 'Neoverený'}</span></td>
+                                    <td className="px-6 py-4 text-right"><button onClick={() => handleVerifyShelter(shelter.id, shelter.isVerified)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${shelter.isVerified ? 'bg-red-50 text-red-600' : 'bg-green-600 text-white'}`}>{shelter.isVerified ? 'Zrušiť overenie' : 'Overiť'}</button></td>
+                                </tr>
+                             ))) : 
+                             activeTab === 'pets' ? (filteredPets.map(pet => (
+                                <tr key={pet.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden">
+                                                { pet.imageUrl ? <img src={pet.imageUrl} className="w-full h-full object-cover" alt="" /> : <ImageIcon className="text-gray-300 p-2" size={32} /> }
+                                            </div>
+                                            <span className="font-bold">{pet.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">{pet.shelterName}</td>
+                                    <td className="px-6 py-4 text-right flex justify-end gap-2"><button onClick={() => handleEditPet(pet)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"><Edit2 size={18} /></button><button onClick={() => setConfirmDelete({ id: pet.id, type: 'pet', name: pet.name })} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 size={18} /></button></td>
+                                </tr>
+                             ))) : 
+                             activeTab === 'blog' ? (filteredPosts.map(post => (
+                                <tr key={post.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden">
+                                                { post.imageUrl ? <img src={post.imageUrl} className="w-full h-full object-cover" alt="" /> : <BookOpen className="text-gray-300 p-2" size={32} /> }
+                                            </div>
+                                            <span className="font-bold line-clamp-1 max-w-[200px]">{post.title}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">{post.author}</td>
+                                    <td className="px-6 py-4 text-right flex justify-end gap-2"><button onClick={() => { setEditingPost(post); setIsBlogModalOpen(true); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"><Edit2 size={18} /></button><button onClick={() => setConfirmDelete({ id: post.id, type: 'blog', name: post.title })} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 size={18} /></button></td>
+                                </tr>
+                             ))) : 
+                             (promoSlides.map(slide => (
+                                <tr key={slide.id} className="hover:bg-gray-50 transition">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden">
+                                                { slide.imageUrl ? <img src={slide.imageUrl} className="w-full h-full object-cover" alt="" /> : <ImageIcon className="text-gray-300 p-2" size={32} /> }
+                                            </div>
+                                            <span className="font-bold line-clamp-1 max-w-[200px]">{slide.title}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4"><span className="bg-gray-100 px-2 py-1 rounded text-xs font-bold">{slide.badge}</span></td>
+                                    <td className="px-6 py-4 text-right flex justify-end gap-2"><button onClick={() => { setEditingSlide(slide); setIsPromoModalOpen(true); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"><Edit2 size={18} /></button><button onClick={() => setConfirmDelete({ id: slide.id, type: 'promo', name: slide.title })} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"><Trash2 size={18} /></button></td>
+                                </tr>
+                             )))}
                         </tbody>
                     </table>
                 </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, Legend
@@ -14,7 +13,7 @@ import { Pet, PetType, AdoptionInquiry, Volunteer, ShelterSupply, Gender, Size, 
 import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext'; 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import PetFormModal from '../components/PetFormModal';
 import ChatWindow from '../components/ChatWindow';
@@ -177,6 +176,7 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
   const [petToDelete, setPetToDelete] = useState<Pet | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { showToast } = useApp();
+  const navigate = useNavigate();
 
   const filteredPets = pets.filter(pet => {
     return pet.name && pet.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -194,6 +194,10 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
     } finally {
         setIsDeleting(false);
     }
+  };
+
+  const handleRowClick = (petId: string) => {
+    window.open(`#/pets/${petId}`, '_blank');
   };
 
   return (
@@ -236,21 +240,21 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
             <tbody className="divide-y divide-gray-50">
                 {filteredPets.map(pet => (
                 <tr key={pet.id} className="hover:bg-gray-50 transition group">
-                    <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                        <img src={pet.imageUrl} alt={pet.name} className="w-12 h-12 rounded-xl object-cover shadow-sm" />
-                        <div>
-                        <div className="font-bold text-gray-900 text-base">{pet.name}</div>
-                        <div className="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-0.5 rounded-md inline-block">{pet.breed}</div>
+                    <td className="px-6 py-4 cursor-pointer" onClick={() => handleRowClick(pet.id)}>
+                        <div className="flex items-center gap-4 hover:text-brand-600 transition group/link">
+                            <img src={pet.imageUrl} alt={pet.name} className="w-12 h-12 rounded-xl object-cover shadow-sm group-hover/link:ring-2 ring-brand-500/30 transition-all" />
+                            <div>
+                                <div className="font-bold text-gray-900 text-base group-hover/link:text-brand-600">{pet.name}</div>
+                                <div className="text-xs text-gray-500 font-medium bg-gray-100 px-2 py-0.5 rounded-md inline-block">{pet.breed}</div>
+                            </div>
                         </div>
-                    </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-gray-600 cursor-pointer" onClick={() => handleRowClick(pet.id)}>
                         <div className="flex flex-col gap-1">
-                            <span className="flex items-center gap-1"><Calendar size={12}/> {pet.age} {pet.age === 1 ? 'rok' : 'rokov'}</span>
+                            <span className="flex items-center gap-1 font-medium"><Calendar size={12} className="text-gray-400"/> {pet.age} {pet.age === 1 ? 'rok' : 'rokov'}</span>
                         </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 cursor-pointer" onClick={() => handleRowClick(pet.id)}>
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${
                         pet.adoptionStatus === 'Available' ? 'bg-green-50 text-green-700 border-green-200' :
                         pet.adoptionStatus === 'Reserved' ? 'bg-orange-50 text-orange-700 border-orange-200' :
@@ -260,7 +264,7 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
                         pet.adoptionStatus === 'Reserved' ? 'Rezervovaný' : 'Adoptovaný'}
                     </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 cursor-pointer" onClick={() => handleRowClick(pet.id)}>
                     {pet.isVisible 
                         ? <div className="flex items-center gap-1.5 text-green-600 text-xs font-bold"><Eye size={14}/> Verejný</div> 
                         : <div className="flex items-center gap-1.5 text-gray-400 text-xs font-bold"><EyeOff size={14}/> Skrytý</div>
@@ -271,12 +275,14 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
                              <div 
                                 onClick={() => onEdit(pet)} 
                                 className="text-gray-400 hover:text-brand-600 p-2 hover:bg-brand-50 rounded-lg transition cursor-pointer" 
+                                title="Upraviť profil"
                              >
                                 <Pencil size={18} />
                             </div>
                             <div 
                                 onClick={() => setPetToDelete(pet)} 
                                 className="text-gray-400 p-2 rounded-lg transition cursor-pointer flex items-center justify-center hover:text-red-600 hover:bg-red-50"
+                                title="Vymazať profil"
                             >
                                 <Trash2 size={18} />
                             </div>
@@ -432,7 +438,7 @@ const InquiriesSection = ({ inquiries, updateStatus, shelter }: { inquiries: Ado
                       </div>
 
                       {/* ACTION BUTTONS (DECISION) */}
-                      {selectedInquiry.status !== 'Schválená' && selectedInquiry.status !== 'Zamietnutá' ? (
+                      {selectedInquiry.status !== 'Schválená' && selectedInquiry.status !== 'Zamietnutá' && selectedInquiry.status !== 'Zrušená' ? (
                           <div className="bg-gray-900 p-6 rounded-3xl shadow-xl space-y-3">
                               <h4 className="text-white font-bold text-sm mb-4 flex items-center gap-2"><ShieldCheck size={18} className="text-green-500"/> Rozhodnutie útulku</h4>
                               <button 
@@ -452,9 +458,16 @@ const InquiriesSection = ({ inquiries, updateStatus, shelter }: { inquiries: Ado
                               </p>
                           </div>
                       ) : (
-                          <div className={`p-6 rounded-3xl border text-center ${selectedInquiry.status === 'Schválená' ? 'bg-green-50 border-green-100 text-green-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
+                          <div className={`p-6 rounded-3xl border text-center ${
+                              selectedInquiry.status === 'Schválená' ? 'bg-green-50 border-green-100 text-green-700' : 
+                              selectedInquiry.status === 'Zrušená' ? 'bg-gray-50 border-gray-100 text-gray-500' : 
+                              'bg-red-50 border-red-100 text-red-700'
+                          }`}>
                               <div className="text-xs font-black uppercase tracking-widest mb-1">Status žiadosti</div>
                               <div className="text-xl font-black">{selectedInquiry.status.toUpperCase()}</div>
+                              {selectedInquiry.status === 'Zrušená' && (
+                                  <p className="text-xs font-bold text-gray-400 mt-2 italic">Tento dopyt bol zrušený záujemcom.</p>
+                              )}
                           </div>
                       )}
                   </div>
@@ -681,7 +694,6 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
         <div className="max-w-4xl space-y-6 animate-in fade-in duration-300 pb-20">
              <div className="flex justify-between items-center">
                 <div><h2 className="text-2xl font-bold text-gray-900">Profil útulku</h2><p className="text-gray-500 text-sm">Upravte informácie, ktoré vidia návštevníci.</p></div>
-                <button onClick={handleSubmit} disabled={loading} className="flex items-center gap-2 bg-brand-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-200 disabled:opacity-70">{loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}Uložiť zmeny</button>
             </div>
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-gray-900">
                 <div className="flex flex-col md:flex-row gap-8 items-start mb-8">
@@ -721,6 +733,17 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                 <div className="border-t border-gray-100 pt-8 mt-8">
                     <label className="block text-sm font-bold text-gray-700 mb-2">O nás / Príbeh útulku</label>
                     <textarea name="description" value={formData.description || ''} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 h-40 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Napíšte príbeh vášho útulku, vašu víziu a úspechy..." />
+                </div>
+                
+                <div className="border-t border-gray-100 pt-10 mt-10 flex justify-center sm:justify-end">
+                    <button 
+                        onClick={handleSubmit} 
+                        disabled={loading} 
+                        className="flex items-center justify-center gap-3 bg-brand-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-brand-700 transition shadow-xl shadow-brand-200 disabled:opacity-70 w-full sm:w-auto transform hover:-translate-y-0.5 active:scale-95"
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={22} /> : <Save size={22} />}
+                        Uložiť všetky zmeny
+                    </button>
                 </div>
             </div>
         </div>
@@ -770,7 +793,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                     </div>
                 </div>
             </div>
-            <ConfirmationModal isOpen={!!volunteerToDelete} onClose={() => setVolunteerToDelete(null)} onConfirm={confirmDelete} title="Odstrániť dobrovoľníka?" message="Naozaj chcete odstrániť tohto člena tímu?" confirmText="Odstrániť" />
+            <ConfirmationModal isOpen={!!volunteerToDelete} onClose={() => setVolunteerToDelete(null)} onConfirm={confirmDelete} title="Odstrániť dobrovoľníka?" message="Naozaj chcete odstraniť tohto člena tímu?" confirmText="Odstrániť" />
         </div>
     );
 };
@@ -849,8 +872,10 @@ const ShelterDashboard: React.FC = () => {
           <SidebarItem id="volunteers" icon={Users} label="Dobrovoľníci" />
           <SidebarItem id="analytics" icon={ChartIcon} label="Analytika" />
           <SidebarItem id="profile" icon={Building} label="Profil" />
+          <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition">
+            <LogOut size={20} /> Odhlásiť sa
+          </button>
         </nav>
-        <div className="p-4 border-t border-gray-100"><button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition"><LogOut size={20} /> Odhlásiť sa</button></div>
       </aside>
       <main className="flex-1 p-4 md:p-10 overflow-y-auto h-[calc(100vh-64px)] md:h-screen bg-gray-50">
          <div className="max-w-7xl mx-auto">

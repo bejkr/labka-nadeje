@@ -173,7 +173,7 @@ export interface AdoptionInquiry {
   email: string;
   phone: string;
   date: string;
-  status: 'Nová' | 'Kontaktovaný' | 'Schválená' | 'Zamietnutá';
+  status: 'Nová' | 'Kontaktovaný' | 'Schválená' | 'Zamietnutá' | 'Zrušená';
   message: string;
   applicantDetails?: {
     location?: string;

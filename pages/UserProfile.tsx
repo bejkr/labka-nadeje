@@ -34,7 +34,7 @@ const PreferenceChip: React.FC<{ label: string, active: boolean, onClick: () => 
 const UserProfilePage: React.FC = () => {
   const { currentUser, userRole, logout, toggleFavorite, updateUserProfile, resetPassword, isFavorite } = useAuth();
   const { pets } = usePets(); 
-  const { inquiries, showToast } = useApp();
+  const { inquiries, updateInquiryStatus, showToast } = useApp();
   const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'settings'>('about');
@@ -46,6 +46,11 @@ const UserProfilePage: React.FC = () => {
   const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // States for Cancellation
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const [bioInput, setBioInput] = useState('');
   const [availability, setAvailability] = useState('');
@@ -191,6 +196,24 @@ const UserProfilePage: React.FC = () => {
       } finally {
           setIsUploadingAvatar(false);
       }
+  };
+
+  const handleCancelApplication = async () => {
+    if (!selectedInquiry) return;
+    setIsCancelling(true);
+    try {
+        const message = `POUŽÍVATEĽ ZRUŠIL ŽIADOSŤ. Dôvod: ${cancelReason}`;
+        await api.sendInquiryMessage(selectedInquiry.id, message);
+        await updateInquiryStatus(selectedInquiry.id, 'Zrušená');
+        
+        showToast("Žiadosť bola úspešne zrušená.", "info");
+        setSelectedInquiry(null);
+    } catch (e) {
+        showToast("Chyba pri rušení žiadosti.", "error");
+    } finally {
+        setIsCancelling(false);
+        setIsCancelModalOpen(false);
+    }
   };
 
   const toggleArrayItem = (key: keyof UserPreferences, value: any) => {
@@ -521,6 +544,16 @@ const UserProfilePage: React.FC = () => {
                                         <Link to={`/pets/${selectedInquiry.petId}`} className="flex items-center justify-center gap-2 w-full py-2.5 bg-gray-50 text-gray-600 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">
                                             Profil zvieraťa <ExternalLink size={14}/>
                                         </Link>
+                                        
+                                        {/* CANCEL BUTTON */}
+                                        {selectedInquiry.status !== 'Zrušená' && selectedInquiry.status !== 'Zamietnutá' && (
+                                            <button 
+                                                onClick={() => setIsCancelModalOpen(true)}
+                                                className="mt-2 w-full py-2 text-red-500 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-red-50 transition"
+                                            >
+                                                Zrušiť žiadosť
+                                            </button>
+                                        )}
                                     </div>
 
                                     {/* Shelter Card */}
@@ -579,7 +612,11 @@ const UserProfilePage: React.FC = () => {
                                                     <tr key={app.id} onClick={() => setSelectedInquiry(app)} className="hover:bg-gray-50 transition cursor-pointer group">
                                                         <td className="px-6 py-4 font-bold text-gray-500">{new Date(app.date).toLocaleDateString('sk-SK')}</td>
                                                         <td className="px-6 py-4 font-bold text-gray-700">{app.petName}</td>
-                                                        <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase border ${app.status === 'Schválená' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-blue-50 text-blue-700 border-blue-100'}`}>{app.status}</span></td>
+                                                        <td className="px-6 py-4"><span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase border ${
+                                                            app.status === 'Schválená' ? 'bg-green-50 text-green-700 border-green-100' : 
+                                                            app.status === 'Zrušená' ? 'bg-gray-100 text-gray-500 border-gray-200' :
+                                                            'bg-blue-50 text-blue-700 border-blue-100'
+                                                        }`}>{app.status}</span></td>
                                                         <td className="px-6 py-4 text-right text-brand-600 font-bold text-[10px] uppercase group-hover:translate-x-1 transition-transform">Prejsť k chatu <ChevronRight size={14} className="inline ml-1"/></td>
                                                     </tr>
                                                 ))}
@@ -693,6 +730,49 @@ const UserProfilePage: React.FC = () => {
         confirmText="Áno, zmazať účet"
         variant="danger"
       />
+
+      {/* --- CANCELLATION MODAL --- */}
+      {isCancelModalOpen && (
+          <div className="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-[2rem] w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
+                  <div className="p-8">
+                      <div className="flex justify-between items-center mb-6">
+                          <h3 className="text-xl font-bold text-gray-900">Zrušiť žiadosť?</h3>
+                          <button onClick={() => setIsCancelModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition"><X size={20}/></button>
+                      </div>
+                      <p className="text-sm text-gray-500 mb-6">Prosím, uveďte dôvod zrušenia vašej žiadosti o adopciu:</p>
+                      
+                      <div className="space-y-3 mb-8">
+                          {[
+                              'Našiel/a som si iné zvieratko',
+                              'Zmena rodinnej situácie',
+                              'Príliš náročný/dlhý proces',
+                              'Iný dôvod'
+                          ].map(reason => (
+                              <button 
+                                key={reason} 
+                                onClick={() => setCancelReason(reason)}
+                                className={`w-full text-left p-3 rounded-xl border-2 transition-all text-sm font-medium ${cancelReason === reason ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-100 text-gray-600 hover:border-gray-200'}`}
+                              >
+                                  {reason}
+                              </button>
+                          ))}
+                      </div>
+
+                      <div className="flex flex-col gap-3">
+                          <button 
+                            onClick={handleCancelApplication} 
+                            disabled={isCancelling || !cancelReason}
+                            className="w-full py-3.5 bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:bg-red-700 transition disabled:opacity-50"
+                          >
+                            {isCancelling ? <Loader2 className="animate-spin mx-auto" size={20}/> : 'Potvrdiť zrušenie'}
+                          </button>
+                          <button onClick={() => setIsCancelModalOpen(false)} className="w-full py-2 text-gray-400 font-bold text-sm">Možno inokedy</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      )}
     </div>
   );
 };
