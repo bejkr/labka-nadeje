@@ -23,7 +23,8 @@ const BlogFormModal: React.FC<BlogFormModalProps> = ({ isOpen, onClose, post, on
       if (post) {
         setTitle(post.title);
         setSummary(post.summary);
-        setContent(post.content.join('\n\n'));
+        // FIX: post.content can be string or string[], check type before calling join to fix Property 'join' does not exist error
+        setContent(Array.isArray(post.content) ? post.content.join('\n\n') : post.content);
         setAuthor(post.author);
         setImageUrl(post.imageUrl);
       } else {

@@ -45,9 +45,6 @@ const SupportPage: React.FC = () => {
                         <button className="bg-white text-brand-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-brand-50 transition shadow-lg shadow-brand-900/20 transform hover:-translate-y-1">
                             Darovať na chod portálu
                         </button>
-                        <a href="#transparency" className="px-8 py-4 rounded-xl font-bold text-brand-100 hover:text-white hover:bg-white/10 transition border border-transparent hover:border-white/30">
-                            Transparentný účet
-                        </a>
                     </div>
                 </div>
 
@@ -198,55 +195,6 @@ const SupportPage: React.FC = () => {
              <Link to="/pets" className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-700 transition shadow-lg shadow-brand-200 transform hover:-translate-y-1">
                 <Search size={20} /> Nájsť zvieratko na adopciu
              </Link>
-          </div>
-        </div>
-
-        {/* 4. TRANSPARENCY SECTION */}
-        <div id="transparency" className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-200">
-          <div className="md:flex items-center justify-between">
-            <div className="mb-8 md:mb-0 md:w-1/2 md:pr-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Transparentný účet platformy</h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Chceme, aby ste presne vedeli, kam idú vaše peniaze určené pre chod portálu LabkaNádeje. Náš transparentný účet je kedykoľvek prístupný k nahliadnutiu.
-                <br /><br />
-                <strong>IBAN:</strong> SK12 1100 0000 0012 3456 7890
-              </p>
-              <a href="#" className="text-brand-600 font-bold hover:underline inline-flex items-center gap-2">
-                  <Database size={18}/> Zobraziť pohyby na účte
-              </a>
-            </div>
-            <div className="md:w-1/2 bg-gray-50 p-8 rounded-2xl border border-gray-100">
-              <h4 className="font-bold text-gray-900 mb-6">Rozdelenie financií (Platforma)</h4>
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-sm mb-2 font-medium text-gray-700">
-                    <span>Vývoj a Servery</span>
-                    <span className="font-bold">60%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div className="bg-brand-500 h-3 rounded-full" style={{ width: '60%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2 font-medium text-gray-700">
-                    <span>Marketing Adopcií</span>
-                    <span className="font-bold">25%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div className="bg-teal-500 h-3 rounded-full" style={{ width: '25%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2 font-medium text-gray-700">
-                    <span>Administratíva</span>
-                    <span className="font-bold">15%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div className="bg-indigo-500 h-3 rounded-full" style={{ width: '15%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

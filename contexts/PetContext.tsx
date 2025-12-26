@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Pet } from '../types';
 import { api } from '../services/api';
+import { supabase } from '../services/supabaseClient';
 
 interface PetContextType {
   pets: Pet[];
@@ -29,14 +29,23 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Fetch pets on mount
   useEffect(() => {
     loadPets();
+
+    // Listen for auth changes to re-fetch pets (important for RLS visibility)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      loadPets();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const updatePet = async (updatedPet: Pet) => {
     try {
         await api.updatePet(updatedPet);
-        await loadPets(); // Force refresh from DB
+        await loadPets(); 
     } catch (e) {
-        console.error(e);
+        console.error("Update pet failed", e);
         alert("Chyba pri ukladaní");
     }
   };
@@ -44,9 +53,9 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const addPet = async (newPet: Pet) => {
     try {
         await api.createPet(newPet);
-        await loadPets(); // Force refresh from DB
+        await loadPets();
     } catch (e) {
-        console.error(e);
+        console.error("Add pet failed", e);
         alert("Chyba pri vytváraní");
     }
   };
@@ -54,11 +63,10 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const deletePet = async (petId: string) => {
     try {
         await api.deletePet(petId);
-        // Po úspešnom zmazaní v DB okamžite načítame nový zoznam
         await loadPets();
     } catch (e: any) {
         console.error("PetContext Delete Error:", e);
-        throw e; // RETHROW pre zobrazenie Toast v UI
+        throw e;
     }
   };
 

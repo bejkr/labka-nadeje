@@ -1,13 +1,15 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Shelter } from '../types';
 import { api } from '../services/api';
+import { supabase } from '../services/supabaseClient';
 
 type UserRole = 'user' | 'shelter';
 
 interface AuthContextType {
   currentUser: User | Shelter | null;
   userRole: UserRole | null;
+  isRecoveringPassword: boolean;
+  isLoading: boolean;
   
   login: (email: string, password?: string) => Promise<boolean>;
   logout: () => void;
@@ -29,21 +31,61 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | Shelter | null>(null);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Restore session on mount
+  // Function to load the profile from database based on an active session
+  const syncProfile = async (session: any) => {
+    if (!session?.user) {
+      setCurrentUser(null);
+      setUserRole(null);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const profile = await api.getCurrentSession(session);
+      if (profile) {
+        setCurrentUser(profile);
+        setUserRole(profile.role);
+      } else {
+        // If Auth exists but profile doesn't, it might still be creating or there's an RLS issue
+        console.warn("AuthContext: Session exists but profile fetch returned null.");
+        setCurrentUser(null);
+        setUserRole(null);
+      }
+    } catch (err) {
+      console.error("AuthContext: Sync profile failed", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const initSession = async () => {
-        try {
-            const user = await api.getCurrentSession();
-            if (user) {
-                setCurrentUser(user);
-                setUserRole(user.role);
-            }
-        } catch (e) {
-            console.error("Error restoring session:", e);
-        }
+    // 1. Initial check for session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      syncProfile(session);
+    });
+
+    // 2. Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth Event:", event);
+      
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecoveringPassword(true);
+      } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        syncProfile(session);
+      } else if (event === 'SIGNED_OUT') {
+        setCurrentUser(null);
+        setUserRole(null);
+        setIsRecoveringPassword(false);
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
     };
-    initSession();
   }, []);
 
   const login = async (email: string, password?: string): Promise<boolean> => {
@@ -56,7 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
         return false;
     } catch (e) {
-        console.error(e);
+        console.error("Login failed:", e);
         return false;
     }
   };
@@ -65,6 +107,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await api.logout();
     setCurrentUser(null);
     setUserRole(null);
+    setIsRecoveringPassword(false);
   };
 
   const resetPassword = async (email: string) => {
@@ -72,7 +115,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const updatePassword = async (password: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw new Error("Relácia pre zmenu hesla nie je aktívna. Prosím, kliknite na odkaz v e-maile znova.");
+    }
+    
     await api.updatePassword(password);
+    setIsRecoveringPassword(false);
   };
 
   const registerUser = async (name: string, email: string, password?: string) => {
@@ -87,7 +136,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const registerShelter = async (name: string, location: string, email: string, password?: string) => {
      const result = await api.register(email, password || 'password', { role: 'shelter', name });
      if (result.user) {
-         // Update location immediately as it's not in metadata
          await api.updateProfile(result.user.id, { location } as Shelter, 'shelter');
          const updatedUser = { ...result.user, location } as Shelter;
          setCurrentUser(updatedUser);
@@ -97,17 +145,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
      return result;
   };
 
-  // --- User Specific Actions ---
   const isRegularUser = (user: any): user is User => user?.role === 'user';
 
   const updateUserProfile = async (data: Partial<User> | Partial<Shelter>) => {
     if (!currentUser) return;
     try {
         await api.updateProfile(currentUser.id, data, currentUser.role);
-        // Cast to union type to satisfy TS
-        setCurrentUser({ ...currentUser, ...data } as User | Shelter);
+        // Refresh local state after update
+        const refreshed = await api.getCurrentSession();
+        if (refreshed) {
+          setCurrentUser(refreshed);
+        }
     } catch (e) {
-        console.error("Update failed", e);
+        console.error("Update profile failed", e);
         throw e;
     }
   };
@@ -115,20 +165,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const toggleFavorite = async (petId: string) => {
     if (!isRegularUser(currentUser)) return;
     const isFav = currentUser.favorites.includes(petId);
-    
-    // Optimistic UI update
     const newFavorites = isFav 
         ? currentUser.favorites.filter(id => id !== petId) 
         : [...currentUser.favorites, petId];
     
     setCurrentUser({ ...currentUser, favorites: newFavorites });
 
-    // API call for persistent storage
     try {
         await api.toggleFavorite(currentUser.id, petId, isFav);
     } catch (e) {
-        console.error("Failed to sync favorites with database:", e);
-        // Revert UI on error if needed
+        console.error("Failed to sync favorites:", e);
         const revertedFavorites = isFav 
             ? [...currentUser.favorites, petId]
             : currentUser.favorites.filter(id => id !== petId);
@@ -140,7 +186,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (!isRegularUser(currentUser)) return;
       try {
           await api.adoptVirtually(currentUser.id, petId, amount);
-          // Refresh session to get updated ID if needed, or optimistic:
           const newAdoption = { petId, amount, startDate: new Date().toISOString() };
           setCurrentUser({ ...currentUser, virtualAdoptions: [...currentUser.virtualAdoptions, newAdoption] });
       } catch (e) { console.error(e); }
@@ -170,7 +215,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <AuthContext.Provider value={{ 
-      currentUser, userRole, 
+      currentUser, userRole, isRecoveringPassword, isLoading,
       login, logout, resetPassword, updatePassword, registerUser, registerShelter, updateUserProfile,
       adoptVirtually, updateAdoptionAmount, cancelAdoption, toggleFavorite, isFavorite 
     }}>
@@ -182,7 +227,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
 };

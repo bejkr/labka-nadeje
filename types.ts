@@ -83,6 +83,7 @@ export interface Shelter {
   location: string;
   email: string;
   phone: string;
+  emailNotificationsEnabled?: boolean;
   description?: string;
   openingHours?: string;
   bankAccount?: string;
@@ -137,6 +138,7 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
+  emailNotificationsEnabled?: boolean;
   avatarUrl?: string;
   bio?: string;
   location?: string;

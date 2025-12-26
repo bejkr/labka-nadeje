@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Shelter } from '../types';
-import { MapPin, Phone, Mail, ArrowRight, Building2, Loader2, Search, CheckCircle2, Users, Heart, ExternalLink, ChevronRight, Dog } from 'lucide-react';
+import { MapPin, Phone, Mail, ArrowRight, Building2, Loader2, Search, CheckCircle2, Users, Heart, ExternalLink, ChevronRight, Dog, Sparkles, ShieldCheck, PawPrint } from 'lucide-react';
 
 // Rozšírený zoznam súradníc slovenských miest pre geokódovanie v prototype
 const CITY_COORDS: Record<string, [number, number]> = {
@@ -238,84 +239,90 @@ const ShelterListPage: React.FC = () => {
                       <Link 
                         key={shelter.id} 
                         to={`/shelters/${shelter.id}`} 
-                        className="group bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-2xl hover:border-brand-100 transition-all duration-300 flex flex-col overflow-hidden transform hover:-translate-y-1.5"
+                        className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:border-brand-200 transition-all duration-500 flex flex-col overflow-hidden transform hover:-translate-y-2"
                       >
-                          <div className="p-6 pb-4">
-                              <div className="flex items-start justify-between gap-4">
-                                  <div className="w-20 h-20 rounded-2xl bg-gray-50 border border-gray-100 p-2 flex-shrink-0 group-hover:bg-white group-hover:border-brand-100 transition-colors">
+                          {/* Card Header - No overflow hidden here to let logo pop out */}
+                          <div className="h-32 bg-brand-600 relative">
+                              {/* New Dynamic Paw Pattern */}
+                              <div className="absolute inset-0 overflow-hidden rounded-t-[2.5rem] pointer-events-none">
+                                  <div className="absolute top-2 left-4 opacity-[0.08] transform -rotate-12 scale-110"><PawPrint size={48} className="text-white fill-current" /></div>
+                                  <div className="absolute top-10 right-10 opacity-[0.04] transform rotate-45 scale-150"><PawPrint size={56} className="text-white fill-current" /></div>
+                                  <div className="absolute bottom-4 left-1/4 opacity-[0.06] transform rotate-12 scale-90"><PawPrint size={32} className="text-white fill-current" /></div>
+                                  <div className="absolute top-1/2 right-1/4 opacity-[0.03] transform -rotate-90 scale-125"><PawPrint size={40} className="text-white fill-current" /></div>
+                                  <div className="absolute -top-4 right-1/2 opacity-[0.05] transform rotate-[160deg] scale-110"><PawPrint size={44} className="text-white fill-current" /></div>
+                              </div>
+                              
+                              {/* Centered Logo - Positioned relative to orange header but allowed to overflow below */}
+                              <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-20">
+                                  <div className="w-24 h-24 rounded-[2rem] bg-white border-4 border-white shadow-2xl flex-shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-110">
                                       {shelter.logoUrl ? (
-                                          <img src={shelter.logoUrl} alt={shelter.name} className="w-full h-full object-contain" />
+                                          <img src={shelter.logoUrl} alt={shelter.name} className="w-full h-full object-contain p-1" />
                                       ) : (
-                                          <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                              <Building2 size={32} />
+                                          <div className="w-full h-full flex items-center justify-center text-gray-200 bg-gray-50">
+                                              <Building2 size={40} />
                                           </div>
                                       )}
                                   </div>
-                                  <div className="flex-1 min-w-0 pt-1">
-                                      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                          <h3 className="font-extrabold text-xl text-gray-900 group-hover:text-brand-600 transition truncate">
-                                              {shelter.name}
-                                          </h3>
-                                          {shelter.isVerified && (
-                                              <span className="bg-blue-50 text-blue-600 p-0.5 rounded-full" title="Overený partner">
-                                                  <CheckCircle2 size={16} className="fill-blue-50" />
-                                              </span>
-                                          )}
-                                      </div>
-                                      <div className="flex items-center text-sm font-medium text-gray-500">
-                                          <MapPin size={14} className="mr-1.5 text-brand-500" />
-                                          {shelter.location}
-                                      </div>
-                                  </div>
                               </div>
-                          </div>
-
-                          <div className="px-6 py-4 space-y-3 flex-1">
-                              <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50/50 p-2 rounded-xl border border-transparent group-hover:border-gray-100 transition-colors">
-                                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors shadow-sm">
-                                      <Mail size={16} />
-                                  </div>
-                                  <span className="truncate">{shelter.email}</span>
-                              </div>
-                              {shelter.phone && (
-                                  <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50/50 p-2 rounded-xl border border-transparent group-hover:border-gray-100 transition-colors">
-                                      <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 group-hover:text-brand-500 transition-colors shadow-sm">
-                                          <Phone size={16} />
-                                      </div>
-                                      <span>{shelter.phone}</span>
-                                  </div>
+                              
+                              {shelter.isVerified && (
+                                <div className="absolute top-4 right-6 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 shadow-sm flex items-center gap-1.5 transition-colors group-hover:bg-white/40 z-10">
+                                    <ShieldCheck size={14} className="text-white" />
+                                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Overený</span>
+                                </div>
                               )}
                           </div>
 
-                          <div className="px-6 py-5 mt-auto bg-gray-50/50 border-t border-gray-50 flex items-center justify-between">
-                               <div className="flex gap-5">
-                                   <div className="flex flex-col">
-                                       <div className="flex items-center gap-1.5 text-gray-900 font-extrabold text-lg">
-                                           <Dog size={16} className="text-orange-500" />
+                          <div className="px-6 pt-16 pb-4 text-center">
+                              <div className="flex flex-col gap-1">
+                                  <h3 className="font-black text-2xl text-gray-900 group-hover:text-brand-600 transition truncate leading-tight">
+                                      {shelter.name}
+                                  </h3>
+                                  <div className="flex items-center justify-center text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
+                                      <MapPin size={12} className="mr-1 text-brand-500" />
+                                      {shelter.location}
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div className="px-6 py-6 mt-auto flex flex-col gap-6">
+                               <div className="grid grid-cols-2 gap-4">
+                                   <div className="flex flex-col p-4 bg-orange-50/50 rounded-[1.5rem] border border-orange-100/50 group-hover:bg-orange-50 transition-colors text-center">
+                                       <div className="flex items-center justify-center gap-2 text-orange-700 font-black text-2xl">
+                                           <Dog size={20} />
                                            {shelter.stats.currentAnimals || 0}
                                        </div>
-                                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">K dispozícii</span>
+                                       <span className="text-[9px] font-black text-orange-400 uppercase tracking-[0.15em] mt-1">V opateri</span>
                                    </div>
-                                   <div className="flex flex-col border-l border-gray-200 pl-5">
-                                       <div className="flex items-center gap-1.5 text-gray-900 font-extrabold text-lg">
-                                           <Heart size={16} className="text-red-500" />
+                                   <div className="flex flex-col p-4 bg-green-50/50 rounded-[1.5rem] border border-green-100/50 group-hover:bg-green-50 transition-colors text-center">
+                                       <div className="flex items-center justify-center gap-2 text-green-700 font-black text-2xl">
+                                           <Heart size={20} />
                                            {shelter.stats.adoptions || 0}
                                        </div>
-                                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Adoptovaných</span>
+                                       <span className="text-[9px] font-black text-green-400 uppercase tracking-[0.15em] mt-1">Doma</span>
                                    </div>
                                </div>
-                               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-300 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm">
-                                   <ChevronRight size={20} />
+                               
+                               <div className="flex items-center justify-between group/btn bg-gray-50/50 p-2 rounded-2xl border border-transparent group-hover:border-gray-100 transition-all">
+                                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-600 ml-4">
+                                       Zobraziť útulok <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                                   </div>
+                                   <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-gray-300 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-brand-200">
+                                       <ChevronRight size={24} />
+                                   </div>
                                </div>
                           </div>
                       </Link>
                   ))}
 
                   {filteredShelters.length === 0 && (
-                      <div className="col-span-full py-24 text-center bg-white rounded-3xl border-2 border-dashed border-gray-200">
-                          <Building2 size={48} className="mx-auto text-gray-200 mb-4" />
-                          <h3 className="text-xl font-bold text-gray-900">Nenašli sme žiadne útulky</h3>
-                          <p className="text-gray-500 mt-2">Skúste zadať iný názov mesta alebo útulku.</p>
+                      <div className="col-span-full py-24 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-200 animate-in fade-in duration-700">
+                          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-200">
+                              <Building2 size={48} />
+                          </div>
+                          <h3 className="text-2xl font-black text-gray-900 tracking-tight">Nenašli sme žiadne útulky</h3>
+                          <p className="text-gray-500 mt-2 max-w-xs mx-auto font-medium">Skúste zadať iný názov mesta alebo útulku.</p>
+                          <button onClick={() => setSearchTerm('')} className="mt-8 text-brand-600 font-black uppercase text-xs tracking-widest underline underline-offset-8">Zobraziť všetky</button>
                       </div>
                   )}
               </div>

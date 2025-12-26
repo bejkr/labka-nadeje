@@ -15,6 +15,7 @@ import { useApp } from '../contexts/AppContext';
 import { User, AdoptionInquiry, Shelter, Gender } from '../types';
 import { api } from '../services/api';
 import { getMatchAnalysis } from '../services/geminiService';
+import { formatSlovakAge, inflectNameToDative } from '../utils/formatters';
 
 const PetDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -211,7 +212,14 @@ const PetDetailPage: React.FC = () => {
       showToast("Pre ukladanie obľúbených sa prosím prihláste.", "info");
       return;
     }
+    
+    const wasFavorite = isFavorite(pet.id);
     toggleFavorite(pet.id);
+    if (!wasFavorite) {
+      showToast("Pridané do obľúbených", "success");
+    } else {
+      showToast("Odstránené z obľúbených", "info");
+    }
   };
 
   const handleApplicationSubmit = async (e: React.FormEvent) => {
@@ -338,7 +346,7 @@ const PetDetailPage: React.FC = () => {
             <div className="flex justify-center gap-4 mb-8">
                  <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
                     <div className="text-xs text-gray-400 font-bold uppercase mb-1">Vek</div>
-                    <div className="font-bold text-gray-900">{pet.age} r.</div>
+                    <div className="font-bold text-gray-900">{formatSlovakAge(pet.age)}</div>
                  </div>
                  <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
                     <div className="text-xs text-gray-400 font-bold uppercase mb-1">Pohlavie</div>
@@ -364,7 +372,7 @@ const PetDetailPage: React.FC = () => {
                     >
                         {hasAlreadyApplied ? <><CheckCircle size={20}/> Žiadosť odoslaná</> : 'Mám záujem o adopciu'}
                     </button>
-                    {!isAlreadyAdopted && (
+                    {!isAlreadyAdopted && pet.adoptionStatus === 'Available' && (
                         <button onClick={handleVirtualAdoptionClick} className="w-full py-3 px-6 rounded-2xl font-bold text-brand-700 bg-brand-50 border border-brand-100 hover:bg-brand-100 transition flex items-center justify-center gap-2">
                             <Heart size={18} /> Virtuálne adoptovať
                         </button>
@@ -571,8 +579,8 @@ const PetDetailPage: React.FC = () => {
                   <Link key={p.id} to={`/pets/${p.id}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
                       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                           <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover transition duration-700 group-hover:scale-110" />
-                          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-black uppercase text-gray-700 shadow-sm border border-gray-100">
-                             {p.age} {p.age === 1 ? 'rok' : 'r.'}
+                          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-black uppercase text-gray-700 shadow-sm border border-gray-100">
+                             {formatSlovakAge(p.age)}
                           </div>
                       </div>
                       <div className="p-5 flex-1 flex flex-col">
@@ -637,7 +645,7 @@ const PetDetailPage: React.FC = () => {
                     <div className="mx-auto w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center text-pink-600 mb-6 border border-pink-100 shadow-sm">
                         <Heart size={40} fill="currentColor" />
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Pomôžte {pet.name} na diaľku</h3>
+                    <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Pomôžte {inflectNameToDative(pet.name)} na diaľku</h3>
                     <p className="text-sm text-gray-500 font-medium mb-8">
                         Virtuálna adopcia umožňuje podporiť zvieratko, aj keď si ho nemôžete vziať domov.
                     </p>
@@ -750,7 +758,7 @@ const PetDetailPage: React.FC = () => {
                            <CheckCircle size={56} />
                        </div>
                        <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Úspešne odoslané!</h3>
-                       <p className="text-gray-500 mb-8 max-w-sm leading-relaxed">
+                       <p className="text-gray-500 mb-8 max-sm leading-relaxed">
                            Vaša žiadosť o adopciu {pet.name} bola doručená útulku. Celú konverzáciu nájdete vo svojom profile.
                        </p>
                        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
@@ -824,7 +832,7 @@ const PetDetailPage: React.FC = () => {
       {/* --- REDESIGNED VIRTUAL ADOPTION MODAL --- */}
       {isVirtualAdoptionModalOpen && (
         <div className="fixed inset-0 z-[130] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                 <div className="p-8 pb-4 border-b border-gray-50 bg-gray-50/50">
                     <div className="flex justify-between items-start mb-6">
                         <div className="flex items-center gap-4">
@@ -832,7 +840,7 @@ const PetDetailPage: React.FC = () => {
                                 <img src={pet.imageUrl} className="w-full h-full object-cover" alt="" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">Virtuálny rodič pre {pet.name}</h3>
+                                <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">Virtuálny rodič pre {inflectNameToDative(pet.name)}</h3>
                                 <p className="text-sm text-gray-500 font-medium">Pomôžte na diaľku pravidelným príspevkom.</p>
                             </div>
                         </div>
@@ -884,11 +892,11 @@ const PetDetailPage: React.FC = () => {
                     <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100">
                         <h4 className="text-blue-900 font-bold text-sm flex items-center gap-2 mb-4">
                             <Zap size={18} className="text-blue-600" />
-                            Ako vaša pomoc zmení život {pet.name}?
+                            Ako vaša pomoc zmení život {inflectNameToDative(pet.name)}?
                         </h4>
                         <div className="grid grid-cols-3 gap-4">
                             <div className="flex flex-col items-center gap-2 text-center">
-                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Utensils size={20}/></div>
+                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm"><Utensils size={20}/></div>
                                 <span className="text-[10px] font-bold text-blue-800 uppercase leading-tight">Plná miska <br/>denne</span>
                             </div>
                             <div className="flex flex-col items-center gap-2 text-center">

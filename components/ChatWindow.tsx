@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Loader2, User as UserIcon } from 'lucide-react';
+import { Send, Loader2, User as UserIcon, AlertCircle } from 'lucide-react';
 import { InquiryMessage, User } from '../types';
 import { api } from '../services/api';
+import { useApp } from '../contexts/AppContext';
 
 interface ChatWindowProps {
   inquiryId: string;
@@ -31,19 +32,32 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { markInquiryAsRead } = useApp();
 
   useEffect(() => {
+    setError(null);
+    setLoading(true);
     loadMessages(true);
+    
     const interval = setInterval(() => {
         loadMessages(false);
-    }, 10000); 
+    }, 8000); 
+    
     return () => clearInterval(interval);
   }, [inquiryId]);
 
   const loadMessages = async (shouldScroll = false) => {
     try {
         const dbMessages = await api.getInquiryMessages(inquiryId);
+        
+        // Auto-mark as read only if there are NEW unread messages from the other person
+        const hasNewUnreadFromOther = dbMessages.some(m => !m.isRead && m.senderId !== currentUser.id);
+        if (hasNewUnreadFromOther) {
+            markInquiryAsRead(inquiryId);
+        }
+
         let allMessages = [...dbMessages];
         
         if (initialMessage && initialMessage.content) {
@@ -55,13 +69,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 createdAt: initialMessage.date,
                 isRead: true
             };
-            allMessages = [firstMsg, ...dbMessages];
+            
+            // Avoid duplicates if initial message is already in DB
+            const isAlreadyInDb = dbMessages.some(m => m.content === initialMessage.content && m.createdAt === initialMessage.date);
+            if (!isAlreadyInDb) {
+                allMessages = [firstMsg, ...dbMessages];
+            }
         }
 
         setMessages(allMessages);
+        setError(null);
+    } catch (e) { 
+        console.error("Failed to load messages", e);
+        if (shouldScroll) setError("Nepodarilo sa načítať správy. Skúste to znova.");
+    } finally {
         setLoading(false);
         if (shouldScroll) { scrollToBottom(); }
-    } catch (e) { console.error("Failed to load messages", e); }
+    }
   };
 
   const scrollToBottom = () => {
@@ -72,7 +96,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || sending) return;
 
     setSending(true);
     try {
@@ -80,8 +104,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         setMessages(prev => [...prev, msg]);
         setNewMessage('');
         scrollToBottom();
-    } catch (e) {
-        alert("Nepodarilo sa odoslať správu.");
+        // Mark as acknowledged when sending a message
+        markInquiryAsRead(inquiryId);
+    } catch (e: any) {
+        console.error("Send message error:", e);
+        alert("Nepodarilo sa odoslať správu. Skontrolujte pripojenie.");
     } finally {
         setSending(false);
     }
@@ -99,10 +126,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       );
   };
 
+  if (error) {
+      return (
+          <div className={`flex flex-col items-center justify-center bg-white rounded-xl border border-gray-200 p-8 text-center ${className || 'h-[400px]'}`}>
+              <AlertCircle className="text-red-500 mb-4" size={40} />
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button onClick={() => loadMessages(true)} className="bg-brand-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-brand-700 transition">Skúsiť znova</button>
+          </div>
+      );
+  }
+
   return (
     <div className={`flex flex-col bg-gray-50 rounded-xl border border-gray-200 overflow-hidden ${className || 'h-[400px]'}`}>
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-            {loading ? (
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
+            {loading && messages.length === 0 ? (
                 <div className="flex justify-center items-center h-full text-gray-400">
                     <Loader2 className="animate-spin" size={24} />
                 </div>
@@ -126,10 +163,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                     const avatarUrl = isMe ? myAvatarUrl : otherAvatarUrl;
 
                     return (
-                        <div key={msg.id || index} className={`flex items-end gap-2 ${justifyClass}`}>
+                        <div key={msg.id || index} className={`flex items-end gap-2 ${justifyClass} animate-in fade-in slide-in-from-bottom-1 duration-300`}>
                             {renderAvatar(avatarUrl)}
                             <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${bubbleStyle}`}>
-                                <p className="leading-relaxed">{msg.content}</p>
+                                <p className="leading-relaxed break-words">{msg.content}</p>
                                 <span className={`text-[10px] block mt-1 ${isMe ? 'text-brand-200' : 'text-gray-400'}`}>
                                     {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                                     {msg.id === 'initial-msg' && ` • ${new Date(msg.createdAt).toLocaleDateString()}`}
@@ -149,11 +186,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 onChange={e => setNewMessage(e.target.value)}
                 placeholder="Napíšte správu..."
                 className="flex-1 px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                disabled={sending}
             />
             <button 
                 type="submit" 
                 disabled={sending || !newMessage.trim()}
-                className="bg-brand-600 text-white p-2 rounded-full hover:bg-brand-700 disabled:opacity-50 transition"
+                className="bg-brand-600 text-white p-2 rounded-full hover:bg-brand-700 disabled:opacity-50 transition flex-shrink-0"
             >
                 {sending ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
             </button>

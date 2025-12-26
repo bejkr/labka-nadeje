@@ -1,11 +1,18 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, PawPrint, Heart, Building2, User, Calendar, Gift, ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles, ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook, Instagram } from 'lucide-react';
+import { 
+  ArrowRight, PawPrint, Heart, Building2, User, Calendar, Gift, 
+  ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles, 
+  ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook, 
+  Instagram, Search as SearchIcon, Zap, Utensils, Shield
+} from 'lucide-react';
 import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
 import { PetType, BlogPost, PromoSlide } from '../types';
 import AdBanner from '../components/AdBanner';
 import { api } from '../services/api';
+import { formatSlovakAge } from '../utils/formatters';
 
 // Visual styles configuration to maintain the aesthetic design
 const SLIDE_STYLES = [
@@ -180,14 +187,14 @@ const HomePage: React.FC = () => {
                   to="/pets"
                   className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-brand-600 hover:bg-brand-700 transition shadow-xl shadow-brand-200 transform hover:-translate-y-1"
                 >
-                  <SearchIcon className="mr-2" size={20} />
+                  <SearchIcon size={20} className="mr-2" />
                   Hľadať zvieratko
                 </Link>
                 {!isShelter && (
                   <Link
                     to="/auth"
                     state={{ role: 'shelter' }} 
-                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition shadow-sm hover:shadow-md"
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-gray-700 bg-white border border-gray-100 hover:bg-gray-50 transition shadow-sm hover:shadow-md"
                   >
                     Pre útulky
                   </Link>
@@ -202,24 +209,22 @@ const HomePage: React.FC = () => {
                 )}
               </div>
 
-              {/* Social Proof */}
-              <div className="flex items-center justify-center lg:justify-start gap-4">
-                 <div className="flex -space-x-3">
-                    {[1,2,3,4].map(i => (
-                        <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-gray-200">
-                            <img src={`https://ui-avatars.com/api/?name=User+${i}&background=random`} alt="User" />
-                        </div>
-                    ))}
-                 </div>
-                 <div className="text-left">
-                    <div className="flex items-center text-yellow-400">
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                        <Star size={14} fill="currentColor" />
-                    </div>
-                    <p className="text-xs font-bold text-gray-500">1200+ úspešných adopcií</p>
+              {/* REPLACEMENT: Quick Categories instead of Social Proof */}
+              <div className="flex flex-col items-center lg:items-start gap-4 animate-in fade-in duration-1000 delay-500">
+                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Rýchle vyhľadávanie</p>
+                 <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                    <Link to="/pets?type=Pes" className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-brand-300 hover:text-brand-600 hover:shadow-md transition group">
+                        <div className="p-1.5 bg-brand-50 rounded-lg group-hover:bg-brand-100 transition"><Dog size={16} className="text-brand-600" /></div>
+                        <span className="text-sm font-bold text-gray-700 group-hover:text-brand-700 transition">Psi</span>
+                    </Link>
+                    <Link to="/pets?type=Mačka" className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-brand-300 hover:text-brand-600 hover:shadow-md transition group">
+                        <div className="p-1.5 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition"><Cat size={16} className="text-orange-600" /></div>
+                        <span className="text-sm font-bold text-gray-700 group-hover:text-brand-700 transition">Mačky</span>
+                    </Link>
+                    <Link to="/pets" className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-brand-300 hover:text-brand-600 hover:shadow-md transition group">
+                        <div className="p-1.5 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition"><PawPrint size={16} className="text-gray-400" /></div>
+                        <span className="text-sm font-bold text-gray-700 group-hover:text-brand-700 transition">Všetky</span>
+                    </Link>
                  </div>
               </div>
             </div>
@@ -278,7 +283,7 @@ const HomePage: React.FC = () => {
                                       <Sparkles size={24} fill="currentColor"/>
                                   </div>
                                   <div>
-                                      <p className="text-xs text-gray-500 font-bold uppercase">{pet.age} {pet.age === 1 ? 'rok' : 'rokov'}</p>
+                                      <p className="text-xs text-gray-500 font-bold uppercase">{formatSlovakAge(pet.age)}</p>
                                       <p className="text-sm font-extrabold text-gray-900">{pet.breed}</p>
                                   </div>
                               </div>
@@ -374,8 +379,8 @@ const HomePage: React.FC = () => {
                       alt={pet.name} 
                       className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-xl text-xs font-bold text-gray-800 shadow-sm">
-                      {pet.age} {pet.age === 1 ? 'rok' : 'rokov'}
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-xl text-xs font-bold text-gray-800 shadow-sm border border-gray-100">
+                      {formatSlovakAge(pet.age)}
                     </div>
                     {pet.adoptionStatus === 'Reserved' && (
                         <div className="absolute top-4 left-4">
@@ -460,38 +465,6 @@ const HomePage: React.FC = () => {
                   <p className="text-gray-500 font-medium">Momentálne nehľadáme dočasnú opateru pre žiadne zvieratko.</p>
               </div>
             )}
-          </div>
-        </div>
-      </section>
-
-      {/* Success Story CTA */}
-      <section className="bg-white py-20 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gray-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
-             {/* Background Decoration */}
-             <div className="absolute top-0 right-0 w-96 h-96 bg-brand-600 rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
-
-            <div className="md:w-1/2 relative z-10">
-              <img 
-                src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-                alt="Happy dog adoption" 
-                className="rounded-3xl shadow-lg w-full object-cover h-80 border-4 border-gray-800"
-              />
-            </div>
-            <div className="md:w-1/2 relative z-10">
-              <div className="inline-block bg-green-500/20 text-green-300 border border-green-500/30 px-4 py-1 rounded-full text-xs font-bold mb-6 uppercase tracking-wider">Príbeh mesiaca</div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-6">Bella našla domov po 3 rokoch</h2>
-              <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-                "Nikdy sme si nemysleli, že starší psík nám prinesie toľko radosti. Bella je dokonalá." - rodina Kováčová.
-                Príbehy ako tento sú možné vďaka vašej podpore.
-              </p>
-              <Link 
-                to="/blog"
-                className="inline-flex items-center font-bold text-white hover:text-brand-400 text-lg group transition"
-              >
-                Čítať viac príbehov <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition" />
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -661,73 +634,142 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Virtual Adoption Banner (Only visible for non-shelters) */}
+      {/* --- REIMAGINED VIRTUAL ADOPTION SECTION --- */}
       {!isShelter && (
-        <section className="bg-brand-600 py-24 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-white opacity-10 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-yellow-400 opacity-10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-            
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-12 text-center md:text-left">
-                <div className="flex-1">
-                <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-6 backdrop-blur-md border border-white/20">
-                    <Gift size={32} className="text-white" />
-                </div>
-                <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-                    Nemôžete si vziať <br/> zvieratko domov?
-                </h2>
-                <p className="text-brand-100 text-xl max-w-2xl mb-10 leading-relaxed">
-                    Staňte sa virtuálnym rodičom! Pravidelným mesačným príspevkom zabezpečíte stravu, veterinárnu starostlivosť a šťastnejší život pre psíka alebo mačičku, ktorá stále čaká na svoj ozajstný domov.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                    <Link 
-                    to="/pets" 
-                    className="px-8 py-4 bg-white text-brand-600 font-extrabold rounded-full hover:bg-gray-100 transition shadow-xl hover:-translate-y-1 transform"
-                    >
-                    Vybrať zvieratko na podporu
-                    </Link>
-                    <Link 
-                    to="/support" 
-                    className="px-8 py-4 bg-transparent text-white font-extrabold rounded-full hover:bg-white/10 transition border-2 border-white/30 hover:border-white"
-                    >
-                    Viac o virtuálnej adopcii
-                    </Link>
-                </div>
-                </div>
+        <section className="py-24 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-gradient-to-br from-brand-600 via-brand-700 to-orange-800 rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden shadow-2xl">
+              
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-white opacity-5 rounded-full blur-[120px] animate-pulse"></div>
+              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-yellow-400 opacity-5 rounded-full blur-[120px] animate-pulse delay-700"></div>
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+
+              <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
                 
-                <div className="hidden md:block w-1/3 relative">
-                    <div className="absolute inset-0 bg-brand-900 rounded-full blur-[60px] opacity-40"></div>
-                    <img 
-                        src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                        alt="Pug looking cute" 
-                        className="relative rounded-[2rem] shadow-2xl rotate-6 hover:rotate-0 transition duration-700 border-8 border-white/10"
-                    />
+                {/* Content Side */}
+                <div className="lg:col-span-7">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 mb-8 animate-in slide-in-from-bottom duration-500">
+                    <Sparkles className="text-yellow-300" size={20} />
+                    <span className="text-sm font-black uppercase tracking-[0.2em]">Pomoc na diaľku</span>
+                  </div>
+
+                  <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tight">
+                    Nemôžete si vziať <br/> zvieratko domov?
+                  </h2>
+                  
+                  <p className="text-brand-100 text-xl md:text-2xl mb-12 leading-relaxed font-medium">
+                    Staňte sa <span className="text-white font-black underline decoration-yellow-400 decoration-4 underline-offset-8">virtuálnym rodičom</span> a zmeňte osud tichého prosebníka z útulku.
+                  </p>
+
+                  {/* Impact Micro-cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Utensils size={20} className="text-orange-200" />
+                      </div>
+                      <h4 className="font-bold text-sm mb-1">Plná miska</h4>
+                      <p className="text-xs text-brand-200 leading-tight">Kvalitná strava pre pevné zdravie.</p>
+                    </div>
+                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Stethoscope size={20} className="text-blue-200" />
+                      </div>
+                      <h4 className="font-bold text-sm mb-1">Lekár</h4>
+                      <p className="text-xs text-brand-200 leading-tight">Veterinárna opatera a lieky.</p>
+                    </div>
+                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Heart size={20} className="text-pink-200" />
+                      </div>
+                      <h4 className="font-bold text-sm mb-1">Šťastie</h4>
+                      <p className="text-xs text-brand-200 leading-tight">Pocit, že na nich niekomu záleží.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-5">
+                    <Link 
+                      to="/pets" 
+                      className="inline-flex items-center justify-center px-10 py-5 bg-white text-brand-700 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-brand-50 transition shadow-2xl shadow-brand-900/40 transform hover:-translate-y-1 active:scale-95 group"
+                    >
+                      Vybrať chlpáča <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                    <Link 
+                      to="/support" 
+                      className="inline-flex items-center justify-center px-10 py-5 bg-transparent text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-white/10 transition border-2 border-white/30 hover:border-white active:scale-95"
+                    >
+                      Ako to funguje?
+                    </Link>
+                  </div>
                 </div>
+
+                {/* Visual Side (Mock UI Card) */}
+                <div className="lg:col-span-5 relative hidden lg:block">
+                  <div className="relative group">
+                    {/* Shadow pulse */}
+                    <div className="absolute inset-0 bg-brand-400 rounded-[2.5rem] blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                    
+                    {/* The "Virtual Parent" Promo Card */}
+                    <div className="relative bg-white rounded-[2.5rem] p-6 shadow-2xl text-gray-900 transform rotate-2 hover:rotate-0 transition-transform duration-700 overflow-hidden border-4 border-white/20">
+                      
+                      <div className="relative h-64 rounded-3xl overflow-hidden mb-6">
+                        <img 
+                          src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80$0" 
+                          alt="Caked dog" 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
+                          Hľadá rodiča
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="text-2xl font-black tracking-tight text-gray-900">Bak</h3>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Kríženec • 8 rokov</p>
+                          </div>
+                          <div className="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 shadow-inner">
+                            <Heart size={24} fill="currentColor" />
+                          </div>
+                        </div>
+
+                        {/* Progress Simulation */}
+                        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                          <div className="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2">
+                            <span>Naplnenie potrieb</span>
+                            <span className="text-brand-600">65%</span>
+                          </div>
+                          <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="h-full bg-brand-600 w-[65%] rounded-full shadow-[0_0_10px_rgba(234,88,12,0.3)]"></div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-2">
+                          <div className="flex -space-x-3">
+                            {[1,2,3].map(i => (
+                              <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-gray-${i*100+100} flex items-center justify-center text-[10px] font-bold text-white`}>
+                                <User size={14} />
+                              </div>
+                            ))}
+                          </div>
+                          <span className="text-[11px] font-bold text-gray-500">Už má 3 virtuálnych rodičov</span>
+                        </div>
+                      </div>
+
+                      {/* Glass effect overlays */}
+                      <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-brand-500/20 rounded-full blur-2xl"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
-            </div>
+          </div>
         </section>
       )}
     </div>
   );
 };
-
-// Helper component for icon
-const SearchIcon = ({ size, className }: { size: number, className?: string }) => (
-    <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width={size} 
-        height={size} 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        className={className}
-    >
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-)
 
 export default HomePage;

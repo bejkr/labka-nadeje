@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   Building2, MapPin, Mail, Phone, Clock, CreditCard, 
   CheckCircle, Dog, Gift, LayoutGrid, Heart, Globe, 
-  Facebook, Instagram, ExternalLink, Copy, Check, ShoppingCart, Info, AlertCircle, ChevronRight
+  Facebook, Instagram, ExternalLink, Copy, Check, ShoppingCart, Info, AlertCircle, ChevronRight, PawPrint
 } from 'lucide-react';
 import { api } from '../services/api';
 import { Shelter, Pet, ShelterSupply } from '../types';
@@ -17,7 +17,7 @@ const ShelterDetailPage: React.FC = () => {
   const { showToast } = useApp();
   
   // Robust check for shelter role
-  const isShelter = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
+  const isShelterUser = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
   
   const [shelter, setShelter] = useState<Shelter | null>(null);
   const [pets, setPets] = useState<Pet[]>([]);
@@ -106,59 +106,60 @@ const ShelterDetailPage: React.FC = () => {
       
       {/* 1. HERO HEADER */}
       <div className="relative bg-white pb-8">
-        {/* Background Pattern - Animal Theme */}
-        <div className="absolute inset-0 h-48 bg-brand-50 overflow-hidden border-b border-brand-100">
-             <div className="absolute inset-0 opacity-[0.07]" style={{
-                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20.5 24c-1.9 0-3.5 1.9-3.5 4.2 0 2.3 1.6 4.2 3.5 4.2 1.9 0 3.5-1.9 3.5-4.2 0-2.3-1.6-4.2-3.5-4.2zM32.5 24c-1.9 0-3.5 1.9-3.5 4.2 0 2.3 1.6 4.2 3.5 4.2 1.9 0 3.5-1.9 3.5-4.2 0-2.3-1.6-4.2-3.5-4.2zM14.5 13.5c-1.9 0-3.5 1.9-3.5 4.2 0 2.3 1.6 4.2 3.5 4.2 1.9 0 3.5-1.9 3.5-4.2 0-2.3-1.6-4.2-3.5-4.2zM38.5 13.5c-1.9 0-3.5 1.9-3.5 4.2 0 2.3 1.6 4.2 3.5 4.2 1.9 0 3.5-1.9 3.5-4.2 0-2.3-1.6-4.2-3.5-4.2zM26.5 29c-5.2 0-9.5 4.5-9.5 10 0 5.5 4.3 10 9.5 10 5.2 0 9.5-4.5 9.5-10 0-5.5-4.3-10-9.5-10z' fill='%23ea580c' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-             }}></div>
-             <div className="absolute -bottom-12 -right-12 text-brand-100 opacity-50 transform rotate-12">
-                 <Dog size={200} />
-             </div>
+        {/* New Enhanced Background Pattern - Solid Orange with Scattered Paws */}
+        <div className="absolute inset-0 h-56 bg-brand-600 overflow-hidden border-b border-brand-700">
+             <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-4 left-[5%] opacity-[0.08] transform -rotate-12 scale-150"><PawPrint size={64} className="text-white fill-current" /></div>
+                <div className="absolute top-20 right-[10%] opacity-[0.04] transform rotate-45 scale-[2]"><PawPrint size={72} className="text-white fill-current" /></div>
+                <div className="absolute bottom-10 left-[15%] opacity-[0.06] transform rotate-12 scale-110"><PawPrint size={48} className="text-white fill-current" /></div>
+                <div className="absolute top-1/2 right-[25%] opacity-[0.03] transform -rotate-90 scale-150"><PawPrint size={56} className="text-white fill-current" /></div>
+                <div className="absolute -top-10 right-[40%] opacity-[0.05] transform rotate-[160deg] scale-[2.5]"><PawPrint size={80} className="text-white fill-current" /></div>
+                <div className="absolute bottom-4 right-[5%] opacity-[0.07] transform -rotate-12 scale-150"><PawPrint size={64} className="text-white fill-current" /></div>
+                <div className="absolute top-10 left-[35%] opacity-[0.03] transform rotate-[30deg] scale-125"><PawPrint size={40} className="text-white fill-current" /></div>
+                <div className="absolute -bottom-10 left-[45%] opacity-[0.05] transform -rotate-45 scale-150"><PawPrint size={90} className="text-white fill-current" /></div>
+            </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative pt-20">
-            <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-center gap-6 border border-gray-100 relative mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative pt-24">
+            <div className="bg-white rounded-[3rem] shadow-2xl p-6 md:p-10 flex flex-col md:flex-row items-center md:items-center gap-8 border border-white/20 relative mt-8">
                 
                 {/* Logo - Properly contained */}
-                <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-1 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-[2.5rem] p-1 shadow-2xl border-4 border-white flex-shrink-0 flex items-center justify-center overflow-hidden transition-transform duration-500 hover:scale-105">
                     {shelter.logoUrl ? (
                         <img src={shelter.logoUrl} alt={shelter.name} className="w-full h-full object-contain p-1" />
                     ) : (
-                        <Building2 size={40} className="text-gray-300" />
+                        <Building2 size={48} className="text-gray-200" />
                     )}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 w-full text-center md:text-left">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
-                            <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2 justify-center md:justify-start">
-                                <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4 justify-center md:justify-start">
+                                <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
                                     {shelter.name}
                                 </h1>
-                                {/* Verified Badge - Inline with name on desktop */}
+                            </div>
+                            
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-gray-500 font-bold uppercase tracking-widest text-[11px] mt-4">
+                                <span className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100"><MapPin size={16} className="text-brand-600"/> {shelter.location}</span>
                                 {shelter.isVerified && (
-                                    <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-100 w-fit mx-auto md:mx-0 flex-shrink-0">
-                                        <CheckCircle size={14} className="fill-green-200 text-green-600" /> Overený útulok
+                                    <span className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-xl border border-green-100">
+                                        <CheckCircle size={16} className="fill-green-200 text-green-600" /> Overený partner
                                     </span>
                                 )}
                             </div>
-                            
-                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-gray-500 text-sm font-medium mt-3">
-                                <span className="flex items-center gap-1.5"><MapPin size={16} className="text-brand-600"/> {shelter.location}</span>
-                                <span className="hidden md:inline text-gray-300">|</span>
-                                <a href={`mailto:${shelter.email}`} className="flex items-center gap-1.5 hover:text-brand-600 transition"><Mail size={16}/> {shelter.email}</a>
-                            </div>
                         </div>
                         
-                        {!isShelter && (
+                        {!isShelterUser && (
                             <div className="flex gap-3 justify-center md:justify-end mt-4 md:mt-0 flex-shrink-0">
                                 <button 
                                     onClick={() => setActiveTab('help')}
-                                    className="bg-brand-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-100 flex items-center gap-2 transform hover:-translate-y-0.5"
+                                    className="bg-brand-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-brand-700 transition shadow-xl shadow-brand-200 flex items-center gap-3 transform hover:-translate-y-1 active:scale-95"
                                 >
-                                    <Heart size={18} fill="currentColor" className="text-brand-200" />
-                                    Podporiť nás
+                                    <Heart size={20} fill="currentColor" className="text-brand-300" />
+                                    Podporiť útulok
                                 </button>
                             </div>
                         )}
@@ -176,37 +177,37 @@ const ShelterDetailPage: React.FC = () => {
             <div className="lg:col-span-8 space-y-8">
                 
                 {/* Custom Tab Navigation */}
-                <div className="flex items-center border-b border-gray-200 overflow-x-auto">
+                <div className="flex items-center border-b border-gray-200 overflow-x-auto bg-white/50 backdrop-blur-sm sticky top-20 z-20 rounded-t-3xl px-4">
                     <button
                         onClick={() => setActiveTab('pets')}
-                        className={`px-6 py-4 text-sm font-bold border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
+                        className={`px-6 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition flex items-center gap-2 whitespace-nowrap ${
                             activeTab === 'pets' 
                             ? 'border-brand-600 text-brand-600' 
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                         }`}
                     >
-                        <LayoutGrid size={18} /> Zvieratá na adopciu ({pets.length})
+                        <LayoutGrid size={18} /> Zverenci ({pets.length})
                     </button>
                     <button
                         onClick={() => setActiveTab('about')}
-                        className={`px-6 py-4 text-sm font-bold border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
+                        className={`px-6 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition flex items-center gap-2 whitespace-nowrap ${
                             activeTab === 'about' 
                             ? 'border-brand-600 text-brand-600' 
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                         }`}
                     >
-                        <Building2 size={18} /> O útulku
+                        <Building2 size={18} /> O nás
                     </button>
-                    {!isShelter && (
+                    {!isShelterUser && (
                         <button
                             onClick={() => setActiveTab('help')}
-                            className={`px-6 py-4 text-sm font-bold border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
+                            className={`px-6 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition flex items-center gap-2 whitespace-nowrap ${
                                 activeTab === 'help' 
                                 ? 'border-brand-600 text-brand-600' 
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                             }`}
                         >
-                            <Gift size={18} /> Ako pomôcť
+                            <Gift size={18} /> Podpora
                         </button>
                     )}
                 </div>
@@ -216,70 +217,79 @@ const ShelterDetailPage: React.FC = () => {
                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {pets.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {pets.map(pet => (
-                                    <Link key={pet.id} to={`/pets/${pet.id}`} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full transform hover:-translate-y-1">
-                                        <div className="relative h-64 overflow-hidden bg-gray-100">
-                                            <img 
-                                                src={pet.imageUrl} 
-                                                alt={pet.name} 
-                                                className="w-full h-full object-cover transition duration-700 group-hover:scale-105" 
-                                            />
-                                            
-                                            <div className="absolute top-0 inset-x-0 p-4 flex justify-between items-start">
-                                                {pet.adoptionStatus !== 'Available' ? (
-                                                    <span className={`px-3 py-1 rounded-lg font-bold text-xs uppercase tracking-wide shadow-sm border ${
-                                                        pet.adoptionStatus === 'Reserved' 
-                                                        ? 'bg-orange-100 text-orange-700 border-orange-200' 
-                                                        : 'bg-gray-100 text-gray-600 border-gray-200'
-                                                    }`}>
-                                                        {pet.adoptionStatus === 'Reserved' ? 'Rezervovaný' : 'Adoptovaný'}
-                                                    </span>
-                                                ) : (
-                                                    <span></span> /* Spacer */
-                                                )}
+                                {pets.map(pet => {
+                                    const isFav = isFavorite(pet.id);
+                                    return (
+                                        <Link key={pet.id} to={`/pets/${pet.id}`} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full transform hover:-translate-y-2">
+                                            <div className="relative h-64 overflow-hidden bg-gray-100">
+                                                <img 
+                                                    src={pet.imageUrl} 
+                                                    alt={pet.name} 
+                                                    className="w-full h-full object-cover transition duration-700 group-hover:scale-110" 
+                                                />
                                                 
-                                                {!isShelter && (
-                                                    <button 
-                                                        onClick={(e) => { e.preventDefault(); toggleFavorite(pet.id); }}
-                                                        className="p-2 rounded-full bg-white/80 hover:bg-white backdrop-blur-sm transition-all shadow-sm group/heart"
-                                                    >
-                                                        <Heart 
-                                                            size={20} 
-                                                            className={`transition ${isFavorite(pet.id) ? 'fill-red-500 text-red-500' : 'text-gray-500 group-hover/heart:text-red-500'}`} 
-                                                        />
-                                                    </button>
-                                                )}
-                                            </div>
-
-                                            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-4 pt-12">
-                                                <h3 className="text-xl font-bold text-white mb-0.5">{pet.name.replace(/\*\*/g, '')}</h3>
-                                                <p className="text-white/80 text-sm font-medium">{pet.breed}</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="p-5 flex-1 flex flex-col">
-                                            <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-1 leading-relaxed">
-                                                {pet.description.replace(/\*\*/g, '')}
-                                            </p>
-                                            
-                                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                                <div className="flex gap-2">
-                                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-md">{pet.age} {pet.age === 1 ? 'rok' : 'rokov'}</span>
-                                                    <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-md">{pet.gender}</span>
+                                                <div className="absolute top-0 inset-x-0 p-4 flex justify-between items-start">
+                                                    {pet.adoptionStatus !== 'Available' ? (
+                                                        <span className={`px-3 py-1 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg border ${
+                                                            pet.adoptionStatus === 'Reserved' 
+                                                            ? 'bg-orange-600 text-white border-orange-500' 
+                                                            : 'bg-gray-700 text-white border-gray-600'
+                                                        }`}>
+                                                            {pet.adoptionStatus === 'Reserved' ? 'Rezervovaný' : 'Adoptovaný'}
+                                                        </span>
+                                                    ) : (
+                                                        <span></span> /* Spacer */
+                                                    )}
+                                                    
+                                                    {!isShelterUser && (
+                                                        <button 
+                                                            onClick={(e) => { e.preventDefault(); toggleFavorite(pet.id); }}
+                                                            className={`p-2.5 rounded-2xl transition-all shadow-lg border ${
+                                                                isFav 
+                                                                ? 'bg-red-50 text-red-500 border-red-200' 
+                                                                : 'bg-white/80 text-gray-400 border-white hover:bg-white hover:text-red-500'
+                                                            }`}
+                                                        >
+                                                            <Heart 
+                                                                size={18} 
+                                                                className={isFav ? 'fill-current' : ''} 
+                                                            />
+                                                        </button>
+                                                    )}
                                                 </div>
-                                                <span className="text-brand-600 text-sm font-bold group-hover:underline">Zobraziť viac</span>
+
+                                                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-12">
+                                                    <h3 className="text-2xl font-black text-white mb-0.5 tracking-tight">{pet.name.replace(/\*\*/g, '')}</h3>
+                                                    <p className="text-white/70 text-xs font-bold uppercase tracking-widest">{pet.breed}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                            
+                                            <div className="p-6 flex-1 flex flex-col">
+                                                <p className="text-gray-500 text-sm line-clamp-2 mb-6 flex-1 leading-relaxed font-medium">
+                                                    {pet.description.replace(/\*\*/g, '')}
+                                                </p>
+                                                
+                                                <div className="flex items-center justify-between pt-5 border-t border-gray-50">
+                                                    <div className="flex gap-2">
+                                                        <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-gray-100">{pet.age} {pet.age === 1 ? 'rok' : 'rokov'}</span>
+                                                        <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-gray-100">{pet.gender}</span>
+                                                    </div>
+                                                    <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm">
+                                                        <ChevronRight size={20} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         ) : (
-                            <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-gray-200">
-                                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <Dog size={32} className="text-gray-400" />
+                            <div className="bg-white rounded-[3rem] p-20 text-center border-2 border-dashed border-gray-200">
+                                <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-gray-200">
+                                    <Dog size={40} />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-1">Žiadne zvieratá</h3>
-                                <p className="text-gray-500">Tento útulok momentálne nemá pridané žiadne zvieratká.</p>
+                                <h3 className="text-xl font-black text-gray-900 tracking-tight">Aktuálne žiadne zvieratká</h3>
+                                <p className="text-gray-500 mt-2 max-w-xs mx-auto font-medium">Tento útulok momentálne nemá v ponuke žiadnych chlpáčov.</p>
                             </div>
                         )}
                     </div>
@@ -288,146 +298,152 @@ const ShelterDetailPage: React.FC = () => {
                 {/* --- TAB CONTENT: ABOUT --- */}
                 {activeTab === 'about' && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                <Building2 className="text-brand-600" /> Náš príbeh a misia
+                        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-10">
+                            <h3 className="text-2xl font-black text-gray-900 mb-8 flex items-center gap-4 tracking-tight">
+                                <div className="p-3 bg-brand-50 text-brand-600 rounded-2xl"><Building2 size={24} /></div>
+                                Náš príbeh a misia
                             </h3>
-                            <div className="prose prose-gray max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap">
-                                {shelter.description || "Tento útulok zatiaľ nepridal popis."}
+                            <div className="prose prose-lg prose-gray max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">
+                                {shelter.description || "Tento útulok zatiaľ nepridal podrobnejší popis svojej činnosti."}
                             </div>
                         </div>
 
                         {/* Stats Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
-                                <div className="text-4xl font-extrabold text-brand-600 mb-1">{shelter.stats.adoptions}</div>
-                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Úspešných adopcií</div>
+                            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center group hover:border-brand-200 transition-colors">
+                                <div className="text-5xl font-black text-brand-600 mb-2 tracking-tighter group-hover:scale-110 transition-transform">{shelter.stats.adoptions}</div>
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Našli nový domov</div>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
-                                <div className="text-4xl font-extrabold text-blue-600 mb-1">{shelter.stats.currentAnimals}</div>
-                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Aktuálne v starostlivosti</div>
+                            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center group hover:border-blue-200 transition-colors">
+                                <div className="text-5xl font-black text-blue-600 mb-2 tracking-tighter group-hover:scale-110 transition-transform">{shelter.stats.currentAnimals}</div>
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">V starostlivosti</div>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
-                                <div className="text-4xl font-extrabold text-green-600 mb-1">{shelter.stats.views || 0}</div>
-                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Zobrazení profilu</div>
+                            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center group hover:border-green-200 transition-colors">
+                                <div className="text-5xl font-black text-green-600 mb-2 tracking-tighter group-hover:scale-110 transition-transform">{shelter.stats.views || 0}</div>
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Videní profilu</div>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* --- TAB CONTENT: HELP (Hidden for shelters) --- */}
-                {activeTab === 'help' && !isShelter && (
+                {/* --- TAB CONTENT: HELP --- */}
+                {activeTab === 'help' && !isShelterUser && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         
                         {/* Donation "Credit Card" Design */}
-                        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 md:p-10 text-white shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                        <div className="bg-gray-900 rounded-[3rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-80 h-80 bg-brand-600 opacity-20 rounded-full blur-[100px] -mr-16 -mt-16 transition-all group-hover:opacity-30"></div>
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600 opacity-10 rounded-full blur-[80px] -ml-20 -mb-20"></div>
                             
                             <div className="relative z-10">
-                                <div className="flex justify-between items-start mb-12">
+                                <div className="flex justify-between items-start mb-16">
                                     <div>
-                                        <h3 className="text-2xl font-bold mb-1">Finančná podpora</h3>
-                                        <p className="text-gray-400 text-sm">Príspevky na veterinárnu starostlivosť a krmivo.</p>
+                                        <h3 className="text-3xl font-black mb-2 tracking-tight">Finančná podpora</h3>
+                                        <p className="text-gray-400 text-base font-medium">Príspevky na veterinárnu starostlivosť, lieky a krmivo.</p>
                                     </div>
-                                    <CreditCard size={32} className="text-brand-500" />
+                                    <div className="p-4 bg-white/10 rounded-3xl backdrop-blur-md border border-white/10"><CreditCard size={32} className="text-brand-500" /></div>
                                 </div>
 
                                 {shelter.bankAccount ? (
                                     <div>
-                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">IBAN (Bankový účet)</label>
-                                        <div className="flex items-center gap-4">
-                                            <code className="font-mono text-2xl md:text-3xl tracking-wider text-white">
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4 block">IBAN / Číslo účtu</label>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                                            <code className="font-mono text-xl md:text-2xl tracking-widest text-white bg-white/5 p-4 rounded-2xl border border-white/5 break-all">
                                                 {shelter.bankAccount}
                                             </code>
                                             <button 
                                                 onClick={copyIban}
-                                                className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition text-white"
+                                                className="p-5 bg-brand-600 hover:bg-brand-700 rounded-2xl transition-all text-white shadow-xl shadow-brand-900/40 flex-shrink-0 active:scale-95"
                                                 title="Kopírovať IBAN"
                                             >
-                                                {copied ? <Check size={20} className="text-green-400"/> : <Copy size={20}/>}
+                                                {copied ? <Check size={24} className="text-green-300"/> : <Copy size={24}/>}
                                             </button>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="p-4 bg-white/10 rounded-xl border border-white/10 text-gray-300">
-                                        Útulok zatiaľ nezverejnil číslo účtu. Kontaktujte ich prosím priamo.
+                                    <div className="p-8 bg-white/5 rounded-[2rem] border border-white/5 text-gray-400 text-center font-medium italic">
+                                        Útulok zatiaľ nezverejnil číslo účtu. Kontaktujte ich prosím priamo pre informácie o darovaní.
                                     </div>
                                 )}
                             </div>
                         </div>
 
                         {/* Material Supplies List */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-                                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                                    <Gift className="text-brand-600" size={20} /> Materiálna pomoc
-                                </h3>
-                                <p className="text-sm text-gray-500 mt-1">Veci, ktoré nám môžete priniesť osobne alebo poslať.</p>
+                        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
+                            <div className="p-8 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-xl font-black text-gray-900 flex items-center gap-3">
+                                        <Gift className="text-brand-600" size={24} /> Materiálna pomoc
+                                    </h3>
+                                    <p className="text-sm text-gray-500 mt-1 font-medium">Veci, ktoré nám aktuálne najviac chýbajú.</p>
+                                </div>
+                                <span className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{supplies.length} položiek</span>
                             </div>
                             
                             {/* Tip for donors */}
                             {supplies.length > 0 && (
-                                <div className="p-4 m-6 mb-2 bg-blue-50 rounded-xl border border-blue-100 flex items-start gap-3">
-                                    <Info className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+                                <div className="p-6 m-8 mb-4 bg-blue-50 rounded-[2rem] border border-blue-100 flex items-start gap-4 shadow-inner">
+                                    <div className="p-2 bg-white rounded-xl text-blue-600 shadow-sm flex-shrink-0"><Info size={20} /></div>
                                     <div className="flex-1">
-                                        <p className="text-blue-900 text-sm font-medium mb-1">Tip pre darcov:</p>
-                                        <p className="text-blue-800 text-xs leading-relaxed mb-2">
-                                            Pri objednávke z e-shopu zadajte ako doručovaciu adresu adresu nášho útulku:
+                                        <p className="text-blue-900 text-sm font-black uppercase tracking-wider mb-2">Tip pre darcov:</p>
+                                        <p className="text-blue-800/80 text-xs leading-relaxed mb-4 font-medium">
+                                            Ak objednávate z e-shopu, môžete zadať adresu útulku ako doručovaciu adresu:
                                         </p>
-                                        <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-blue-100 w-fit max-w-full">
-                                            <code className="text-xs font-mono text-gray-700 truncate">
+                                        <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-2xl border border-blue-100 w-fit max-w-full group">
+                                            <code className="text-xs font-bold text-gray-600 truncate">
                                                 {shelter.shippingAddress || shelter.location}
                                             </code>
                                             <button 
                                                 onClick={copyAddress}
-                                                className="text-blue-500 hover:text-blue-700 transition flex-shrink-0"
+                                                className="text-blue-400 hover:text-blue-600 transition flex-shrink-0 p-1 hover:bg-blue-50 rounded-lg"
                                                 title="Kopírovať adresu"
                                             >
-                                                {addressCopied ? <Check size={14}/> : <Copy size={14}/>}
+                                                {addressCopied ? <Check size={16} className="text-green-500"/> : <Copy size={16}/>}
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            <ul className="divide-y divide-gray-100">
-                                {supplies.length > 0 ? supplies.map(item => (
-                                    <li key={item.id} className="p-5 flex items-center justify-between hover:bg-gray-50 transition group">
-                                        <div className="flex items-center gap-4">
-                                            <div className={`w-2.5 h-2.5 rounded-full shadow-sm flex-shrink-0 ${
-                                                item.priority === 'Vysoká' ? 'bg-red-500 shadow-red-200' : 
-                                                item.priority === 'Stredná' ? 'bg-yellow-500 shadow-yellow-200' : 'bg-green-500 shadow-green-200'
-                                            }`}></div>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium text-gray-700 group-hover:text-gray-900 transition">{item.item}</span>
-                                                <span className={`text-[10px] font-bold uppercase tracking-wide mt-0.5 w-fit rounded px-1.5 py-0.5 ${
-                                                    item.priority === 'Vysoká' ? 'bg-red-50 text-red-600' : 
-                                                    item.priority === 'Stredná' ? 'bg-yellow-50 text-yellow-600' : 'bg-green-50 text-green-600'
-                                                }`}>
-                                                    {item.priority} priorita
-                                                </span>
+                            <div className="p-4 sm:p-8">
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {supplies.length > 0 ? supplies.map(item => (
+                                        <li key={item.id} className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group border-l-4" style={{ borderLeftColor: item.priority === 'Vysoká' ? '#ef4444' : item.priority === 'Stredná' ? '#f59e0b' : '#10b981' }}>
+                                            <div className="mb-4">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${
+                                                        item.priority === 'Vysoká' ? 'bg-red-50 text-red-600' : 
+                                                        item.priority === 'Stredná' ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'
+                                                    }`}>
+                                                        {item.priority} priorita
+                                                    </span>
+                                                </div>
+                                                <span className="font-extrabold text-gray-800 group-hover:text-brand-600 transition text-lg">{item.item}</span>
                                             </div>
-                                        </div>
-                                        
-                                        {item.link ? (
-                                            <a 
-                                                href={item.link} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-brand-700 transition shadow-sm hover:shadow transform hover:-translate-y-0.5"
-                                            >
-                                                <ShoppingCart size={14} /> Kúpiť online
-                                            </a>
-                                        ) : (
-                                            <span className="text-xs text-gray-400 font-medium bg-gray-100 px-3 py-1.5 rounded-lg">
-                                                Doručiť osobne
-                                            </span>
-                                        )}
-                                    </li>
-                                )) : (
-                                    <li className="p-12 text-center text-gray-400">Momentálne nemáme uvedené špeciálne potreby.</li>
-                                )}
-                            </ul>
+                                            
+                                            {item.link ? (
+                                                <a 
+                                                    href={item.link} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center justify-center gap-2 bg-gray-900 text-white w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-600 transition shadow-lg active:scale-95"
+                                                >
+                                                    <ShoppingCart size={14} /> Kúpiť online
+                                                </a>
+                                            ) : (
+                                                <div className="flex items-center justify-center gap-2 text-gray-400 bg-gray-50 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-gray-100 cursor-default">
+                                                    <MapPin size={14} /> Doručiť osobne
+                                                </div>
+                                            )}
+                                        </li>
+                                    )) : (
+                                        <li className="col-span-full p-20 text-center text-gray-400 bg-gray-50 rounded-[2rem] border border-dashed border-gray-200">
+                                            <Gift size={32} className="mx-auto mb-4 opacity-30" />
+                                            <p className="font-medium">Momentálne nemáme uvedené špeciálne potreby.</p>
+                                        </li>
+                                    )}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -437,71 +453,73 @@ const ShelterDetailPage: React.FC = () => {
             <div className="lg:col-span-4 space-y-6">
                 
                 {/* Contact Card */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-24">
-                    <h3 className="font-bold text-gray-900 mb-6 pb-4 border-b border-gray-100">Kontaktovať útulok</h3>
+                <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-100 p-8 sticky top-24 overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-brand-50 rounded-full -mr-12 -mt-12 opacity-50 group-hover:scale-125 transition-transform duration-700"></div>
                     
-                    <div className="space-y-6">
-                        <div className="flex items-start gap-4 group">
-                            <div className="p-3 bg-brand-50 text-brand-600 rounded-xl group-hover:bg-brand-600 group-hover:text-white transition duration-300">
+                    <h3 className="font-black text-gray-900 text-xl mb-8 pb-4 border-b border-gray-50 relative z-10 tracking-tight">Kontaktujte nás</h3>
+                    
+                    <div className="space-y-8 relative z-10">
+                        <div className="flex items-start gap-5 group/item">
+                            <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center group-hover/item:bg-brand-600 group-hover/item:text-white transition duration-300 shadow-sm">
                                 <Mail size={20}/>
                             </div>
                             <div>
-                                <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">Email</div>
-                                <a href={`mailto:${shelter.email}`} className="text-gray-900 font-bold hover:text-brand-600 transition break-all">
+                                <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">E-mailová adresa</div>
+                                <a href={`mailto:${shelter.email}`} className="text-gray-800 font-extrabold hover:text-brand-600 transition break-all text-sm">
                                     {shelter.email}
                                 </a>
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-4 group">
-                            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition duration-300">
+                        <div className="flex items-start gap-5 group/item">
+                            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover/item:bg-blue-600 group-hover/item:text-white transition duration-300 shadow-sm">
                                 <Phone size={20}/>
                             </div>
                             <div>
-                                <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">Telefón</div>
-                                <a href={`tel:${shelter.phone}`} className="text-gray-900 font-bold hover:text-blue-600 transition">
+                                <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Telefónne číslo</div>
+                                <a href={`tel:${shelter.phone}`} className="text-gray-800 font-extrabold hover:text-blue-600 transition text-sm">
                                     {shelter.phone}
                                 </a>
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-4 group">
-                            <div className="p-3 bg-gray-50 text-gray-600 rounded-xl group-hover:bg-gray-800 group-hover:text-white transition duration-300">
+                        <div className="flex items-start gap-5 group/item">
+                            <div className="w-12 h-12 bg-gray-50 text-gray-600 rounded-2xl flex items-center justify-center group-hover/item:bg-gray-800 group-hover/item:text-white transition duration-300 shadow-sm">
                                 <Clock size={20}/>
                             </div>
                             <div>
-                                <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">Otváracie hodiny</div>
-                                <p className="text-gray-900 font-medium text-sm whitespace-pre-line leading-relaxed">
-                                    {shelter.openingHours || "Dohodou"}
+                                <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Otváracie hodiny</div>
+                                <p className="text-gray-800 font-bold text-sm whitespace-pre-line leading-relaxed">
+                                    {shelter.openingHours || "Dohodou / Po tel. dohovore"}
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     {hasSocials ? (
-                        <div className="mt-8 pt-6 border-t border-gray-100">
-                            <p className="text-xs text-center text-gray-400 font-bold uppercase mb-4">Sledujte nás</p>
+                        <div className="mt-12 pt-8 border-t border-gray-50 relative z-10">
+                            <p className="text-[9px] text-center text-gray-400 font-black uppercase tracking-[0.3em] mb-6">Sledujte našu prácu</p>
                             <div className="flex justify-center gap-4">
                                 {shelter.socials?.facebook && (
-                                    <a href={ensureUrl(shelter.socials.facebook)} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-50 rounded-full text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition" title="Facebook">
+                                    <a href={ensureUrl(shelter.socials.facebook)} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all shadow-sm hover:shadow-blue-200" title="Facebook">
                                         <Facebook size={20}/>
                                     </a>
                                 )}
                                 {shelter.socials?.instagram && (
-                                    <a href={ensureUrl(shelter.socials.instagram)} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-50 rounded-full text-gray-400 hover:bg-pink-50 hover:text-pink-600 transition" title="Instagram">
+                                    <a href={ensureUrl(shelter.socials.instagram)} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all shadow-sm hover:shadow-pink-200" title="Instagram">
                                         <Instagram size={20}/>
                                     </a>
                                 )}
                                 {shelter.socials?.website && (
-                                    <a href={ensureUrl(shelter.socials.website)} target="_blank" rel="noopener noreferrer" className="p-3 bg-gray-50 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-900 transition" title="Web">
+                                    <a href={ensureUrl(shelter.socials.website)} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-gray-800 hover:text-white transition-all shadow-sm" title="Web">
                                         <Globe size={20}/>
                                     </a>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                             <p className="text-xs text-gray-400 font-bold uppercase">Žiadne sociálne siete</p>
+                        <div className="mt-12 pt-8 border-t border-gray-50 text-center relative z-10">
+                             <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest">Momentálne bez sociálnych sietí</p>
                         </div>
                     )}
                 </div>
