@@ -421,6 +421,12 @@ export const api = {
         if (!session) throw new Error("Nie ste prihlásený");
         const { data, error = null } = await supabase.from('inquiry_messages').insert({ inquiry_id: inquiryId, sender_id: session.user.id, content, created_at: new Date().toISOString() }).select().single();
         if (error) throw error;
+
+        // Trigger notification function (fire and forget)
+        supabase.functions.invoke('notify-message', {
+            body: { message_id: data.id }
+        }).catch(err => console.warn("Notification trigger failed:", err));
+
         return { id: data.id, inquiryId: data.inquiry_id, senderId: data.sender_id, content: data.content, createdAt: data.created_at, isRead: data.is_read } as InquiryMessage;
     },
 
