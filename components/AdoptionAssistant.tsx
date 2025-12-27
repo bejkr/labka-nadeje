@@ -4,14 +4,17 @@ import { ChatMessage } from '../types';
 import { sendChatMessage } from '../services/geminiService';
 import { usePets } from '../contexts/PetContext';
 
+import { useTranslation } from 'react-i18next';
+
 const AdoptionAssistant: React.FC = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'init',
       role: 'model',
-      text: 'Ahoj! 👋 Ja som tvoj Labka asistent. Ako ti môžem dnes pomôcť s hľadaním nového priateľa?',
+      text: t('assistant.initMessage'),
       timestamp: Date.now()
     }
   ]);
@@ -24,12 +27,12 @@ const AdoptionAssistant: React.FC = () => {
   // Format pets into a context string for the model
   const petsContextString = useMemo(() => {
     const availablePets = pets.filter(p => p.adoptionStatus === 'Available' && p.isVisible);
-    if (availablePets.length === 0) return "Momentálne nie sú dostupné žiadne zvieratá.";
-    
-    return availablePets.map(p => 
+    if (availablePets.length === 0) return t('assistant.noPets');
+
+    return availablePets.map(p =>
       `- ${p.name} (${p.type}, ${p.breed}, ${p.age}r, ${p.location}): ${p.tags.join(', ')}. Vhodný pre: ${p.requirements.suitableFor.join(', ')}.`
     ).join('\n');
-  }, [pets]);
+  }, [pets, t]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,7 +57,7 @@ const AdoptionAssistant: React.FC = () => {
     setIsLoading(true);
 
     const historyForAi = messages.filter(m => m.id !== 'init');
-    
+
     // Pass the live pets context to the service
     const responseText = await sendChatMessage(input, historyForAi, petsContextString);
 
@@ -85,9 +88,8 @@ const AdoptionAssistant: React.FC = () => {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 ${
-          isOpen ? 'bg-red-50 rotate-90' : 'bg-brand-600 hover:bg-brand-700'
-        } text-white`}
+        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 ${isOpen ? 'bg-red-50 rotate-90' : 'bg-brand-600 hover:bg-brand-700'
+          } text-white`}
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={28} />}
       </button>
@@ -99,8 +101,8 @@ const AdoptionAssistant: React.FC = () => {
           <div className="bg-brand-600 p-4 flex items-center text-white">
             <Bot className="mr-2" size={20} />
             <div>
-              <h3 className="font-bold">Labka Asistent</h3>
-              <p className="text-xs text-brand-100">Pomáham nájsť najlepšiu Labka zhodu</p>
+              <h3 className="font-bold">{t('assistant.title')}</h3>
+              <p className="text-xs text-brand-100">{t('assistant.subtitle')}</p>
             </div>
           </div>
 
@@ -112,11 +114,10 @@ const AdoptionAssistant: React.FC = () => {
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] p-3 rounded-2xl text-sm ${
-                    msg.role === 'user'
+                  className={`max-w-[85%] p-3 rounded-2xl text-sm ${msg.role === 'user'
                       ? 'bg-brand-600 text-white rounded-tr-none'
                       : 'bg-white text-gray-800 border border-gray-200 rounded-tl-none shadow-sm'
-                  }`}
+                    }`}
                 >
                   {formatMessage(msg.text)}
                 </div>
@@ -143,7 +144,7 @@ const AdoptionAssistant: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Napíšte správu..."
+              placeholder={t('assistant.placeholder')}
               className="flex-1 px-4 py-2 bg-white text-gray-900 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
             />
             <button
@@ -159,5 +160,4 @@ const AdoptionAssistant: React.FC = () => {
     </>
   );
 };
-
 export default AdoptionAssistant;

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const GDPRConsent: React.FC = () => {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -27,23 +29,23 @@ const GDPRConsent: React.FC = () => {
             <ShieldCheck size={24} />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-lg mb-2">Chránime vaše súkromie</h3>
+            <h3 className="font-bold text-lg mb-2">{t('gdpr.title')}</h3>
             <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              Naša stránka používa cookies a spracováva osobné údaje pre správne fungovanie adopčného procesu. 
-              Prečítajte si naše <Link to="/privacy" onClick={() => setIsVisible(false)} className="text-brand-400 hover:text-brand-300 underline">zásady ochrany údajov</Link>.
+              {t('gdpr.description')}{' '}
+              <Link to="/privacy" onClick={() => setIsVisible(false)} className="text-brand-400 hover:text-brand-300 underline">{t('gdpr.link')}</Link>.
             </p>
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={handleAccept}
                 className="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition text-sm"
               >
-                Rozumiem a súhlasím
+                {t('gdpr.accept')}
               </button>
-              <button 
+              <button
                 onClick={() => setIsVisible(false)}
                 className="px-4 py-2.5 text-gray-400 hover:text-white transition text-sm"
               >
-                Zavrieť
+                {t('gdpr.close')}
               </button>
             </div>
           </div>

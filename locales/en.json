@@ -1,0 +1,242 @@
+{
+    "nav": {
+        "home": "Home",
+        "pets": "Pets",
+        "shelters": "Shelters",
+        "blog": "Blog",
+        "support": "Support",
+        "admin": "Admin Panel",
+        "myShelter": "My Shelter",
+        "forShelters": "For Shelters",
+        "myAccount": "My Account",
+        "login": "Login",
+        "adopt": "I want to adopt"
+    },
+    "footer": {
+        "tagline": "Connecting lonely hearts with loving homes. Helping shelters across Slovakia.",
+        "quickLinks": "Quick Links",
+        "contact": "Contact",
+        "news": "Newsletter",
+        "subscribeText": "Subscribe to our newsletter and stories.",
+        "emailPlaceholder": "Your email",
+        "copyright": "LabkaNádeje. All rights reserved.",
+        "privacy": "GDPR",
+        "terms": "Terms of Use"
+    },
+    "home": {
+        "heroTitle": "Find your faithful friend",
+        "heroSubtitle": "Thousands of dogs in shelters are waiting for a second chance. Adopt love for a lifetime.",
+        "heroButton": "View Dogs",
+        "stats": {
+            "adopted": "Adopted",
+            "shelters": "Shelters",
+            "waiting": "Waiting for home"
+        },
+        "quickSearch": {
+            "title": "Quick Search",
+            "dogs": "Dogs",
+            "cats": "Cats",
+            "all": "All"
+        },
+        "featured": {
+            "title": "Urgent Homes Needed",
+            "subtitle": "These pets have been waiting too long.",
+            "viewAll": "View All",
+            "reserved": "Reserved"
+        },
+        "foster": {
+            "title": "Foster Care Needed",
+            "description": "Help animals that need individual care or are recovering from procedures.",
+            "badge": "Foster Care",
+            "empty": "Currently not looking for foster care for any pet."
+        },
+        "community": {
+            "title": "Join Our Community",
+            "description": "Follow us on social media for daily doses of cuteness, success stories, and shelter news.",
+            "facebook": "Follow on Facebook",
+            "instagram": "Follow on Instagram"
+        },
+        "blog": {
+            "title": "Latest from Blog",
+            "subtitle": "Useful advice, tips, and news from the animal world.",
+            "tips": "Tips & Tricks",
+            "viewAll": "View All Articles",
+            "empty": "No articles yet."
+        },
+        "partners": {
+            "title": "Our Partners & Offers",
+            "subtitle": "Treat your pets to the best and support our community."
+        },
+        "virtualAdoption": {
+            "badge": "Remote Help",
+            "title": "Can't take a pet home?",
+            "description": "Become a virtual parent and change the fate of a silent plea from the shelter.",
+            "bowl": "Full Bowl",
+            "bowlDesc": "Quality food for strong health.",
+            "doctor": "Doctor",
+            "doctorDesc": "Veterinary care and medicine.",
+            "luck": "Happiness",
+            "luckDesc": "The feeling that someone cares.",
+            "select": "Choose a Pet",
+            "howItWorks": "How it works?",
+            "mock": {
+                "needs": "Seeking Parent",
+                "fulfillment": "Needs Fulfillment",
+                "parents": "Already has 3 virtual parents"
+            }
+        }
+    },
+    "gdpr": {
+        "title": "We Protect Your Privacy",
+        "description": "Our site uses cookies and processes personal data for the proper functioning of the adoption process.",
+        "link": "privacy policy",
+        "accept": "I Understand and Agree",
+        "close": "Close"
+    },
+    "assistant": {
+        "title": "Labka Assistant",
+        "subtitle": "Helping find the best Labka match",
+        "placeholder": "Type a message...",
+        "initMessage": "Hi! 👋 I am your Labka assistant. How can I help you find a new friend today?",
+        "noPets": "Currently no animals are available."
+    },
+    "petDetail": {
+        "notFound": "Pet not found.",
+        "backToList": "Back to list",
+        "interestButton": "I am interested in adoption",
+        "applicationSent": "Application sent",
+        "virtualAdopt": "Virtually adopt",
+        "ownerEdit": "Your listing. Edit",
+        "loginAsUser": "Please log in as a user.",
+        "adoptionFee": "Adoption Fee",
+        "story": "My Story",
+        "home": "Home",
+        "status": {
+            "suitable": "Suitable",
+            "unsuitable": "Unsuitable",
+            "careful": "Careful"
+        },
+        "activity": "Activity Level",
+        "compatibility": "Compatibility",
+        "children": "Children",
+        "dogs": "Dogs",
+        "cats": "Cats",
+        "health": "Health",
+        "vaccination": "Vaccination",
+        "castration": "Castration",
+        "microchip": "Microchip",
+        "deworming": "Deworming",
+        "applicationTitle": "Adoption Application",
+        "submit": "Submit",
+        "close": "Close",
+        "success": "Sent!",
+        "age": "Age",
+        "gender": "Gender",
+        "genderLabel": {
+            "male": "Male",
+            "female": "Female"
+        },
+        "size": {
+            "label": "Size",
+            "small": "Small",
+            "medium": "Medium",
+            "large": "Large"
+        },
+        "activityLevels": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "hidden": "Hidden Listing",
+        "loading": "Loading...",
+        "shelter": "Shelter",
+        "loginToFavorite": "Please log in to save favorites.",
+        "errorSending": "Error sending application",
+        "importantNotice": "Important Notice",
+        "unspecified": "Unspecified",
+        "unknown": "Unknown",
+        "medium": "Medium",
+        "training": "Training",
+        "toiletTrained": "Toilet Trained",
+        "leash": "Leash Trained",
+        "car": "Car Travel",
+        "alone": "Home Alone",
+        "specialNeeds": "Special Needs",
+        "allergy": "Allergy:",
+        "meds": "Medication:",
+        "diet": "Diet:",
+        "suggested": {
+            "title": "You might also like",
+            "subtitle": "Other pets waiting for their chance.",
+            "viewAll": "All pets"
+        },
+        "toast": {
+            "addedFavorite": "Added to favorites",
+            "removedFavorite": "Removed from favorites"
+        },
+        "yourMessage": "Your message to the shelter",
+        "messagePlaceholder": "Write something about yourself, your motivation, and why you would be a great owner...",
+        "chooseAmount": "Choose monthly contribution",
+        "otherAmount": "Other amount",
+        "impactTitle": "How your help changes {{name}}'s life?",
+        "recurringDonation": "Monthly donation. Can be cancelled anytime.",
+        "continueToPayment": "Continue to payment",
+        "invalidAmount": "Please enter a valid amount (min. 1 €)."
+    },
+    "shelterDetail": {
+        "notFound": "Shelter not found",
+        "removed": "We are sorry, but this profile does not exist or has been removed.",
+        "backHome": "Back to home",
+        "supportButton": "Support shelter",
+        "tabs": {
+            "pets": "Pets",
+            "about": "About us",
+            "help": "Support"
+        },
+        "noPets": "No pets currently",
+        "noPetsDesc": "This shelter currently has no pets available.",
+        "storyTitle": "Our story and mission",
+        "noStory": "This shelter has not added a detailed description yet.",
+        "stats": {
+            "adopted": "Found new home",
+            "care": "In care",
+            "views": "Profile views"
+        },
+        "financeTitle": "Financial support",
+        "financeDesc": "Contributions for veterinary care, medicine and food.",
+        "iban": "IBAN / Account number",
+        "materialHelp": "Material help",
+        "materialDesc": "Items we currently miss the most.",
+        "donorTip": "Tip for donors",
+        "tipDesc": "If ordering from an e-shop, you can set the shelter address as delivery address",
+        "buyOnline": "Buy online",
+        "deliverPerson": "Deliver in person",
+        "contactTitle": "Contact us",
+        "email": "Email address",
+        "phone": "Phone number",
+        "hours": "Opening hours",
+        "followUs": "Follow our work",
+        "noSocials": "Currently no social media",
+        "verified": "Verified partner",
+        "copyIban": "IBAN copied",
+        "copyAddress": "Address copied",
+        "priority": {
+            "high": "High Priority",
+            "medium": "Medium Priority",
+            "low": "Low Priority"
+        },
+        "suppliesCount_one": "{{count}} item",
+        "suppliesCount_other": "{{count}} items",
+        "noSupplies": "Currently no special needs listed."
+    },
+    "common": {
+        "yes": "Yes",
+        "no": "No",
+        "years_one": "{{count}} year",
+        "years_other": "{{count}} years"
+    },
+    "petStatus": {
+        "reserved": "Reserved",
+        "adopted": "Adopted"
+    }
+}

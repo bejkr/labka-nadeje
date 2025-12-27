@@ -7,6 +7,8 @@ import { useApp } from './contexts/AppContext';
 import { api } from './services/api';
 import Logo from './components/Logo';
 import { Analytics } from '@vercel/analytics/react';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from './components/LanguageSelector';
 
 // Pages imports
 import HomePage from './pages/Home';
@@ -37,17 +39,18 @@ const NotificationBadge: React.FC<{ count: number }> = ({ count }) => {
 };
 
 const Navbar: React.FC = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const location = useLocation();
   const { currentUser, userRole } = useAuth();
   const { unreadCount } = useApp();
 
   const navLinks = [
-    { name: 'Domov', path: '/', icon: Home },
-    { name: 'Zvieratá', path: '/pets', icon: Search },
-    { name: 'Útulky', path: '/shelters', icon: Map },
-    { name: 'Blog', path: '/blog', icon: BookOpen },
-    { name: 'Podpora', path: '/support', icon: Heart },
+    { name: t('nav.home'), path: '/', icon: Home },
+    { name: t('nav.pets'), path: '/pets', icon: Search },
+    { name: t('nav.shelters'), path: '/shelters', icon: Map },
+    { name: t('nav.blog'), path: '/blog', icon: BookOpen },
+    { name: t('nav.support'), path: '/support', icon: Heart },
   ];
 
   const isShelter = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
@@ -82,13 +85,15 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSelector />
+
             {isSuperAdmin && (
               <Link
                 to="/admin"
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition-all mr-2"
               >
                 <ShieldAlert size={18} />
-                Admin Panel
+                {t('nav.admin')}
               </Link>
             )}
 
@@ -101,7 +106,7 @@ const Navbar: React.FC = () => {
                   }`}
               >
                 <Building2 size={18} />
-                Môj Útulok
+                {t('nav.myShelter')}
                 <NotificationBadge count={unreadCount} />
               </Link>
             ) : (
@@ -113,7 +118,7 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-gray-600 hover:text-brand-600 hover:bg-gray-50 transition-all"
                   >
                     <Building2 size={18} />
-                    Pre útulky
+                    {t('nav.forShelters')}
                   </Link>
                 )}
 
@@ -139,7 +144,7 @@ const Navbar: React.FC = () => {
                     className="flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 transition-all"
                   >
                     <LogIn size={18} />
-                    <span className="text-sm font-bold">Prihlásiť</span>
+                    <span className="text-sm font-bold">{t('nav.login')}</span>
                   </Link>
                 )}
 
@@ -147,7 +152,7 @@ const Navbar: React.FC = () => {
                   to="/pets"
                   className="px-5 py-2 rounded-full bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-200 transform hover:scale-105 duration-200"
                 >
-                  Chcem adoptovať
+                  {t('nav.adopt')}
                 </Link>
               </>
             )}
@@ -194,11 +199,15 @@ const Navbar: React.FC = () => {
                 className="flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium text-red-600 bg-red-50 hover:bg-red-100"
               >
                 <ShieldAlert size={20} />
-                Admin Panel
+                {t('nav.admin')}
               </Link>
             )}
 
             <div className="border-t border-gray-100 my-2 pt-2">
+              <div className="px-3 py-2">
+                <LanguageSelector />
+              </div>
+
               {isShelter && (
                 <Link
                   to="/shelter"
@@ -209,7 +218,7 @@ const Navbar: React.FC = () => {
                     }`}
                 >
                   <Building2 size={20} className={location.pathname === '/shelter' ? "text-brand-600" : "text-gray-500"} />
-                  Môj Útulok
+                  {t('nav.myShelter')}
                   <NotificationBadge count={unreadCount} />
                 </Link>
               )}
@@ -224,7 +233,7 @@ const Navbar: React.FC = () => {
                       className="flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-gray-50"
                     >
                       <Building2 size={20} className="text-gray-500" />
-                      Pre útulky
+                      {t('nav.forShelters')}
                     </Link>
                   )}
 
@@ -238,7 +247,7 @@ const Navbar: React.FC = () => {
                         }`}
                     >
                       <UserIcon size={20} className={location.pathname === '/profile' ? "text-brand-600" : "text-gray-500"} />
-                      Môj účet
+                      {t('nav.myAccount')}
                       <NotificationBadge count={unreadCount} />
                     </Link>
                   ) : (
@@ -248,7 +257,7 @@ const Navbar: React.FC = () => {
                       className="flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-gray-50"
                     >
                       <LogIn size={20} className="text-gray-500" />
-                      Prihlásiť sa
+                      {t('nav.login')}
                     </Link>
                   )}
                 </>
@@ -263,13 +272,14 @@ const Navbar: React.FC = () => {
 
 const Footer: React.FC = () => {
   const { showToast } = useApp();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes('@')) {
-      showToast("Zadajte prosím platnú e-mailovú adresu.", "error");
+      showToast("Zadajte prosím platnú e-mailovú adresu.", "error"); // TODO: Translate toast helper
       return;
     }
 
@@ -294,7 +304,7 @@ const Footer: React.FC = () => {
               <Logo className="h-12" variant="light" />
             </div>
             <p className="text-gray-400 text-sm mb-6">
-              Spájame opustené srdcia s milujúcimi domovmi. Pomáhame útulkom po celom Slovensku.
+              {t('footer.tagline')}
             </p>
             <div className="flex gap-4">
               <a href="https://www.facebook.com/profile.php?id=61584849571446" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-800 rounded-lg hover:bg-brand-600 transition text-white">
@@ -306,31 +316,31 @@ const Footer: React.FC = () => {
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-brand-400">Rýchle odkazy</h3>
+            <h3 className="text-lg font-semibold mb-4 text-brand-400">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
-              <li><Link to="/pets" className="hover:text-white">Hľadám psa</Link></li>
-              <li><Link to="/shelters" className="hover:text-white">Zoznam útulkov</Link></li>
-              <li><Link to="/privacy" className="hover:text-white">Ochrana údajov (GDPR)</Link></li>
-              <li><Link to="/blog" className="hover:text-white">Blog</Link></li>
-              <li><Link to="/support" className="hover:text-white">Podpora</Link></li>
+              <li><Link to="/pets" className="hover:text-white">{t('nav.pets')}</Link></li>
+              <li><Link to="/shelters" className="hover:text-white">{t('nav.shelters')}</Link></li>
+              <li><Link to="/privacy" className="hover:text-white">{t('footer.privacy')}</Link></li>
+              <li><Link to="/blog" className="hover:text-white">{t('nav.blog')}</Link></li>
+              <li><Link to="/support" className="hover:text-white">{t('nav.support')}</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-brand-400">Kontakt</h3>
+            <h3 className="text-lg font-semibold mb-4 text-brand-400">{t('footer.contact')}</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>info@labkanadeje.sk</li>
               <li>Bratislava, Slovensko</li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-brand-400">Novinky</h3>
-            <p className="text-gray-400 text-sm mb-4">Prihláste sa na odber noviniek a príbehov.</p>
+            <h3 className="text-lg font-semibold mb-4 text-brand-400">{t('footer.news')}</h3>
+            <p className="text-gray-400 text-sm mb-4">{t('footer.subscribeText')}</p>
             <form onSubmit={handleNewsletterSubmit} className="flex shadow-sm">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Váš email"
+                placeholder={t('footer.emailPlaceholder')}
                 className="px-4 py-2 bg-white text-gray-900 rounded-l-xl text-sm w-full focus:outline-none focus:ring-2 focus:ring-brand-500"
                 disabled={loading}
               />
@@ -347,11 +357,11 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
           <div className="flex items-center gap-2">
             <Shield size={14} />
-            <span>&copy; {new Date().getFullYear()} LabkaNádeje. Všetky dáta sú chránené.</span>
+            <span>&copy; {new Date().getFullYear()} {t('footer.copyright')}</span>
           </div>
           <div className="flex gap-6">
-            <Link to="/privacy" className="hover:text-white transition">GDPR</Link>
-            <Link to="/support" className="hover:text-white transition">Podmienky používania</Link>
+            <Link to="/privacy" className="hover:text-white transition">{t('footer.privacy')}</Link>
+            <Link to="/support" className="hover:text-white transition">{t('footer.terms')}</Link>
           </div>
         </div>
       </div>

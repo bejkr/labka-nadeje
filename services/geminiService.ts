@@ -11,7 +11,7 @@ Odpovedaj vždy v slovenskom jazyku, empaticky a profesionálne.
 `;
 
 export const sendChatMessage = async (
-  message: string, 
+  message: string,
   history: ChatMessage[],
   petsContext: string = ''
 ): Promise<string> => {
@@ -81,4 +81,24 @@ export const generatePetDescription = async (name: string, breed: string, traits
     const response = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });
     return response.text || "";
   } catch (error) { return ""; }
+};
+
+export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
+  try {
+    const prompt = `Prelož nasledujúci text o zvieratku z útulku do jazyka: ${targetLanguage}.
+    Zachovaj emotívny a milý tón. Zachovaj formátovanie (nové riadky).
+    
+    TEXT:
+    ${text}`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt
+    });
+
+    return response.text || text;
+  } catch (error) {
+    console.error("Translation failed", error);
+    return text; // Fallback to original text
+  }
 };

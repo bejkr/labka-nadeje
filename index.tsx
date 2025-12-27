@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { PetProvider } from './contexts/PetContext';
 import { AppProvider } from './contexts/AppContext';
 import './index.css';
+import './i18n';
 
 interface ErrorBoundaryProps {
   children?: ReactNode;
@@ -47,8 +48,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     const { hasError, error } = this.state;
 
     if (hasError) {
-      const errorMsg = error instanceof Error 
-        ? error.message 
+      const errorMsg = error instanceof Error
+        ? error.message
         : (typeof error === 'object' ? 'Unknown error occurred' : String(error));
 
       return (
@@ -58,7 +59,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
             {errorMsg}
           </pre>
           <p style={{ marginTop: '20px', color: '#4B5563' }}>Check the console for more details.</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             style={{ marginTop: '20px', padding: '10px 20px', background: '#DC2626', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
           >

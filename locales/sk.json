@@ -1,0 +1,239 @@
+{
+    "nav": {
+        "home": "Domov",
+        "pets": "Zvieratá",
+        "shelters": "Útulky",
+        "blog": "Blog",
+        "support": "Podpora",
+        "admin": "Admin Panel",
+        "myShelter": "Môj Útulok",
+        "forShelters": "Pre útulky",
+        "myAccount": "Môj účet",
+        "login": "Prihlásiť",
+        "adopt": "Chcem adoptovať"
+    },
+    "footer": {
+        "tagline": "Spájame opustené srdcia s milujúcimi domovmi. Pomáhame útulkom po celom Slovensku.",
+        "quickLinks": "Rýchle odkazy",
+        "contact": "Kontakt",
+        "news": "Novinky",
+        "subscribeText": "Prihláste sa na odber noviniek a príbehov.",
+        "emailPlaceholder": "Váš email",
+        "copyright": "LabkaNádeje. Všetky dáta sú chránené.",
+        "privacy": "GDPR",
+        "terms": "Podmienky používania"
+    },
+    "home": {
+        "heroTitle": "Nájdite svojho verného priateľa",
+        "heroSubtitle": "Tisíce psíkov v útulkoch čakajú na druhú šancu. Adoptujte si lásku na celý život.",
+        "heroButton": "Zobraziť psíkov",
+        "stats": {
+            "adopted": "Adoptovaných",
+            "shelters": "Útulkov",
+            "waiting": "Čaká na domov"
+        },
+        "quickSearch": {
+            "title": "Rýchle vyhľadávanie",
+            "dogs": "Psi",
+            "cats": "Mačky",
+            "all": "Všetky"
+        },
+        "featured": {
+            "title": "Hľadajú domov urgentne",
+            "subtitle": "Tieto zvieratká čakajú už príliš dlho.",
+            "viewAll": "Zobraziť všetky",
+            "reserved": "Rezervovaný"
+        },
+        "foster": {
+            "title": "Hľadajú dočasnú opateru",
+            "description": "Pomôžte zvieratám, ktoré potrebujú individuálnu starostlivosť alebo sa zotavujú po zákroku.",
+            "badge": "Dočasná opatera",
+            "empty": "Momentálne nehľadáme dočasnú opateru pre žiadne zvieratko."
+        },
+        "community": {
+            "title": "Staňte sa súčasťou našej komunity",
+            "description": "Sledujte nás na sociálnych sieťach pre denné dávky roztomilosti, úspešné príbehy adopcií a novinky z útulkov.",
+            "facebook": "Sledovať na Facebooku",
+            "instagram": "Sledovať na Instagrame"
+        },
+        "blog": {
+            "title": "Najnovšie z blogu",
+            "subtitle": "Užitočné rady, tipy a novinky zo sveta zvierat.",
+            "tips": "Tipy & Triky",
+            "viewAll": "Zobraziť všetky články",
+            "empty": "Zatiaľ žiadne články."
+        },
+        "partners": {
+            "title": "Naši partneri a ponuky",
+            "subtitle": "Doprajte svojim miláčikom to najlepšie a podporte našu komunitu."
+        },
+        "virtualAdoption": {
+            "badge": "Pomoc na diaľku",
+            "title": "Nemôžete si vziať zvieratko domov?",
+            "description": "Staňte sa virtuálnym rodičom a zmeňte osud tichého prosebníka z útulku.",
+            "bowl": "Plná miska",
+            "bowlDesc": "Kvalitná strava pre pevné zdravie.",
+            "doctor": "Lekár",
+            "doctorDesc": "Veterinárna opatera a lieky.",
+            "luck": "Šťastie",
+            "luckDesc": "Pocit, že na nich niekomu záleží.",
+            "select": "Vybrať chlpáča",
+            "howItWorks": "Ako to funguje?",
+            "mock": {
+                "needs": "Hľadá rodiča",
+                "fulfillment": "Naplnenie potrieb",
+                "parents": "Už má 3 virtuálnych rodičov"
+            }
+        }
+    },
+    "gdpr": {
+        "title": "Chránime vaše súkromie",
+        "description": "Naša stránka používa cookies a spracováva osobné údaje pre správne fungovanie adopčného procesu.",
+        "link": "zásady ochrany údajov",
+        "accept": "Rozumiem a súhlasím",
+        "close": "Zavrieť"
+    },
+    "assistant": {
+        "title": "Labka Asistent",
+        "subtitle": "Pomáham nájsť najlepšiu Labka zhodu",
+        "placeholder": "Napíšte správu...",
+        "initMessage": "Ahoj! 👋 Ja som tvoj Labka asistent. Ako ti môžem dnes pomôcť s hľadaním nového priateľa?",
+        "noPets": "Momentálne nie sú dostupné žiadne zvieratá."
+    },
+    "petDetail": {
+        "notFound": "Zvieratko sa nenašlo.",
+        "backToList": "Späť na zoznam",
+        "interestButton": "Mám záujem o adopciu",
+        "applicationSent": "Žiadosť odoslaná",
+        "virtualAdopt": "Virtuálne adoptovať",
+        "ownerEdit": "Váš inzerát. Upraviť",
+        "loginAsUser": "Prihláste sa ako používateľ.",
+        "adoptionFee": "Adopčný poplatok",
+        "story": "Môj príbeh",
+        "home": "Domov",
+        "status": {
+            "suitable": "Vhodný",
+            "unsuitable": "Nevhodný",
+            "careful": "Opatrne"
+        },
+        "activity": "Aktivita",
+        "compatibility": "Znášanlivosť",
+        "children": "Deti",
+        "dogs": "Psi",
+        "cats": "Mačky",
+        "health": "Zdravie",
+        "vaccination": "Očkovanie",
+        "castration": "Kastrácia",
+        "microchip": "Čipovanie",
+        "deworming": "Odčervenie",
+        "applicationTitle": "Žiadosť o adopciu",
+        "submit": "Odoslať",
+        "close": "Zavrieť",
+        "success": "Odoslané!",
+        "age": "Vek",
+        "gender": "Pohlavie",
+        "genderLabel": {
+            "male": "Samec",
+            "female": "Samica"
+        },
+        "size": "Veľkosť",
+        "activityLevels": {
+            "low": "Nízka",
+            "medium": "Stredná",
+            "high": "Vysoká"
+        },
+        "hidden": "Skrytý inzerát",
+        "loading": "Načítavam...",
+        "shelter": "Útulok",
+        "loginToFavorite": "Pre ukladanie obľúbených sa prosím prihláste.",
+        "errorSending": "Chyba pri odosielaní",
+        "importantNotice": "Dôležité upozornenie",
+        "unspecified": "Nešpecifikované",
+        "unknown": "Neznáme",
+        "medium": "Stredná",
+        "training": "Výchova",
+        "toiletTrained": "Hygienické návyky",
+        "leash": "Chôdza na vodítku",
+        "car": "Zvláda cestu autom",
+        "alone": "Zvláda samotu",
+        "specialNeeds": "Špeciálne potreby",
+        "allergy": "Alergia:",
+        "meds": "Lieky:",
+        "diet": "Strava:",
+        "suggested": {
+            "title": "Možno hľadáte práve ich",
+            "subtitle": "Ďalšie zvieratká, ktoré čakajú na svoju šancu.",
+            "viewAll": "Všetky zvieratá"
+        },
+        "toast": {
+            "addedFavorite": "Pridané do obľúbených",
+            "removedFavorite": "Odstránené z obľúbených"
+        },
+        "yourMessage": "Vaša správa pre útulok",
+        "messagePlaceholder": "Napíšte niečo o sebe, o vašej motivácii a prečo by ste boli skvelý majiteľ...",
+        "chooseAmount": "Zvoľte mesačný príspevok",
+        "otherAmount": "Iná suma",
+        "impactTitle": "Ako vaša pomoc zmení život {{name}}?",
+        "recurringDonation": "Mesačný dar. Možno kedykoľvek zrušiť.",
+        "continueToPayment": "Pokračovať k platbe",
+        "invalidAmount": "Zadajte platnú sumu (min. 1 €)."
+    },
+    "shelterDetail": {
+        "notFound": "Útulok sa nenašiel",
+        "removed": "Je nám ľúto, ale tento profil neexistuje alebo bol odstránený.",
+        "backHome": "Späť na domovskú stránku",
+        "supportButton": "Podporiť útulok",
+        "tabs": {
+            "pets": "Zverenci",
+            "about": "O nás",
+            "help": "Podpora"
+        },
+        "noPets": "Aktuálne žiadne zvieratká",
+        "noPetsDesc": "Tento útulok momentálne nemá v ponuke žiadnych chlpáčov.",
+        "storyTitle": "Náš príbeh a misia",
+        "noStory": "Tento útulok zatiaľ nepridal podrobnejší popis svojej činnosti.",
+        "stats": {
+            "adopted": "Našli nový domov",
+            "care": "V starostlivosti",
+            "views": "Videní profilu"
+        },
+        "financeTitle": "Finančná podpora",
+        "financeDesc": "Príspevky na veterinárnu starostlivosť, lieky a krmivo.",
+        "iban": "IBAN / Číslo účtu",
+        "materialHelp": "Materiálna pomoc",
+        "materialDesc": "Veci, ktoré nám aktuálne najviac chýbajú.",
+        "donorTip": "Tip pre darcov",
+        "tipDesc": "Ak objednávate z e-shopu, môžete zadať adresu útulku ako doručovaciu adresu",
+        "buyOnline": "Kúpiť online",
+        "deliverPerson": "Doručiť osobne",
+        "contactTitle": "Kontaktujte nás",
+        "email": "E-mailová adresa",
+        "phone": "Telefónne číslo",
+        "hours": "Otváracie hodiny",
+        "followUs": "Sledujte našu prácu",
+        "noSocials": "Momentálne bez sociálnych sietí",
+        "verified": "Overený partner",
+        "copyIban": "IBAN skopírovaný",
+        "copyAddress": "Adresa skopírovaná",
+        "priority": {
+            "high": "Vysoká priorita",
+            "medium": "Stredná priorita",
+            "low": "Nízka priorita"
+        },
+        "suppliesCount_one": "{{count}} položka",
+        "suppliesCount_few": "{{count}} položky",
+        "suppliesCount_other": "{{count}} položiek",
+        "noSupplies": "Momentálne nemáme uvedené špeciálne potreby."
+    },
+    "common": {
+        "yes": "Áno",
+        "no": "Nie",
+        "years_one": "{{count}} rok",
+        "years_few": "{{count}} roky",
+        "years_other": "{{count}} rokov"
+    },
+    "petStatus": {
+        "reserved": "Rezervovaný",
+        "adopted": "Adoptovaný"
+    }
+}

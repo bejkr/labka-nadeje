@@ -1,0 +1,242 @@
+{
+    "nav": {
+        "home": "Startseite",
+        "pets": "Tiere",
+        "shelters": "Tierheime",
+        "blog": "Blog",
+        "support": "Unterstützung",
+        "admin": "Admin-Bereich",
+        "myShelter": "Mein Tierheim",
+        "forShelters": "Für Tierheime",
+        "myAccount": "Mein Konto",
+        "login": "Anmelden",
+        "adopt": "Ich möchte adoptieren"
+    },
+    "footer": {
+        "tagline": "Wir verbinden einsame Herzen mit liebevollen Zuhause. Wir helfen Tierheimen in der ganzen Slowakei.",
+        "quickLinks": "Inhaltsverzeichnis",
+        "contact": "Kontakt",
+        "news": "Newsletter",
+        "subscribeText": "Abonnieren Sie unseren Newsletter für Geschichten.",
+        "emailPlaceholder": "Ihre E-Mail",
+        "copyright": "LabkaNádeje. Alle Rechte vorbehalten.",
+        "privacy": "DSGVO",
+        "terms": "Nutzungsbedingungen"
+    },
+    "home": {
+        "heroTitle": "Finden Sie Ihren treuen Freund",
+        "heroSubtitle": "Tausende Hunde in Tierheimen warten auf eine zweite Chance. Adoptieren Sie Liebe fürs Leben.",
+        "heroButton": "Hunde anzeigen",
+        "stats": {
+            "adopted": "Adoptiert",
+            "shelters": "Tierheime",
+            "waiting": "Warten auf Zuhause"
+        },
+        "quickSearch": {
+            "title": "Schnellsuche",
+            "dogs": "Hunde",
+            "cats": "Katzen",
+            "all": "Alle"
+        },
+        "featured": {
+            "title": "Dringend Zuhause gesucht",
+            "subtitle": "Diese Tiere warten schon zu lange.",
+            "viewAll": "Alle anzeigen",
+            "reserved": "Reserviert"
+        },
+        "foster": {
+            "title": "Pflegestelle gesucht",
+            "description": "Helfen Sie Tieren, die individuelle Betreuung benötigen oder sich von Eingriffen erholen.",
+            "badge": "Pflegestelle",
+            "empty": "Derzeit suchen wir keine Pflegestellen."
+        },
+        "community": {
+            "title": "Werden Sie Teil unserer Gemeinschaft",
+            "description": "Folgen Sie uns in den sozialen Medien für tägliche Dosen von Niedlichkeit, Erfolgsgeschichten und Neuigkeiten.",
+            "facebook": "Auf Facebook folgen",
+            "instagram": "Auf Instagram folgen"
+        },
+        "blog": {
+            "title": "Neues vom Blog",
+            "subtitle": "Nützliche Ratschläge, Tipps und Neuigkeiten aus der Tierwelt.",
+            "tips": "Tipps & Tricks",
+            "viewAll": "Alle Artikel anzeigen",
+            "empty": "Noch keine Artikel."
+        },
+        "partners": {
+            "title": "Unsere Partner & Angebote",
+            "subtitle": "Gönnen Sie Ihren Haustieren das Beste und unterstützen Sie unsere Gemeinschaft."
+        },
+        "virtualAdoption": {
+            "badge": "Fernhilfe",
+            "title": "Können Sie kein Tier aufnehmen?",
+            "description": "Werden Sie virtueller Pate und ändern Sie das Schicksal eines stillen Bittstellers aus dem Tierheim.",
+            "bowl": "Voller Napf",
+            "bowlDesc": "Qualitätsfutter für starke Gesundheit.",
+            "doctor": "Arzt",
+            "doctorDesc": "Tierärztliche Versorgung und Medikamente.",
+            "luck": "Glück",
+            "luckDesc": "Das Gefühl, dass sich jemand kümmert.",
+            "select": "Tier auswählen",
+            "howItWorks": "Wie funktioniert es?",
+            "mock": {
+                "needs": "Sucht Pate",
+                "fulfillment": "Bedürfniserfüllung",
+                "parents": "Hat bereits 3 virtuelle Paten"
+            }
+        }
+    },
+    "gdpr": {
+        "title": "Wir schützen Ihre Privatsphäre",
+        "description": "Unsere Seite verwendet Cookies und verarbeitet personenbezogene Daten für das ordnungsgemäße Funktionieren des Adoptionsprozesses.",
+        "link": "Datenschutzerklärung",
+        "accept": "Ich verstehe und stimme zu",
+        "close": "Schließen"
+    },
+    "assistant": {
+        "title": "Labka Assistent",
+        "subtitle": "Hilft das beste Labka-Match zu finden",
+        "placeholder": "Nachricht schreiben...",
+        "initMessage": "Hallo! 👋 Ich bin dein Labka-Assistent. Wie kann ich dir heute helfen, einen neuen Freund zu finden?",
+        "noPets": "Derzeit keine Tiere verfügbar."
+    },
+    "petDetail": {
+        "notFound": "Tier nicht gefunden.",
+        "backToList": "Zurück zur Liste",
+        "interestButton": "Ich interessiere mich für eine Adoption",
+        "applicationSent": "Antrag gesendet",
+        "virtualAdopt": "Virtuelle Adoption",
+        "ownerEdit": "Ihr Inserat. Bearbeiten",
+        "loginAsUser": "Melden Sie sich als Benutzer an.",
+        "adoptionFee": "Adoptionsgebühr",
+        "story": "Meine Geschichte",
+        "home": "Zuhause",
+        "status": {
+            "suitable": "Geeignet",
+            "unsuitable": "Ungeeignet",
+            "careful": "Vorsichtig"
+        },
+        "activity": "Aktivität",
+        "compatibility": "Verträglichkeit",
+        "children": "Kinder",
+        "dogs": "Hunde",
+        "cats": "Katzen",
+        "health": "Gesundheit",
+        "vaccination": "Impfung",
+        "castration": "Kastration",
+        "microchip": "Mikrochip",
+        "deworming": "Entwurmung",
+        "applicationTitle": "Adoptionsantrag",
+        "submit": "Senden",
+        "close": "Schließen",
+        "success": "Gesendet!",
+        "age": "Alter",
+        "gender": "Geschlecht",
+        "genderLabel": {
+            "male": "Männlich",
+            "female": "Weiblich"
+        },
+        "size": {
+            "label": "Größe",
+            "small": "Klein",
+            "medium": "Mittel",
+            "large": "Groß"
+        },
+        "activityLevels": {
+            "low": "Niedrig",
+            "medium": "Mittel",
+            "high": "Hoch"
+        },
+        "hidden": "Verstecktes Inserat",
+        "loading": "Laden...",
+        "shelter": "Tierheim",
+        "loginToFavorite": "Bitte melden Sie sich an, um Favoriten zu speichern.",
+        "errorSending": "Fehler beim Senden",
+        "importantNotice": "Wichtiger Hinweis",
+        "unspecified": "Nicht angegeben",
+        "unknown": "Unbekannt",
+        "medium": "Mittel",
+        "training": "Erziehung",
+        "toiletTrained": "Stubenrein",
+        "leash": "Leinenführigkeit",
+        "car": "Autofahren",
+        "alone": "Alleine bleiben",
+        "specialNeeds": "Besondere Bedürfnisse",
+        "allergy": "Allergie:",
+        "meds": "Medikamente:",
+        "diet": "Diät:",
+        "suggested": {
+            "title": "Vielleicht suchen Sie gerade diese",
+            "subtitle": "Andere Tiere warten auf ihre Chance.",
+            "viewAll": "Alle Tiere"
+        },
+        "toast": {
+            "addedFavorite": "Zu Favoriten hinzugefügt",
+            "removedFavorite": "Aus Favoriten entfernt"
+        },
+        "yourMessage": "Ihre Nachricht an das Tierheim",
+        "messagePlaceholder": "Erzählen Sie etwas über sich, Ihre Motivation und warum Sie ein großartiger Besitzer wären...",
+        "chooseAmount": "Monatlichen Beitrag wählen",
+        "otherAmount": "Anderer Betrag",
+        "impactTitle": "Wie Ihre Hilfe das Leben von {{name}} verändert?",
+        "recurringDonation": "Monatliche Spende. Jederzeit kündbar.",
+        "continueToPayment": "Weiter zur Zahlung",
+        "invalidAmount": "Bitte geben Sie einen gültigen Betrag ein (min. 1 €)."
+    },
+    "shelterDetail": {
+        "notFound": "Tierheim nicht gefunden",
+        "removed": "Es tut uns leid, aber dieses Profil existiert nicht oder wurde entfernt.",
+        "backHome": "Zurück zur Startseite",
+        "supportButton": "Tierheim unterstützen",
+        "tabs": {
+            "pets": "Tiere",
+            "about": "Über uns",
+            "help": "Unterstützung"
+        },
+        "noPets": "Derzeit keine Tiere",
+        "noPetsDesc": "Dieses Tierheim hat derzeit keine Tiere im Angebot.",
+        "storyTitle": "Unsere Geschichte und Mission",
+        "noStory": "Dieses Tierheim hat noch keine detaillierte Beschreibung hinzugefügt.",
+        "stats": {
+            "adopted": "Neues Zuhause gefunden",
+            "care": "In Pflege",
+            "views": "Profilaufrufe"
+        },
+        "financeTitle": "Finanzielle Unterstützung",
+        "financeDesc": "Beiträge für tierärztliche Versorgung, Medikamente und Futter.",
+        "iban": "IBAN / Kontonummer",
+        "materialHelp": "Sachspenden",
+        "materialDesc": "Dinge, die uns derzeit am meisten fehlen.",
+        "donorTip": "Tipp für Spender",
+        "tipDesc": "Wenn Sie in einem E-Shop bestellen, können Sie die Adresse des Tierheims als Lieferadresse angeben",
+        "buyOnline": "Online kaufen",
+        "deliverPerson": "Persönlich liefern",
+        "contactTitle": "Kontaktieren Sie uns",
+        "email": "E-Mail-Adresse",
+        "phone": "Telefonnummer",
+        "hours": "Öffnungszeiten",
+        "followUs": "Folgen Sie unserer Arbeit",
+        "noSocials": "Derzeit keine sozialen Medien",
+        "verified": "Verifizierter Partner",
+        "copyIban": "IBAN kopiert",
+        "copyAddress": "Adresse kopiert",
+        "priority": {
+            "high": "Hohe Priorität",
+            "medium": "Mittlere Priorität",
+            "low": "Niedrige Priorität"
+        },
+        "suppliesCount_one": "{{count}} Artikel",
+        "suppliesCount_other": "{{count}} Artikel",
+        "noSupplies": "Derzeit keine besonderen Bedürfnisse aufgeführt."
+    },
+    "common": {
+        "yes": "Ja",
+        "no": "Nein",
+        "years_one": "{{count}} Jahr",
+        "years_other": "{{count}} Jahre"
+    },
+    "petStatus": {
+        "reserved": "Reserviert",
+        "adopted": "Adoptiert"
+    }
+}
