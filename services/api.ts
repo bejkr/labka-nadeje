@@ -278,6 +278,11 @@ export const api = {
         if (error) throw error;
     },
 
+    async updatePetStatus(petId: string, status: string) {
+        const { error } = await supabase.from('pets').update({ adoption_status: status }).eq('id', petId);
+        if (error) throw error;
+    },
+
     async deletePet(petId: string) {
         const { error } = await supabase.from('pets').delete().eq('id', petId);
         if (error) throw error;

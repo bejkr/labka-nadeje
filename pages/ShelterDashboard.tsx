@@ -268,8 +268,8 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
                                     </td>
                                     <td className="px-6 py-4 cursor-pointer" onClick={() => handleRowClick(pet.id)}>
                                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${pet.adoptionStatus === 'Available' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                pet.adoptionStatus === 'Reserved' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-                                                    'bg-gray-100 text-gray-600 border-gray-200'
+                                            pet.adoptionStatus === 'Reserved' ? 'bg-orange-50 text-orange-700 border-orange-200' :
+                                                'bg-gray-100 text-gray-600 border-gray-200'
                                             }`}>
                                             {pet.adoptionStatus === 'Available' ? 'Na adopciu' :
                                                 pet.adoptionStatus === 'Reserved' ? 'Rezervovaný' : 'Adoptovaný'}
@@ -346,7 +346,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
 
     if (selectedInquiry) {
         return (
-            <div className="animate-in fade-in slide-in-from-right duration-300 h-full flex flex-col pb-10">
+            <div className="animate-in fade-in slide-in-from-right duration-300 h-full lg:h-[calc(100vh-6rem)] flex flex-col">
                 <div className="flex items-center gap-4 mb-6">
                     <button
                         onClick={() => setSelectedInquiry(null)}
@@ -475,8 +475,8 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                             </div>
                         ) : (
                             <div className={`p-6 rounded-3xl border text-center ${selectedInquiry.status === 'Schválená' ? 'bg-green-50 border-green-100 text-green-700' :
-                                    selectedInquiry.status === 'Zrušená' ? 'bg-gray-50 border-gray-100 text-gray-500' :
-                                        'bg-red-50 border-red-100 text-red-700'
+                                selectedInquiry.status === 'Zrušená' ? 'bg-gray-50 border-gray-100 text-gray-500' :
+                                    'bg-red-50 border-red-100 text-red-700'
                                 }`}>
                                 <div className="text-xs font-black uppercase tracking-widest mb-1">Status žiadosti</div>
                                 <div className="text-xl font-black">{selectedInquiry.status.toUpperCase()}</div>
@@ -488,7 +488,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                     </div>
 
                     {/* Chat - Right Column (7/12) */}
-                    <div className="lg:col-span-7 flex flex-col h-[700px] lg:h-auto">
+                    <div className="lg:col-span-7 flex flex-col h-[700px] lg:h-full overflow-hidden">
                         <ChatWindow
                             inquiryId={selectedInquiry.id}
                             currentUser={currentUser}
@@ -545,9 +545,9 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                         <td className="px-6 py-4"><span className="text-brand-600 font-bold">{inq.petName}</span></td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${inq.status === 'Nová' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                    inq.status === 'Schválená' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                        inq.status === 'Zamietnutá' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                            'bg-gray-100 text-gray-600 border-gray-200'
+                                                inq.status === 'Schválená' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                    inq.status === 'Zamietnutá' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                        'bg-gray-100 text-gray-600 border-gray-200'
                                                 }`}>{inq.status}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right"><ArrowUpRight size={20} className="text-gray-300 group-hover:text-brand-600 inline" /></td>
@@ -640,14 +640,14 @@ const AnalyticsSection = ({ pets, inquiries, virtualParents }: { pets: Pet[], in
                                                 <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
                                                     <div
                                                         className={`h-full transition-all duration-1000 ${parseFloat(successRate) > 10 ? 'bg-green-500' :
-                                                                parseFloat(successRate) > 5 ? 'bg-blue-500' : 'bg-brand-500'
+                                                            parseFloat(successRate) > 5 ? 'bg-blue-500' : 'bg-brand-500'
                                                             }`}
                                                         style={{ width: `${Math.min(parseFloat(successRate) * 5, 100)}%` }}
                                                     ></div>
                                                 </div>
                                                 <span className={`text-xs font-black px-2.5 py-1 rounded-lg border shadow-sm ${parseFloat(successRate) > 10 ? 'bg-green-50 text-green-700 border-green-100' :
-                                                        parseFloat(successRate) > 5 ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                            'bg-brand-50 text-brand-700 border-brand-100'
+                                                    parseFloat(successRate) > 5 ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                        'bg-brand-50 text-brand-700 border-brand-100'
                                                     }`}>
                                                     {successRate}%
                                                 </span>
@@ -794,8 +794,8 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                             type="button"
                             onClick={toggleEmailNotifications}
                             className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.emailNotificationsEnabled
-                                    ? 'bg-brand-600 text-white shadow-lg shadow-brand-200'
-                                    : 'bg-white text-gray-400 border border-gray-200 hover:border-brand-500 hover:text-brand-600'
+                                ? 'bg-brand-600 text-white shadow-lg shadow-brand-200'
+                                : 'bg-white text-gray-400 border border-gray-200 hover:border-brand-500 hover:text-brand-600'
                                 }`}
                         >
                             {formData.emailNotificationsEnabled ? 'Zapnuté' : 'Vypnuté'}
@@ -847,8 +847,8 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                                 onClick={handlePasswordUpdate}
                                 disabled={isPasswordUpdating || !passwordData.newPassword}
                                 className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition ${isPasswordUpdating || !passwordData.newPassword
-                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                        : 'bg-gray-900 text-white hover:bg-black shadow-lg shadow-gray-200'
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-gray-900 text-white hover:bg-black shadow-lg shadow-gray-200'
                                     }`}
                             >
                                 {isPasswordUpdating ? <Loader2 size={18} className="animate-spin" /> : <ShieldCheck size={18} />}
@@ -1207,8 +1207,8 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                                             type="button"
                                             onClick={() => setNewPriority(p.id as any)}
                                             className={`py-2 px-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 group ${newPriority === p.id
-                                                    ? `border-${p.id === 'Vysoká' ? 'red' : p.id === 'Stredná' ? 'amber' : 'green'}-50 shadow-sm`
-                                                    : 'border-gray-100 bg-white hover:border-gray-200'
+                                                ? `border-${p.id === 'Vysoká' ? 'red' : p.id === 'Stredná' ? 'amber' : 'green'}-50 shadow-sm`
+                                                : 'border-gray-100 bg-white hover:border-gray-200'
                                                 }`}
                                         >
                                             <div className={`w-2 h-2 rounded-full ${p.color}`}></div>
@@ -1253,13 +1253,13 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                             <div key={s.id} className="bg-white rounded-2xl p-4 md:p-5 border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md hover:border-brand-100 transition group">
                                 <div className="flex items-center gap-4 min-w-0">
                                     <div className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${s.priority === 'Vysoká' ? 'bg-red-500 shadow-red-100' :
-                                            s.priority === 'Stredná' ? 'bg-amber-500 shadow-amber-100' : 'bg-green-500 shadow-green-100'
+                                        s.priority === 'Stredná' ? 'bg-amber-500 shadow-amber-100' : 'bg-green-500 shadow-green-100'
                                         }`}></div>
                                     <div className="min-w-0">
                                         <div className="font-extrabold text-gray-900 text-base leading-tight group-hover:text-brand-600 transition truncate">{s.item}</div>
                                         <div className="flex items-center gap-3 mt-1.5">
                                             <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${s.priority === 'Vysoká' ? 'bg-red-50 text-red-600 border-red-100' :
-                                                    s.priority === 'Stredná' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-green-50 text-green-600 border-green-100'
+                                                s.priority === 'Stredná' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-green-50 text-green-600 border-green-100'
                                                 }`}>
                                                 {s.priority} priorita
                                             </span>

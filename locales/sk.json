@@ -136,7 +136,12 @@
             "male": "Samec",
             "female": "Samica"
         },
-        "size": "Veľkosť",
+        "size": {
+            "label": "Veľkosť",
+            "small": "Malý",
+            "medium": "Stredný",
+            "large": "Veľký"
+        },
         "activityLevels": {
             "low": "Nízka",
             "medium": "Stredná",

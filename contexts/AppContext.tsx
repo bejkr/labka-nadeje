@@ -116,12 +116,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setInquiries(prev => prev.map(i => i.id === id ? { ...i, status } : i));
 
       if (status === 'Schválená') {
-        await refreshPets();
-        showToast("Žiadosť schválená. Zviera označené ako rezervované.", "success");
+        const inquiry = inquiries.find(i => i.id === id);
+        if (inquiry && inquiry.petId) {
+          await api.updatePetStatus(inquiry.petId, 'Adopted');
+          await refreshPets();
+          showToast("Žiadosť schválená. Zvieratko bolo označené ako ADOPTOVANÉ.", "success");
+        }
       }
-    } catch (e) {
-      console.error(e);
-      showToast("Chyba pri aktualizácii statusu", "error");
+    } catch (e: any) {
+      console.error("Update status error:", e);
+      showToast(e.message || "Chyba pri aktualizácii statusu", "error");
+      throw e;
     }
   };
 
