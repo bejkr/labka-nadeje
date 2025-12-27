@@ -27,7 +27,7 @@ const StatCard = ({ label, value, icon: Icon, color, subtext }: any) => (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition duration-300">
         <div className="flex justify-between items-start">
             <div>
-                <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">{label}</p>
+                <p className="text-gray-500 text-sm font-bold mb-1">{label}</p>
                 <h3 className="text-3xl font-extrabold text-gray-900">{value}</h3>
                 {subtext && <p className={`text-xs mt-2 font-medium ${color.text}`}>{subtext}</p>}
             </div>
@@ -242,11 +242,11 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
                     <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50/80 text-gray-500 border-b border-gray-100">
                             <tr>
-                                <th className="px-6 py-4 font-bold uppercase text-xs tracking-wider">Zviera</th>
-                                <th className="px-6 py-4 font-bold uppercase text-xs tracking-wider">Detaily</th>
-                                <th className="px-6 py-4 font-bold uppercase text-xs tracking-wider">Status</th>
-                                <th className="px-6 py-4 font-bold uppercase text-xs tracking-wider">Viditeľnosť</th>
-                                <th className="px-6 py-4 font-bold uppercase text-xs tracking-wider text-right">Akcia</th>
+                                <th className="px-6 py-4 font-bold text-xs">Zviera</th>
+                                <th className="px-6 py-4 font-bold text-xs">Detaily</th>
+                                <th className="px-6 py-4 font-bold text-xs">Status</th>
+                                <th className="px-6 py-4 font-bold text-xs">Viditeľnosť</th>
+                                <th className="px-6 py-4 font-bold text-xs text-right">Akcia</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -370,7 +370,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                     <img src={inquiryPet?.imageUrl} className="w-full h-full object-cover" alt="" />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Záujem o zvieratko</div>
+                                    <div className="text-[10px] text-gray-400 font-bold">Záujem o zvieratko</div>
                                     <div className="font-extrabold text-gray-900 text-xl">{selectedInquiry.petName}</div>
                                 </div>
                             </div>
@@ -404,11 +404,11 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                     <h3 className="text-gray-900 font-bold mb-4 flex items-center gap-2"><Home size={20} className="text-brand-500" /> Domácnosť a bývanie</h3>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                            <div className="text-[10px] text-gray-400 font-bold uppercase mb-1">Typ bývania</div>
+                                            <div className="text-[10px] text-gray-400 font-bold mb-1">Typ bývania</div>
                                             <div className="text-sm font-black text-gray-800">{applicant.household.housingType}</div>
                                         </div>
                                         <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                            <div className="text-[10px] text-gray-400 font-bold uppercase mb-1">Práca</div>
+                                            <div className="text-[10px] text-gray-400 font-bold mb-1">Práca</div>
                                             <div className="text-sm font-black text-gray-800">{applicant.household.workMode}</div>
                                         </div>
                                         <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center justify-between">
@@ -431,7 +431,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                 <div>
                                     <h3 className="text-gray-900 font-bold mb-4 flex items-center gap-2"><Award size={20} className="text-brand-500" /> Skúsenosti</h3>
                                     <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                                        <div className="text-[10px] text-blue-500 font-bold uppercase tracking-wider mb-1">Úroveň kynológa</div>
+                                        <div className="text-[10px] text-blue-500 font-bold mb-1">Úroveň kynológa</div>
                                         <div className="text-sm font-black text-blue-900">{applicant.household.experienceLevel}</div>
                                     </div>
                                 </div>
@@ -469,7 +469,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                 >
                                     <XCircle size={20} /> Zamietnuť žiadosť
                                 </button>
-                                <p className="text-[10px] text-gray-400 text-center uppercase tracking-widest mt-4">
+                                <p className="text-[10px] text-gray-400 text-center mt-4">
                                     Schválenie označí zvieratko ako rezervované
                                 </p>
                             </div>
@@ -478,7 +478,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                 selectedInquiry.status === 'Zrušená' ? 'bg-gray-50 border-gray-100 text-gray-500' :
                                     'bg-red-50 border-red-100 text-red-700'
                                 }`}>
-                                <div className="text-xs font-black uppercase tracking-widest mb-1">Status žiadosti</div>
+                                <div className="text-xs font-black mb-1">Status žiadosti</div>
                                 <div className="text-xl font-black">{selectedInquiry.status.toUpperCase()}</div>
                                 {selectedInquiry.status === 'Zrušená' && (
                                     <p className="text-xs font-bold text-gray-400 mt-2 italic">Tento dopyt bol zrušený záujemcom.</p>
@@ -533,7 +533,7 @@ const InquiriesSection = ({ inquiries, updateStatus, markInquiryAsRead, shelter,
                                         <td className={`px-6 py-4 ${isUnread ? 'font-black text-gray-900' : 'font-bold text-gray-700'}`}>
                                             <div className="flex items-center gap-3">
                                                 {hasChatUnread ? (
-                                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-100 text-blue-700 text-[10px] font-black uppercase shadow-sm">
+                                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-100 text-blue-700 text-[10px] font-black shadow-sm">
                                                         <MessageSquare size={10} fill="currentColor" /> Nová správa
                                                     </div>
                                                 ) : isNewNotSeen && (
@@ -602,7 +602,7 @@ const AnalyticsSection = ({ pets, inquiries, virtualParents }: { pets: Pet[], in
                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                         <ChartIcon size={20} className="text-brand-600" /> Live výkonnosť inzerátov
                     </h3>
-                    <div className="flex items-center gap-2 text-[10px] text-green-600 font-bold uppercase tracking-widest bg-green-50 px-2 py-1 rounded-lg border border-green-100 animate-pulse">
+                    <div className="flex items-center gap-2 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded-lg border border-green-100 animate-pulse">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                         Live dáta
                     </div>
@@ -611,10 +611,10 @@ const AnalyticsSection = ({ pets, inquiries, virtualParents }: { pets: Pet[], in
                     <table className="w-full text-left text-sm">
                         <thead className="bg-white text-gray-400 border-b border-gray-100">
                             <tr>
-                                <th className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest">Zviera</th>
-                                <th className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-center">Videnia</th>
-                                <th className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-center">Dopyty</th>
-                                <th className="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-right">Miera úspešnosti</th>
+                                <th className="px-6 py-4 font-bold text-[10px]">Zviera</th>
+                                <th className="px-6 py-4 font-bold text-[10px] text-center">Videnia</th>
+                                <th className="px-6 py-4 font-bold text-[10px] text-center">Dopyty</th>
+                                <th className="px-6 py-4 font-bold text-[10px] text-right">Miera úspešnosti</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
@@ -793,7 +793,7 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                         <button
                             type="button"
                             onClick={toggleEmailNotifications}
-                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.emailNotificationsEnabled
+                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black transition-all ${formData.emailNotificationsEnabled
                                 ? 'bg-brand-600 text-white shadow-lg shadow-brand-200'
                                 : 'bg-white text-gray-400 border border-gray-200 hover:border-brand-500 hover:text-brand-600'
                                 }`}
@@ -813,7 +813,7 @@ const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
                 </div>
                 <div className="border-t border-gray-100 pt-8 mt-8 space-y-6">
                     <h3 className="font-bold text-gray-900 flex items-center gap-2 text-lg"><CreditCard size={20} className="text-brand-500" /> Podpora</h3>
-                    <div><label className="block text-sm font-bold text-gray-700 mb-2">Číslo účtu (IBAN) pre dary</label><input name="bankAccount" type="text" value={formData.bankAccount || ''} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-mono tracking-wider focus:ring-2 focus:ring-brand-500 outline-none" placeholder="SK..." /></div>
+                    <div><label className="block text-sm font-bold text-gray-700 mb-2">Číslo účtu (IBAN) pre dary</label><input name="bankAccount" type="text" value={formData.bankAccount || ''} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 font-mono focus:ring-2 focus:ring-brand-500 outline-none" placeholder="SK..." /></div>
                 </div>
 
                 <div className="border-t border-gray-100 pt-8 mt-8">
@@ -964,7 +964,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                         </div>
                         <form onSubmit={handleAdd} className="p-6 space-y-5">
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Meno a priezvisko</label>
+                                <label className="block text-[10px] font-black text-gray-400 mb-2 ml-1">Meno a priezvisko</label>
                                 <div className="relative group">
                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors">
                                         <User size={16} />
@@ -980,7 +980,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Kontaktný Email</label>
+                                <label className="block text-[10px] font-black text-gray-400 mb-2 ml-1">Kontaktný Email</label>
                                 <div className="relative group">
                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors">
                                         <Mail size={16} />
@@ -997,7 +997,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                             </div>
 
                             <div>
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Hlavná Rola</label>
+                                <label className="block text-[10px] font-black text-gray-400 mb-2 ml-1">Hlavná Rola</label>
                                 <select
                                     value={newRole}
                                     onChange={e => setNewRole(e.target.value)}
@@ -1010,7 +1010,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !newName.trim()}
-                                className="w-full bg-brand-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-brand-700 shadow-xl shadow-brand-200 transition transform hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full bg-brand-600 text-white py-4 rounded-2xl font-black text-[11px] hover:bg-brand-700 shadow-xl shadow-brand-200 transition transform hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
                                 Pridať do tímu
@@ -1030,7 +1030,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                 {/* List column (8/12) */}
                 <div className="lg:col-span-8 space-y-4">
                     <div className="flex items-center justify-between px-2 mb-2">
-                        <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Aktívni pomocníci ({volunteers.length})</h3>
+                        <h3 className="text-[11px] font-black text-gray-400">Aktívni pomocníci ({volunteers.length})</h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1054,7 +1054,7 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
                                     </div>
 
                                     <div className="mt-4 pt-4 border-t border-gray-50 flex items-center justify-between">
-                                        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase border ${roleData.bg} ${roleData.color} border-transparent`}>
+                                        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black border ${roleData.bg} ${roleData.color} border-transparent`}>
                                             <RoleIcon size={12} />
                                             {v.role}
                                         </div>
@@ -1169,7 +1169,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                         </div>
                         <form onSubmit={handleAdd} className="p-6 space-y-5">
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Názov položky</label>
+                                <label className="block text-xs font-black text-gray-400 mb-2 ml-1">Názov položky</label>
                                 <input
                                     required
                                     placeholder="Napr. Deky, Granule pre seniorov..."
@@ -1180,7 +1180,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Odkaz na produkt (voliteľné)</label>
+                                <label className="block text-xs font-black text-gray-400 mb-2 ml-1">Odkaz na produkt (voliteľné)</label>
                                 <div className="relative group">
                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors">
                                         <LinkIcon size={16} />
@@ -1195,7 +1195,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Priorita</label>
+                                <label className="block text-xs font-black text-gray-400 mb-3 ml-1">Priorita</label>
                                 <div className="grid grid-cols-3 gap-3">
                                     {[
                                         { id: 'Vysoká', color: 'bg-red-500', text: 'text-red-500' },
@@ -1212,7 +1212,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                                                 }`}
                                         >
                                             <div className={`w-2 h-2 rounded-full ${p.color}`}></div>
-                                            <span className={`text-[10px] font-black uppercase tracking-tighter ${newPriority === p.id ? p.text : 'text-gray-400'}`}>{p.id}</span>
+                                            <span className={`text-[10px] font-black ${newPriority === p.id ? p.text : 'text-gray-400'}`}>{p.id}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -1221,7 +1221,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                             <button
                                 type="submit"
                                 disabled={loading || !newItem.trim()}
-                                className="w-full bg-brand-600 text-white py-4 rounded-2xl font-black uppercase tracking-[0.1em] text-xs hover:bg-brand-700 shadow-xl shadow-brand-200 transition transform hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full bg-brand-600 text-white py-4 rounded-2xl font-black text-xs hover:bg-brand-700 shadow-xl shadow-brand-200 transition transform hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
                                 Pridať do zoznamu
@@ -1245,7 +1245,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                 {/* List column (7/12) */}
                 <div className="lg:col-span-7 space-y-4">
                     <div className="flex items-center justify-between px-2 mb-2">
-                        <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">Aktuálne potreby ({supplies.length})</h3>
+                        <h3 className="text-sm font-black text-gray-400">Aktuálne potreby ({supplies.length})</h3>
                     </div>
 
                     <div className="space-y-3">
@@ -1258,7 +1258,7 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
                                     <div className="min-w-0">
                                         <div className="font-extrabold text-gray-900 text-base leading-tight group-hover:text-brand-600 transition truncate">{s.item}</div>
                                         <div className="flex items-center gap-3 mt-1.5">
-                                            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${s.priority === 'Vysoká' ? 'bg-red-50 text-red-600 border-red-100' :
+                                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-md border ${s.priority === 'Vysoká' ? 'bg-red-50 text-red-600 border-red-100' :
                                                 s.priority === 'Stredná' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-green-50 text-green-600 border-green-100'
                                                 }`}>
                                                 {s.priority} priorita

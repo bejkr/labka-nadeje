@@ -412,7 +412,7 @@ const PetDetailPage: React.FC = () => {
                 {isRegularUser && (
                     <div className="mb-8 p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
                         <div className="flex items-center justify-between mb-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Labka Zhoda</span>
+                            <span className="text-[10px] font-black text-gray-400">Labka Zhoda</span>
                             {isAnalyzingMatch ? (
                                 <Loader2 size={14} className="animate-spin text-gray-400" />
                             ) : (
@@ -439,15 +439,15 @@ const PetDetailPage: React.FC = () => {
 
                 <div className="flex justify-center gap-4 mb-8">
                     <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.age')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.age')}</div>
                         <div className="font-bold text-gray-900">{t('common.years', { count: pet.age })}</div>
                     </div>
                     <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.gender')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.gender')}</div>
                         <div className="font-bold text-gray-900">{t(`petDetail.genderLabel.${pet.gender === Gender.MALE ? 'male' : 'female'}`)}</div>
                     </div>
                     <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.size.label')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.size.label')}</div>
                         <div className="font-bold text-gray-900">{getSizeLabel(pet.size)}</div>
                     </div>
                 </div>
@@ -478,7 +478,7 @@ const PetDetailPage: React.FC = () => {
                 )}
                 {pet.adoptionFee > 0 && (
                     <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-                        <p className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.adoptionFee')}</p>
+                        <p className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.adoptionFee')}</p>
                         <p className="text-2xl font-extrabold text-gray-900">{pet.adoptionFee} €</p>
                     </div>
                 )}
@@ -489,7 +489,7 @@ const PetDetailPage: React.FC = () => {
                         {shelter?.logoUrl ? <img src={shelter.logoUrl} alt="" className="w-full h-full object-contain" /> : <Building2 size={24} className="text-gray-300" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-0.5">{t('petDetail.shelter')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-0.5">{t('petDetail.shelter')}</div>
                         <h4 className="font-bold text-gray-900 truncate group-hover:text-brand-600">{shelter?.name || t('petDetail.loading')}</h4>
                     </div>
                     <ChevronRight className="text-gray-300" />
@@ -563,7 +563,7 @@ const PetDetailPage: React.FC = () => {
                                 <div className="mb-8 p-6 bg-amber-50 border-l-4 border-amber-500 rounded-r-2xl flex gap-4 animate-in slide-in-from-left duration-500">
                                     <AlertCircle className="text-amber-600 flex-shrink-0" size={24} />
                                     <div>
-                                        <h4 className="font-extrabold text-amber-900 text-sm uppercase tracking-wider mb-1">{t('petDetail.importantNotice')}</h4>
+                                        <h4 className="font-extrabold text-amber-900 text-sm mb-1">{t('petDetail.importantNotice')}</h4>
                                         <p className="text-amber-800 text-sm leading-relaxed">{translatedHealth?.importantNotes || pet.importantNotes}</p>
                                     </div>
                                 </div>
@@ -594,9 +594,9 @@ const PetDetailPage: React.FC = () => {
                                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2"><HomeIcon size={20} className="text-brand-600" /> {t('petDetail.home')}</h3>
                                 <div className="space-y-6">
                                     <div>
-                                        <div className="text-xs font-bold text-green-600 uppercase mb-2 flex items-center gap-1"><CheckCircle size={12} /> {t('petDetail.status.suitable')}</div>
+                                        <div className="text-xs font-bold text-green-600 mb-2 flex items-center gap-1"><CheckCircle size={12} /> {t('petDetail.status.suitable')}</div>
                                         <div className="flex flex-wrap gap-2">
-                                            {pet.requirements?.suitableFor?.map(tag => <span key={tag} className="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-[10px] font-bold uppercase tracking-wider">{tag}</span>)}
+                                            {pet.requirements?.suitableFor?.map(tag => <span key={tag} className="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-[10px] font-bold">{tag}</span>)}
                                             {(!pet.requirements?.suitableFor || pet.requirements?.suitableFor.length === 0) && <span className="text-xs text-gray-400">{t('petDetail.unspecified')}</span>}
                                         </div>
                                     </div>
@@ -645,7 +645,7 @@ const PetDetailPage: React.FC = () => {
                                 </div>
                                 {(pet.health?.medication || pet.health?.diet || pet.health?.hasAllergies) && (
                                     <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
-                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('petDetail.specialNeeds')}</p>
+                                        <p className="text-[10px] font-bold text-gray-400">{t('petDetail.specialNeeds')}</p>
                                         {pet.health?.hasAllergies && (
                                             <div className="flex items-start gap-2 text-xs">
                                                 <AlertCircle size={14} className="text-red-500 mt-0.5" />
@@ -690,16 +690,16 @@ const PetDetailPage: React.FC = () => {
                                 <Link key={p.id} to={`/pets/${p.id}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
                                     <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                                         <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover transition duration-700 group-hover:scale-110" />
-                                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-black uppercase text-gray-700 shadow-sm border border-gray-100">
+                                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-black text-gray-700 shadow-sm border border-gray-100">
                                             {t('common.years', { count: p.age })}
                                         </div>
                                     </div>
                                     <div className="p-5 flex-1 flex flex-col">
                                         <div className="flex justify-between items-start mb-2">
                                             <h3 className="font-extrabold text-gray-900 group-hover:text-brand-600 transition truncate">{p.name}</h3>
-                                            <div className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md uppercase">{p.type}</div>
+                                            <div className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">{p.type}</div>
                                         </div>
-                                        <p className="text-gray-400 text-xs font-bold uppercase tracking-tight mb-4">{p.breed}</p>
+                                        <p className="text-gray-400 text-xs font-bold mb-4">{p.breed}</p>
                                         <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between text-[11px] font-bold text-gray-500">
                                             <span className="flex items-center gap-1"><MapPin size={12} className="text-brand-500" /> {p.location}</span>
                                             <GenderLabel gender={p.gender} />
@@ -764,15 +764,15 @@ const PetDetailPage: React.FC = () => {
                             <div className="space-y-4 mb-10">
                                 <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
                                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm"><Utensils size={20} /></div>
-                                    <span className="text-xs font-bold text-gray-700 uppercase leading-tight">Zabezpečíte plnú <br />misku krmiva</span>
+                                    <span className="text-xs font-bold text-gray-700 leading-tight">Zabezpečíte plnú <br />misku krmiva</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
                                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Stethoscope size={20} /></div>
-                                    <span className="text-xs font-bold text-gray-700 uppercase leading-tight">Umožníte dôležitú <br />veterinárnu starostlivosť</span>
+                                    <span className="text-xs font-bold text-gray-700 leading-tight">Umožníte dôležitú <br />veterinárnu starostlivosť</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
                                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-pink-600 shadow-sm"><Star size={20} /></div>
-                                    <span className="text-xs font-bold text-gray-700 uppercase leading-tight">Darujete šťastnejší <br />život v útulku</span>
+                                    <span className="text-xs font-bold text-gray-700 leading-tight">Darujete šťastnejší <br />život v útulku</span>
                                 </div>
                             </div>
 
@@ -902,7 +902,7 @@ const PetDetailPage: React.FC = () => {
 
                                 <div className="p-8 space-y-6">
                                     <div>
-                                        <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">{t('petDetail.yourMessage')}</label>
+                                        <label className="block text-xs font-black text-gray-400 mb-2 ml-1">{t('petDetail.yourMessage')}</label>
                                         <textarea
                                             required
                                             className="w-full border border-gray-200 rounded-[1.5rem] p-4 h-40 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none text-sm font-medium transition-all bg-gray-50/30"
@@ -963,7 +963,7 @@ const PetDetailPage: React.FC = () => {
 
                         <div className="p-8 space-y-8">
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1">{t('petDetail.chooseAmount')}</label>
+                                <label className="block text-xs font-bold text-gray-400 mb-4 ml-1">{t('petDetail.chooseAmount')}</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     {[
                                         { val: 5, desc: 'Základná strava' },
@@ -981,7 +981,7 @@ const PetDetailPage: React.FC = () => {
                                             <div className={`text-xl font-black mb-1 ${selectedAmount === item.val && !customAmount ? 'text-brand-600' : 'text-gray-900'}`}>
                                                 {item.val} €
                                             </div>
-                                            <div className="text-[10px] font-bold text-gray-400 uppercase group-hover:text-gray-500">{item.desc}</div>
+                                            <div className="text-[10px] font-bold text-gray-400 group-hover:text-gray-500">{item.desc}</div>
                                         </button>
                                     ))}
                                 </div>
@@ -1007,15 +1007,15 @@ const PetDetailPage: React.FC = () => {
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="flex flex-col items-center gap-2 text-center">
                                         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm"><Utensils size={20} /></div>
-                                        <span className="text-[10px] font-bold text-blue-800 uppercase leading-tight">Plná miska <br />denne</span>
+                                        <span className="text-[10px] font-bold text-blue-800 leading-tight">Plná miska <br />denne</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-2 text-center">
                                         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Stethoscope size={20} /></div>
-                                        <span className="text-[10px] font-bold text-blue-800 uppercase leading-tight">Veterinárna <br />kontrola</span>
+                                        <span className="text-[10px] font-bold text-blue-800 leading-tight">Veterinárna <br />kontrola</span>
                                     </div>
                                     <div className="flex flex-col items-center gap-2 text-center">
                                         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Heart size={20} /></div>
-                                        <span className="text-[10px] font-bold text-blue-800 uppercase leading-tight">Lepší život <br />v útulku</span>
+                                        <span className="text-[10px] font-bold text-blue-800 leading-tight">Lepší život <br />v útulku</span>
                                     </div>
                                 </div>
                             </div>

@@ -170,8 +170,8 @@ const HomePage: React.FC = () => {
             <div className="text-center lg:text-left animate-in slide-in-from-bottom-10 duration-700">
 
               <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 leading-[1.1]">
-                {t('home.heroTitle')}
-                <span className="relative inline-block text-brand-600">
+                {t('home.heroTitleStart')} <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-600">
+                  {t('home.heroTitleEnd')}
                   <svg className="absolute w-full h-3 -bottom-1 left-0 text-brand-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
                   </svg>
@@ -211,7 +211,7 @@ const HomePage: React.FC = () => {
 
               {/* REPLACEMENT: Quick Categories instead of Social Proof */}
               <div className="flex flex-col items-center lg:items-start gap-4 animate-in fade-in duration-1000 delay-500">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">{t('home.quickSearch.title')}</p>
+                <p className="text-[10px] font-black text-gray-400 ml-1">{t('home.quickSearch.title')}</p>
                 <div className="flex flex-wrap justify-center lg:justify-start gap-3">
                   <Link to="/pets?type=Pes" className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-brand-300 hover:text-brand-600 hover:shadow-md transition group">
                     <div className="p-1.5 bg-brand-50 rounded-lg group-hover:bg-brand-100 transition"><Dog size={16} className="text-brand-600" /></div>
@@ -271,7 +271,7 @@ const HomePage: React.FC = () => {
                             <PetIcon size={24} />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-bold uppercase">Meno</p>
+                            <p className="text-xs text-gray-500 font-bold">Meno</p>
                             <p className="text-lg font-extrabold text-gray-900">{pet.name.replace(/\*\*/g, '')}</p>
                           </div>
                         </div>
@@ -282,7 +282,7 @@ const HomePage: React.FC = () => {
                             <Sparkles size={24} fill="currentColor" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-bold uppercase">{formatSlovakAge(pet.age)}</p>
+                            <p className="text-xs text-gray-500 font-bold">{formatSlovakAge(pet.age)}</p>
                             <p className="text-sm font-extrabold text-gray-900">{pet.breed}</p>
                           </div>
                         </div>
@@ -382,7 +382,7 @@ const HomePage: React.FC = () => {
                   </div>
                   {pet.adoptionStatus === 'Reserved' && (
                     <div className="absolute top-4 left-4">
-                      <span className="bg-orange-500 text-white px-3 py-1 rounded-xl font-bold uppercase tracking-wider text-xs shadow-lg">Rezervovaný</span>
+                      <span className="bg-orange-500 text-white px-3 py-1 rounded-xl font-bold text-xs shadow-lg">Rezervovaný</span>
                     </div>
                   )}
                 </div>
@@ -390,13 +390,13 @@ const HomePage: React.FC = () => {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-extrabold text-gray-900 group-hover:text-brand-600 transition">{pet.name.replace(/\*\*/g, '')}</h3>
-                    <span className="text-xs font-bold text-brand-700 bg-brand-100 px-2.5 py-1 rounded-lg uppercase tracking-wide">{pet.breed}</span>
+                    <span className="text-xs font-bold text-brand-700 bg-brand-100 px-2.5 py-1 rounded-lg">{pet.breed}</span>
                   </div>
                   <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed">
                     {pet.description.replace(/\*\*/g, '')}
                   </p>
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center text-gray-400 text-xs font-bold uppercase tracking-wider">
+                    <div className="flex items-center text-gray-400 text-xs font-bold">
                       <MapPin size={14} className="mr-1.5" />
                       {pet.location}
                     </div>
@@ -435,20 +435,20 @@ const HomePage: React.FC = () => {
                     alt={pet.name}
                     className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-md uppercase tracking-wide">
+                  <div className="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-md">
                     Dočasná opatera
                   </div>
                 </div>
                 <div className="p-6 bg-indigo-50/30">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-extrabold text-gray-900 group-hover:text-indigo-600 transition">{pet.name.replace(/\*\*/g, '')}</h3>
-                    <span className="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-lg uppercase tracking-wide">{pet.breed}</span>
+                    <span className="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-lg">{pet.breed}</span>
                   </div>
                   <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed">
                     {pet.description.replace(/\*\*/g, '')}
                   </p>
                   <div className="flex items-center justify-between pt-4 border-t border-indigo-100">
-                    <div className="flex items-center text-gray-400 text-xs font-bold uppercase tracking-wider">
+                    <div className="flex items-center text-gray-400 text-xs font-bold">
                       <MapPin size={14} className="mr-1.5" />
                       {pet.location}
                     </div>
@@ -515,7 +515,7 @@ const HomePage: React.FC = () => {
                   </div>
                   <div className="flex-1 p-8 flex flex-col justify-between">
                     <div className="flex-1">
-                      <p className="text-xs font-bold text-brand-600 uppercase tracking-wider mb-3">
+                      <p className="text-xs font-bold text-brand-600 mb-3">
                         {t('home.blog.tips')}
                       </p>
                       <p className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-brand-600 transition">
@@ -580,7 +580,7 @@ const HomePage: React.FC = () => {
                   {/* Left Content */}
                   <div className={`md:w-1/2 p-8 md:p-12 flex flex-col justify-center ${colors.bg}`}>
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="bg-white/80 backdrop-blur text-gray-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm border border-gray-100">
+                      <span className="bg-white/80 backdrop-blur text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-gray-100">
                         {slide.badge}
                       </span>
                     </div>
@@ -649,7 +649,7 @@ const HomePage: React.FC = () => {
                 <div className="lg:col-span-7">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 mb-8 animate-in slide-in-from-bottom duration-500">
                     <Sparkles className="text-yellow-300" size={20} />
-                    <span className="text-sm font-black uppercase tracking-[0.2em]">{t('home.virtualAdoption.badge')}</span>
+                    <span className="text-sm font-black">{t('home.virtualAdoption.badge')}</span>
                   </div>
 
                   <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tight">
@@ -688,13 +688,13 @@ const HomePage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-5">
                     <Link
                       to="/pets"
-                      className="inline-flex items-center justify-center px-10 py-5 bg-white text-brand-700 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-brand-50 transition shadow-2xl shadow-brand-900/40 transform hover:-translate-y-1 active:scale-95 group"
+                      className="inline-flex items-center justify-center px-10 py-5 bg-white text-brand-700 font-black text-xs rounded-2xl hover:bg-brand-50 transition shadow-2xl shadow-brand-900/40 transform hover:-translate-y-1 active:scale-95 group"
                     >
                       {t('home.virtualAdoption.select')} <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                     <Link
                       to="/support"
-                      className="inline-flex items-center justify-center px-10 py-5 bg-transparent text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-white/10 transition border-2 border-white/30 hover:border-white active:scale-95"
+                      className="inline-flex items-center justify-center px-10 py-5 bg-transparent text-white font-black text-xs rounded-2xl hover:bg-white/10 transition border-2 border-white/30 hover:border-white active:scale-95"
                     >
                       {t('home.virtualAdoption.howItWorks')}
                     </Link>
@@ -716,7 +716,7 @@ const HomePage: React.FC = () => {
                           alt="Caked dog"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
+                        <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-xl text-[10px] font-black shadow-lg">
                           {t('home.virtualAdoption.mock.needs')}
                         </div>
                       </div>
@@ -725,7 +725,7 @@ const HomePage: React.FC = () => {
                         <div className="flex justify-between items-center">
                           <div>
                             <h3 className="text-2xl font-black tracking-tight text-gray-900">Bak</h3>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Kríženec • 8 rokov</p>
+                            <p className="text-xs font-bold text-gray-400">Kríženec • 8 rokov</p>
                           </div>
                           <div className="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 shadow-inner">
                             <Heart size={24} fill="currentColor" />
@@ -734,7 +734,7 @@ const HomePage: React.FC = () => {
 
                         {/* Progress Simulation */}
                         <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                          <div className="flex justify-between text-[10px] font-black uppercase text-gray-400 mb-2">
+                          <div className="flex justify-between text-[10px] font-black text-gray-400 mb-2">
                             <span>{t('home.virtualAdoption.mock.fulfillment')}</span>
                             <span className="text-brand-600">65%</span>
                           </div>

@@ -24,7 +24,8 @@
         "terms": "Podmienky používania"
     },
     "home": {
-        "heroTitle": "Nájdite svojho verného priateľa",
+        "heroTitleStart": "Nájdite svojho",
+        "heroTitleEnd": "verného priateľa",
         "heroSubtitle": "Tisíce psíkov v útulkoch čakajú na druhú šancu. Adoptujte si lásku na celý život.",
         "heroButton": "Zobraziť psíkov",
         "stats": {

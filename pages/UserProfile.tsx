@@ -8,7 +8,7 @@ import {
     Heart, Edit2, Trash2, Home as HomeIcon, Clock, CheckCircle,
     Dog, Lock, LogOut, X,
     User as UserIcon, Loader2,
-    ChevronRight, Sparkles, Camera, Filter, Settings, Activity,
+    ChevronRight, ChevronDown, Sparkles, Camera, Filter, Settings, Activity,
     Smile, Zap, Target, ArrowLeft, MessageCircle,
     Baby, Award, Briefcase, MapPin, Mail, Phone, Coins, ExternalLink, Ruler, Building2, Trophy,
     ListTodo, Info, ShieldCheck, Star, ArrowUpRight,
@@ -19,27 +19,28 @@ import { User, PetType, Size, Gender, HousingType, WorkMode, ExperienceLevel, Us
 import ConfirmationModal from '../components/ConfirmationModal';
 import ChatWindow from '../components/ChatWindow';
 import { api } from '../services/api';
-import { formatSlovakAge } from '../utils/formatters';
+
 
 const PreferenceChip: React.FC<{ label: string, active: boolean, onClick?: () => void, variant?: 'brand' | 'blue' | 'purple' | 'green' | 'gray' }> = ({ label, active, onClick, variant = 'brand' }) => {
     const colors = {
-        brand: active ? 'bg-brand-600 border-brand-600 text-white' : 'bg-white border-gray-100 text-gray-500 hover:border-brand-200',
-        blue: active ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-100 text-gray-500 hover:border-blue-200',
-        purple: active ? 'bg-purple-600 border-purple-600 text-white' : 'bg-white border-gray-100 text-gray-500 hover:border-purple-200',
-        green: active ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-100 text-gray-500 hover:border-green-200',
-        gray: active ? 'bg-gray-700 border-gray-700 text-white' : 'bg-gray-50 border-gray-100 text-gray-400'
+        brand: active ? 'bg-brand-600 border-brand-600 text-white shadow-brand-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-brand-200 hover:text-brand-600 hover:bg-brand-50',
+        blue: active ? 'bg-blue-600 border-blue-600 text-white shadow-blue-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50',
+        purple: active ? 'bg-purple-600 border-purple-600 text-white shadow-purple-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-purple-200 hover:text-purple-600 hover:bg-purple-50',
+        green: active ? 'bg-green-600 border-green-600 text-white shadow-green-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-green-200 hover:text-green-600 hover:bg-green-50',
+        gray: active ? 'bg-gray-800 border-gray-800 text-white' : 'bg-gray-100 border-gray-200 text-gray-400'
     };
     return (
         <button
             type="button"
             onClick={onClick}
             disabled={!onClick}
-            className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${colors[variant]} ${!onClick ? 'cursor-default' : ''}`}
+            className={`px-5 py-2.5 rounded-2xl text-[11px] font-black border-2 transition-all duration-300 transform active:scale-95 ${colors[variant]} ${!onClick ? 'cursor-default' : ''}`}
         >
             {label}
         </button>
     );
 };
+
 
 const UserProfilePage: React.FC = () => {
     const { currentUser, userRole, logout, toggleFavorite, updateUserProfile, resetPassword, isFavorite } = useAuth();
@@ -238,563 +239,551 @@ const UserProfilePage: React.FC = () => {
 
     const getStatusInfo = (status: string) => {
         switch (status) {
-            case 'Schválená': return { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-100', dot: 'bg-green-500' };
-            case 'Zamietnutá': return { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-100', dot: 'bg-red-500' };
-            case 'Zrušená': return { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', dot: 'bg-gray-400' };
-            case 'Kontaktovaný': return { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-100', dot: 'bg-indigo-500' };
-            default: return { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-100', dot: 'bg-blue-500' };
+            case 'Schválená': return { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', dot: 'bg-green-500' };
+            case 'Zamietnutá': return { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', dot: 'bg-red-500' };
+            case 'Zrušená': return { bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200', dot: 'bg-gray-400' };
+            case 'Kontaktovaný': return { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200', dot: 'bg-purple-500' };
+            default: return { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', dot: 'bg-blue-500' };
         }
     };
 
     return (
-        <div className="bg-gray-50 min-h-screen py-8 md:py-12 text-gray-900 font-sans">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-[#FAFAFA] min-h-screen text-gray-900 font-sans pb-20">
+            {/* LARGE HERO HEADER WITH GLASSMORPHISM */}
+            <div className="relative bg-white pt-10 pb-20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-600 via-purple-600 to-indigo-700 opacity-[0.03]"></div>
+                <div className="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-brand-50/50 to-transparent pointer-events-none"></div>
 
-                {/* HEADER SECTION */}
-                <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Môj Dashboard</h1>
-                        <p className="text-gray-500 mt-1">Vitajte späť, {user.name.split(' ')[0]}! Tu je prehľad vašej aktivity.</p>
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-12">
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <h1 className="text-5xl md:text-6xl font-[900] text-gray-900 tracking-tighter leading-none mb-4">
+                                Váš <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-600">Profil</span>
+                            </h1>
+                            <p className="text-lg text-gray-500 font-medium max-w-lg">
+                                Vitajte späť, {user.name.split(' ')[0]}! Spravujte svoje preferencie, sledujte žiadosti a pomáhajte zvieratkám.
+                            </p>
+                        </div>
+                        <div className="flex gap-4">
+                            <button onClick={logout} className="px-6 py-3 bg-white border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+                                <LogOut size={18} /> Odhlásiť
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button onClick={logout} className="p-2.5 bg-white text-gray-400 hover:text-red-500 border border-gray-100 rounded-xl shadow-sm transition hover:shadow-md" title="Odhlásiť sa">
-                            <LogOut size={20} />
-                        </button>
+
+                    {/* STICKY NAV TABS */}
+                    <div className="sticky top-6 z-30 p-2 bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl shadow-gray-200/50 rounded-3xl inline-flex gap-1">
+                        {[
+                            { id: 'about', label: 'Môj Profil', icon: UserIcon },
+                            { id: 'activity', label: 'Adopcie & Pomoc', icon: Activity },
+                            { id: 'settings', label: 'Nastavenia', icon: Settings }
+                        ].map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => { setActiveTab(tab.id as any); setSelectedInquiry(null); }}
+                                className={`
+                                    flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-xs font-black transition-all duration-300
+                                    ${activeTab === tab.id
+                                        ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-100'
+                                        : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}
+                                `}
+                            >
+                                <tab.icon size={16} strokeWidth={2.5} /> {tab.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
+            </div>
 
+            <div className="max-w-7xl mx-auto px-6 -mt-8 relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                    {/* SIDEBAR */}
+                    {/* LEFT COLUMN - ALWAYS VISIBLE */}
                     <div className="lg:col-span-4 space-y-6">
-                        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden group">
-                            <div className="h-32 bg-gradient-to-br from-brand-600 via-brand-500 to-orange-400 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-1000"></div>
-                            </div>
-                            <div className="px-6 pb-8 -mt-16 flex flex-col items-center text-center relative z-10">
-                                <div className="relative">
-                                    <div className="w-32 h-32 rounded-[2.5rem] bg-white p-1 shadow-2xl relative overflow-hidden border border-gray-50 flex items-center justify-center transform transition-transform group-hover:scale-105 duration-500">
-                                        {isUploadingAvatar ? (
-                                            <div className="flex flex-col items-center gap-2">
-                                                <Loader2 size={32} className="animate-spin text-brand-600" />
-                                                <span className="text-[10px] font-bold text-brand-600">NAHRÁVAM...</span>
-                                            </div>
-                                        ) : (
-                                            user.avatarUrl ? (
-                                                <img src={user.avatarUrl} className="w-full h-full object-cover rounded-[2.2rem]" alt={user.name} />
-                                            ) : (
-                                                <div className="w-full h-full bg-brand-50 flex items-center justify-center text-4xl font-black text-brand-600 rounded-[2.2rem]">
-                                                    {user.name.charAt(0)}
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
+                        {/* AVATAR CARD */}
+                        <div className="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-gray-100/50 border border-gray-100/50 flex flex-col items-center text-center relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-transparent h-32 z-0"></div>
+
+                            <div className="relative z-10 w-40 h-40 rounded-[2.5rem] p-1.5 bg-white shadow-2xl shadow-brand-100 mb-6 mt-4 group-hover:scale-105 transition-transform duration-500">
+                                <div className="w-full h-full rounded-[2.2rem] overflow-hidden relative bg-gray-100">
+                                    {isUploadingAvatar ? (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-20">
+                                            <Loader2 size={32} className="animate-spin text-brand-600 mb-2" />
+                                            <span className="text-[10px] font-black text-brand-600">Nahrávam...</span>
+                                        </div>
+                                    ) : null}
+                                    {user.avatarUrl ? (
+                                        <img src={user.avatarUrl} className="w-full h-full object-cover" alt={user.name} />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-brand-50 text-brand-600 text-5xl font-black">{user.name.charAt(0)}</div>
+                                    )}
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
-                                        disabled={isUploadingAvatar}
-                                        className="absolute bottom-2 right-2 p-2.5 bg-brand-600 text-white rounded-2xl shadow-xl hover:bg-brand-700 hover:scale-110 transition border-2 border-white disabled:opacity-50"
+                                        className="absolute bottom-2 right-2 w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center shadow-lg hover:bg-brand-600 transition-colors z-20"
                                     >
-                                        <Camera size={16} />
+                                        <Camera size={18} />
                                     </button>
-                                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
                                 </div>
-                                <h2 className="text-2xl font-black mt-6 text-gray-900 tracking-tight leading-tight">{user.name}</h2>
+                            </div>
+                            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAvatarUpload} />
 
-                                <div className="mt-6 flex flex-wrap justify-center gap-2">
-                                    {user.badges.map(b => (
-                                        <span key={b} className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-[10px] font-black uppercase border border-green-100 flex items-center gap-1">
-                                            <Award size={12} /> {b}
-                                        </span>
-                                    ))}
-                                    {user.isFosterParent && (
-                                        <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-black uppercase border border-indigo-100 flex items-center gap-1">
-                                            <HomeIcon size={12} /> Dočaskár
-                                        </span>
-                                    )}
+                            <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-2 relative z-10">{user.name}</h2>
+                            <div className="flex flex-wrap justify-center gap-2 mb-8 relative z-10">
+                                {user.badges.map(b => (
+                                    <span key={b} className="px-3 py-1 bg-yellow-50 text-yellow-700 border border-yellow-100 rounded-lg text-[10px] font-black flex items-center gap-1.5">
+                                        <Award size={12} /> {b}
+                                    </span>
+                                ))}
+                                {user.isFosterParent && (
+                                    <span className="px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg text-[10px] font-black flex items-center gap-1.5">
+                                        <HomeIcon size={12} /> Dočaskár
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="w-full bg-gray-50/50 rounded-3xl p-5 border border-gray-100 space-y-3 relative z-10 text-left">
+                                <div className="flex items-center gap-3 group/item">
+                                    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><Mail size={14} /></div>
+                                    <span className="text-xs font-bold text-gray-500 truncate">{user.email}</span>
                                 </div>
-
-                                <div className="w-full space-y-3 mt-8 text-left bg-gray-50/50 p-5 rounded-3xl border border-gray-100">
-                                    <div className="flex items-center gap-3 text-gray-500 hover:text-brand-600 transition group cursor-default">
-                                        <Mail size={16} className="text-gray-300 group-hover:text-brand-500" />
-                                        <span className="text-xs font-bold truncate flex-1">{user.email}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-gray-500 hover:text-brand-600 transition group cursor-default">
-                                        <Phone size={16} className="text-gray-300 group-hover:text-brand-500" />
-                                        <span className="text-xs font-bold flex-1">{user.phone || 'Telefón neuvedený'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-gray-500 hover:text-brand-600 transition group cursor-default">
-                                        <MapPin size={16} className="text-gray-300 group-hover:text-brand-500" />
-                                        <span className="text-xs font-bold flex-1">{user.location || 'Lokalita neuvedená'}</span>
-                                    </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><Phone size={14} /></div>
+                                    <span className="text-xs font-bold text-gray-500">{user.phone || 'Neuvedené'}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><MapPin size={14} /></div>
+                                    <span className="text-xs font-bold text-gray-500">{user.location || 'Slovensko'}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="p-8 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden group">
-                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-brand-50 rounded-full opacity-50 group-hover:scale-125 transition duration-700"></div>
+                        {/* PROGRESS CARD */}
+                        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500 rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000"></div>
+
                             <div className="relative z-10">
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-2">
-                                        <div className="p-2.5 bg-brand-50 text-brand-600 rounded-2xl"><Trophy size={20} /></div>
-                                        <span className="font-black text-gray-800 text-xs uppercase tracking-[0.15em]">Progres profilu</span>
+                                <div className="flex justify-between items-end mb-6">
+                                    <div className="space-y-1">
+                                        <div className="text-[10px] font-black text-gray-400">Kompletnosť profilu</div>
+                                        <div className="text-4xl font-black tracking-tighter">{completionPercent}%</div>
                                     </div>
-                                    <span className={`font-black text-2xl ${completionStatus.color}`}>{completionPercent}%</span>
-                                </div>
-                                <div className="space-y-5">
-                                    <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden p-1 border border-gray-50">
-                                        <div className="h-full bg-gradient-to-r from-brand-400 to-brand-600 rounded-full transition-all duration-1000 relative" style={{ width: `${completionPercent}%` }}>
-                                            <div className="absolute top-0 right-0 h-full w-8 bg-white/20 skew-x-12 animate-pulse"></div>
-                                        </div>
-                                    </div>
-                                    <div className="pt-2">
-                                        <p className={`font-black text-lg ${completionStatus.color} tracking-tight`}>{completionStatus.label}</p>
-                                        <p className="text-sm text-gray-500 mt-1 font-medium leading-relaxed">{completionStatus.sub}</p>
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/10 bg-white/5`}>
+                                        <Trophy size={20} className={completionStatus.color.replace('text-', 'text-')} />
                                     </div>
                                 </div>
+
+                                <div className="h-4 bg-gray-700 rounded-full overflow-hidden p-0.5 mb-4 shadow-inner">
+                                    <div className="h-full bg-gradient-to-r from-brand-400 to-indigo-400 rounded-full relative" style={{ width: `${completionPercent}%` }}>
+                                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                    </div>
+                                </div>
+
+                                <p className="text-sm font-medium text-gray-300 leading-relaxed">
+                                    {completionStatus.sub}
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    {/* MAIN CONTENT */}
-                    <div className="lg:col-span-8 space-y-6">
-                        <div className="bg-white rounded-[1.8rem] p-1.5 shadow-sm border border-gray-100 flex gap-1 sticky top-24 z-20 backdrop-blur-xl bg-white/90">
-                            {[
-                                { id: 'about', label: 'Profil', icon: UserIcon },
-                                { id: 'activity', label: 'Moja aktivita', icon: Activity },
-                                { id: 'settings', label: 'Nastavenia', icon: Settings }
-                            ].map(tab => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => { setActiveTab(tab.id as any); setSelectedInquiry(null); }}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-[0.1em] transition-all ${activeTab === tab.id ? 'bg-brand-600 text-white shadow-xl shadow-brand-200' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}`}
-                                >
-                                    <tab.icon size={16} /> <span className="hidden sm:inline">{tab.label}</span>
-                                </button>
-                            ))}
-                        </div>
+                    {/* RIGHT COLUMN - DYNAMIC CONTENT */}
+                    <div className="lg:col-span-8 animate-in slide-in-from-right-4 duration-500 delay-150">
 
-                        {/* TAB CONTENT: ABOUT */}
+                        {/* ABOUT TAB */}
                         {activeTab === 'about' && (
-                            <div className="space-y-8 animate-in fade-in duration-500 pb-12">
-                                <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-gray-100">
+                            <div className="space-y-6">
+                                {/* BIO SECTION */}
+                                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
                                     <div className="flex justify-between items-center mb-8">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-brand-50 text-brand-600 rounded-2xl"><Smile size={24} /></div>
-                                            <h2 className="text-xl font-black text-gray-800 tracking-tight">O mne</h2>
-                                        </div>
-                                        <button onClick={() => setIsEditingBio(!isEditingBio)} className="p-2.5 bg-gray-50 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-xl transition border border-transparent hover:border-brand-100">
+                                        <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                                            <span className="p-3 bg-brand-50 text-brand-600 rounded-2xl"><Smile size={24} /></span>
+                                            O mne
+                                        </h2>
+                                        <button onClick={() => setIsEditingBio(!isEditingBio)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors">
                                             {isEditingBio ? <X size={20} /> : <Edit2 size={18} />}
                                         </button>
                                     </div>
+
                                     {isEditingBio ? (
-                                        <div className="space-y-5">
-                                            <textarea value={bioInput} onChange={e => setBioInput(e.target.value)} className="w-full border-2 border-gray-100 rounded-[2rem] p-6 h-40 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none bg-gray-50 text-base font-medium transition-all" placeholder="Napíšte niečo o vašom vzťahu k zvieratám..."></textarea>
-                                            <div className="relative group">
-                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors"><Clock size={18} /></div>
-                                                <input value={availability} onChange={e => setAvailability(e.target.value)} className="w-full border-2 border-gray-100 rounded-2xl pl-12 pr-4 py-3.5 bg-gray-50 text-sm font-bold focus:bg-white focus:border-brand-500 transition-all outline-none" placeholder="Kedy máte čas?" />
-                                            </div>
-                                            <div className="flex justify-end gap-3 pt-4">
-                                                <button onClick={() => setIsEditingBio(false)} className="px-6 py-3 text-sm font-bold text-gray-400 hover:text-gray-600 transition">Zrušiť</button>
-                                                <button onClick={handleSaveBio} className="px-10 py-3.5 bg-brand-600 text-white text-sm font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-brand-200 flex items-center gap-2 transform hover:-translate-y-0.5 transition-all">
-                                                    {isSaving ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />} Uložiť zmeny
+                                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
+                                            <textarea
+                                                value={bioInput}
+                                                onChange={e => setBioInput(e.target.value)}
+                                                className="w-full bg-gray-50 border-2 border-gray-100 rounded-[2rem] p-6 min-h-[160px] focus:bg-white focus:border-brand-500 outline-none text-base font-medium transition-all resize-none"
+                                                placeholder="Povedzte nám niečo o sebe..."
+                                            />
+                                            <div className="flex gap-4">
+                                                <div className="relative flex-1">
+                                                    <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                                    <input
+                                                        value={availability}
+                                                        onChange={e => setAvailability(e.target.value)}
+                                                        className="w-full pl-10 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-brand-500 outline-none transition-all"
+                                                        placeholder="Vaša časová dostupnosť"
+                                                    />
+                                                </div>
+                                                <button onClick={handleSaveBio} className="px-8 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-colors shadow-lg shadow-brand-200">
+                                                    Uložiť
                                                 </button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="bg-gray-50/50 p-8 rounded-[2rem] border border-gray-100 group-hover:bg-white transition-colors duration-500">
-                                            <p className="text-gray-600 text-lg leading-relaxed font-medium italic">
-                                                {user.bio ? `"${user.bio}"` : 'Zatiaľ ste o sebe nič nenapísali.'}
-                                            </p>
+                                        <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100/50 relative group hover:bg-white transition-all duration-300">
+                                            <Quote size={40} className="absolute top-6 left-6 text-brand-100 -z-10 group-hover:scale-110 transition-transform" />
+                                            <p className="text-lg text-gray-600 italic leading-loose font-medium relative z-10 pl-4">{user.bio || "Zatiaľ ste o sebe nič nenapísali..."}</p>
+
                                             {user.availability && (
                                                 <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-3">
-                                                    <Clock size={16} className="text-blue-500" />
-                                                    <span className="text-sm font-black text-gray-700 uppercase tracking-wide">Dostupnosť: <span className="text-blue-600 font-bold normal-case ml-1">{user.availability}</span></span>
+                                                    <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black">Dostupnosť</div>
+                                                    <span className="font-bold text-gray-800 text-sm">{user.availability}</span>
                                                 </div>
                                             )}
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-gray-100">
+                                {/* HOUSEHOLD SECTION */}
+                                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
                                     <div className="flex justify-between items-center mb-8">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><HomeIcon size={24} /></div>
-                                            <h2 className="text-xl font-black text-gray-800 tracking-tight">Moja domácnosť</h2>
-                                        </div>
-                                        <button onClick={() => setIsEditingHousehold(!isEditingHousehold)} className="text-brand-600 font-black text-[10px] uppercase tracking-[0.2em] px-4 py-2 bg-brand-50 rounded-xl hover:bg-brand-100 transition-colors">{isEditingHousehold ? 'Zatvoriť' : 'Upraviť'}</button>
+                                        <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                                            <span className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><HomeIcon size={24} /></span>
+                                            Domácnosť
+                                        </h2>
+                                        <button onClick={() => setIsEditingHousehold(!isEditingHousehold)} className="text-indigo-600 font-black text-[10px] px-5 py-2.5 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors">
+                                            {isEditingHousehold ? 'Zatvoriť' : 'Upraviť'}
+                                        </button>
                                     </div>
+
                                     {isEditingHousehold ? (
-                                        <div className="space-y-6 animate-in slide-in-from-top-2 duration-300">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-gray-900">
-                                                <div className="space-y-2">
-                                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Typ bývania</label>
-                                                    <select value={householdData.housingType} onChange={e => setHouseholdData({ ...householdData, housingType: e.target.value as any })} className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-black text-gray-700 outline-none focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all appearance-none cursor-pointer">
-                                                        <option value="Byt">Byt</option><option value="Dom">Dom</option><option value="Dom so záhradou">Dom so záhradou</option><option value="Farma">Farma</option>
-                                                    </select>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Pracovný režim</label>
-                                                    <select value={householdData.workMode} onChange={e => setHouseholdData({ ...householdData, workMode: e.target.value as any })} className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-black text-gray-700 outline-none focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all appearance-none cursor-pointer">
-                                                        <option value="Práca z domu">Práca z domu</option><option value="Hybrid">Hybrid</option><option value="V kancelárii">V kancelárii</option><option value="Študent/Doma">Študent / Doma</option>
-                                                    </select>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Skúsenosti so zvieratami</label>
-                                                    <select value={householdData.experienceLevel} onChange={e => setHouseholdData({ ...householdData, experienceLevel: e.target.value as any })} className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-black text-gray-700 outline-none focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all appearance-none cursor-pointer">
-                                                        <option value="Začiatočník">Začiatočník</option><option value="Mierne pokročilý">Mierne pokročilý</option><option value="Skúsený">Skúsený</option>
-                                                    </select>
-                                                </div>
-                                                <div className="flex gap-4 pt-6">
-                                                    <label className={`flex-1 flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${householdData.hasChildren ? 'bg-pink-50 border-pink-500' : 'bg-gray-50 border-gray-100'}`}>
-                                                        <input type="checkbox" checked={householdData.hasChildren} onChange={e => setHouseholdData({ ...householdData, hasChildren: e.target.checked })} className="hidden" />
-                                                        <Baby size={18} className={householdData.hasChildren ? 'text-pink-500' : 'text-gray-300'} />
-                                                        <span className={`text-xs font-black uppercase tracking-widest ${householdData.hasChildren ? 'text-pink-700' : 'text-gray-400'}`}>Mám deti</span>
+                                        <div className="space-y-6 animate-in slide-in-from-top-2">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {['housingType', 'workMode', 'experienceLevel'].map(field => (
+                                                    <div key={field} className="space-y-2">
+                                                        <label className="text-[10px] font-black text-gray-400 pl-2">
+                                                            {field === 'housingType' ? 'Bývanie' : field === 'workMode' ? 'Práca' : 'Skúsenosti'}
+                                                        </label>
+                                                        <div className="relative">
+                                                            <select
+                                                                value={(householdData as any)[field]}
+                                                                onChange={e => setHouseholdData({ ...householdData, [field]: e.target.value })}
+                                                                className="w-full p-4 pr-10 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-800 outline-none focus:border-indigo-500 focus:bg-white transition-all appearance-none cursor-pointer"
+                                                            >
+                                                                {field === 'housingType' && ['Byt', 'Dom', 'Dom so záhradou'].map(o => <option key={o} value={o}>{o}</option>)}
+                                                                {field === 'workMode' && ['Práca z domu', 'Hybrid', 'V kancelárii'].map(o => <option key={o} value={o}>{o}</option>)}
+                                                                {field === 'experienceLevel' && ['Začiatočník', 'Mierne pokročilý', 'Skúsený'].map(o => <option key={o} value={o}>{o}</option>)}
+                                                            </select>
+                                                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="flex gap-4 pt-4">
+                                                {[
+                                                    { key: 'hasChildren', label: 'Deti v rodine', icon: Baby, color: 'text-pink-500', bg: 'bg-pink-50', border: 'border-pink-200' },
+                                                    { key: 'hasOtherPets', label: 'Iné zvieratá', icon: Dog, color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-200' }
+                                                ].map(item => (
+                                                    <label key={item.key} className={`flex-1 flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 cursor-pointer transition-all ${(householdData as any)[item.key] ? `${item.bg} ${item.border}` : 'bg-gray-50 border-gray-100 hover:bg-gray-100'}`}>
+                                                        <input type="checkbox" checked={(householdData as any)[item.key]} onChange={e => setHouseholdData({ ...householdData, [item.key]: e.target.checked })} className="hidden" />
+                                                        <item.icon size={24} className={(householdData as any)[item.key] ? item.color : 'text-gray-300'} />
+                                                        <span className={`text-[10px] font-black ${(householdData as any)[item.key] ? 'text-gray-800' : 'text-gray-400'}`}>{item.label}</span>
                                                     </label>
-                                                    <label className={`flex-1 flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${householdData.hasOtherPets ? 'bg-indigo-50 border-indigo-500' : 'bg-gray-50 border-gray-100'}`}>
-                                                        <input type="checkbox" checked={householdData.hasOtherPets} onChange={e => setHouseholdData({ ...householdData, hasOtherPets: e.target.checked })} className="hidden" />
-                                                        <Dog size={18} className={householdData.hasOtherPets ? 'text-indigo-500' : 'text-gray-300'} />
-                                                        <span className={`text-xs font-black uppercase tracking-widest ${householdData.hasOtherPets ? 'text-indigo-700' : 'text-gray-400'}`}>Iné zvery</span>
-                                                    </label>
-                                                </div>
+                                                ))}
                                             </div>
                                             <div className="flex justify-end pt-4">
-                                                <button onClick={handleSaveHousehold} className="px-10 py-4 bg-brand-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-brand-200 hover:bg-brand-700 transition flex items-center gap-2">
-                                                    {isSaving && <Loader2 size={14} className="animate-spin" />} Uložiť domácnosť
-                                                </button>
+                                                <button onClick={handleSaveHousehold} className="px-10 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition">Uložiť</button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                            <div className="bg-gray-50 p-5 rounded-3xl border border-gray-100 flex flex-col items-center text-center gap-2 group hover:bg-white hover:shadow-md transition-all duration-300">
-                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform"><HomeIcon size={22} /></div>
-                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Bývanie</span>
-                                                <span className="text-sm font-black text-gray-700">{user.household?.housingType || 'Neuvedené'}</span>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            {[
+                                                { label: 'Bývanie', val: user.household?.housingType, icon: HomeIcon, color: 'text-blue-500' },
+                                                { label: 'Práca', val: user.household?.workMode, icon: Briefcase, color: 'text-purple-500' },
+                                                { label: 'Deti', val: user.household?.hasChildren ? 'Áno' : 'Nie', icon: Baby, color: 'text-pink-500' },
+                                                { label: 'Zvieratá', val: user.household?.hasOtherPets ? 'Áno' : 'Nie', icon: Dog, color: 'text-orange-500' }
+                                            ].map(item => (
+                                                <div key={item.label} className="bg-gray-50 p-5 rounded-[2rem] border border-gray-100 flex flex-col items-center text-center gap-3">
+                                                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center"><item.icon size={18} className={item.color} /></div>
+                                                    <div>
+                                                        <div className="text-[9px] font-black text-gray-400 mb-1">{item.label}</div>
+                                                        <div className="text-sm font-bold text-gray-800">{item.val || '-'}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* PREFERENCES SECTION */}
+                                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                                            <span className="p-3 bg-purple-50 text-purple-600 rounded-2xl"><Heart size={24} /></span>
+                                            Preferencie
+                                        </h2>
+                                        <button onClick={() => setIsEditingPreferences(!isEditingPreferences)} className="text-purple-600 font-black text-[10px] px-5 py-2.5 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
+                                            {isEditingPreferences ? 'Zatvoriť' : 'Upraviť'}
+                                        </button>
+                                    </div>
+
+                                    {isEditingPreferences ? (
+                                        <div className="space-y-10 animate-in slide-in-from-top-2">
+                                            {[
+                                                { title: 'Druh zvieratka', items: [PetType.DOG, PetType.CAT, PetType.RABBIT, PetType.BIRD, PetType.RODENT], key: 'types', variant: 'brand' },
+                                                { title: 'Veľkosť', items: [Size.SMALL, Size.MEDIUM, Size.LARGE], key: 'sizes', variant: 'blue' },
+                                                { title: 'Vek', items: ['Šteňa/Mača', 'Mladý', 'Dospelý', 'Senior'], key: 'ageRange', variant: 'green' },
+                                                { title: 'Pohlavie', items: [Gender.MALE, Gender.FEMALE], key: 'genders', format: (g: any) => g === Gender.MALE ? 'Samec' : 'Samica', variant: 'purple' }
+                                            ].map((group: any) => (
+                                                <div key={group.key} className="space-y-4">
+                                                    <h3 className="text-xs font-black text-gray-400 ml-1">{group.title}</h3>
+                                                    <div className="flex flex-wrap gap-3">
+                                                        {group.items.map((item: any) => (
+                                                            <PreferenceChip
+                                                                key={item}
+                                                                label={group.format ? group.format(item) : item}
+                                                                active={((Array.isArray(prefData[group.key as keyof UserPreferences])) ? (prefData[group.key as keyof UserPreferences] as any[]).includes(item) : false)}
+                                                                onClick={() => toggleArrayItem(group.key as keyof UserPreferences, item)}
+                                                                variant={group.variant}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <div className="flex justify-end pt-6">
+                                                <button onClick={handleSavePreferences} className="px-10 py-4 bg-purple-600 text-white rounded-2xl font-black text-xs shadow-xl shadow-purple-200 hover:bg-purple-700 transition">Uložiť preferencie</button>
                                             </div>
-                                            <div className="bg-gray-50 p-5 rounded-3xl border border-gray-100 flex flex-col items-center text-center gap-2 group hover:bg-white hover:shadow-md transition-all duration-300">
-                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-purple-500 shadow-sm group-hover:scale-110 transition-transform"><Briefcase size={22} /></div>
-                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Práca</span>
-                                                <span className="text-sm font-black text-gray-700">{user.household?.workMode || 'Neuvedené'}</span>
-                                            </div>
-                                            <div className="bg-gray-50 p-5 rounded-3xl border border-gray-100 flex flex-col items-center text-center gap-2 group hover:bg-white hover:shadow-md transition-all duration-300">
-                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm group-hover:scale-110 transition-transform"><Award size={22} /></div>
-                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Úroveň</span>
-                                                <span className="text-sm font-black text-gray-700">{user.household?.experienceLevel || 'Začiatočník'}</span>
-                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-wrap gap-2">
+                                            {user.preferences?.types?.map(t => <span key={t} className="px-4 py-2 bg-brand-50 text-brand-700 rounded-xl text-xs font-black">{t}</span>)}
+                                            {user.preferences?.sizes?.map(s => <span key={s} className="px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-xs font-black">{s}</span>)}
+                                            {user.preferences?.ageRange?.map(a => <span key={a} className="px-4 py-2 bg-green-50 text-green-700 rounded-xl text-xs font-black">{a}</span>)}
+                                            {!user.preferences && <span className="text-gray-400 italic">Zatiaľ žiadne preferencie...</span>}
                                         </div>
                                     )}
                                 </div>
                             </div>
                         )}
 
-                        {/* TAB CONTENT: ACTIVITY */}
+                        {/* ACTIVITY TAB */}
                         {activeTab === 'activity' && (
-                            <div className="space-y-12 animate-in fade-in duration-500 pb-12">
+                            <div className="space-y-6">
                                 {selectedInquiry ? (
-                                    <div className="flex flex-col space-y-8 animate-in slide-in-from-right duration-500">
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                            <div className="flex items-center gap-4">
-                                                <button onClick={() => setSelectedInquiry(null)} className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-brand-600 transition"><ArrowLeft size={20} /></button>
-                                                <div><h2 className="text-2xl font-black text-gray-800 tracking-tight leading-tight">Mám záujem o {selectedInquiry.petName}</h2><p className="text-sm text-gray-500 font-medium">Chat s útulkom {relatedShelter?.name}</p></div>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border shadow-sm ${getStatusInfo(selectedInquiry.status).bg} ${getStatusInfo(selectedInquiry.status).text} ${getStatusInfo(selectedInquiry.status).border}`}>
+                                    <div className="animate-in slide-in-from-right duration-500">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <button onClick={() => setSelectedInquiry(null)} className="p-4 bg-white rounded-[1.5rem] shadow-sm hover:shadow-md transition-all border border-gray-100 group"><ArrowLeft size={20} className="text-gray-400 group-hover:text-gray-900" /></button>
+                                            <div>
+                                                <h2 className="text-3xl font-black text-gray-900 tracking-tight">{selectedInquiry.petName}</h2>
+                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-black ${getStatusInfo(selectedInquiry.status).bg} ${getStatusInfo(selectedInquiry.status).text} mt-1`}>
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${getStatusInfo(selectedInquiry.status).dot}`}></div>
                                                     {selectedInquiry.status}
-                                                </span>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        {/* Added Profile Cards */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            {/* Shelter Profile Card */}
-                                            <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-                                                <div className="w-16 h-16 bg-brand-50 rounded-2xl flex items-center justify-center border border-brand-100 flex-shrink-0">
-                                                    {relatedShelter?.logoUrl ? <img src={relatedShelter.logoUrl} className="w-full h-full object-cover rounded-2xl" alt="" /> : <Building2 size={32} className="text-brand-600" />}
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Útulok</div>
-                                                    <h3 className="font-bold text-gray-900 truncate">{relatedShelter?.name || 'Neznámy útulok'}</h3>
-                                                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-1"><MapPin size={12} /> {relatedShelter?.location || 'Slovensko'}</p>
-                                                </div>
-                                                {relatedShelter && (
-                                                    <Link to={`/shelters/${relatedShelter.id}`} target="_blank" className="p-3 bg-gray-50 text-gray-400 rounded-xl hover:bg-brand-600 hover:text-white transition">
-                                                        <ExternalLink size={20} />
-                                                    </Link>
-                                                )}
-                                            </div>
-
-                                            {/* Pet Profile Card */}
-                                            <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-                                                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center border border-gray-200 flex-shrink-0 overflow-hidden">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-5 relative overflow-hidden">
+                                                <div className="w-20 h-20 bg-gray-100 rounded-[1.8rem] overflow-hidden flex-shrink-0">
                                                     <img src={relatedPet?.imageUrl} className="w-full h-full object-cover" alt="" />
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Zvieratko</div>
-                                                    <h3 className="font-bold text-gray-900 truncate">{relatedPet?.name || selectedInquiry.petName}</h3>
-                                                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-1"><Dog size={12} /> {relatedPet?.breed || 'Neznáme plemeno'}</p>
+                                                <div>
+                                                    <div className="text-[10px] font-black text-gray-400 mb-1">Žiadosť o adopciu</div>
+                                                    <h3 className="text-lg font-black text-gray-900">{relatedPet?.name}</h3>
+                                                    <div className="text-xs font-bold text-gray-500 mt-1">{relatedPet?.breed}</div>
                                                 </div>
-                                                <Link to={`/pets/${selectedInquiry.petId}`} target="_blank" className="p-3 bg-gray-50 text-gray-400 rounded-xl hover:bg-brand-600 hover:text-white transition">
-                                                    <ExternalLink size={20} />
-                                                </Link>
+                                                <Link to={`/pets/${selectedInquiry.petId}`} target="_blank" className="absolute right-6 top-1/2 -translate-y-1/2 p-3 bg-gray-50 rounded-2xl text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"><ExternalLink size={20} /></Link>
+                                            </div>
+
+                                            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-5 relative overflow-hidden">
+                                                <div className="w-20 h-20 bg-brand-50 rounded-[1.8rem] flex items-center justify-center text-brand-600 flex-shrink-0">
+                                                    {relatedShelter?.logoUrl ? <img src={relatedShelter.logoUrl} className="w-full h-full object-cover rounded-[1.8rem]" alt="" /> : <Building2 size={32} />}
+                                                </div>
+                                                <div>
+                                                    <div className="text-[10px] font-black text-gray-400 mb-1">Útulok</div>
+                                                    <h3 className="text-lg font-black text-gray-900">{relatedShelter?.name || 'Načítavam...'}</h3>
+                                                    <div className="text-xs font-bold text-gray-500 mt-1 flex items-center gap-1"><MapPin size={12} /> {relatedShelter?.location || '-'}</div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="w-full">
+                                        <div className="h-[700px]">
                                             <ChatWindow
                                                 inquiryId={selectedInquiry.id}
                                                 currentUser={user}
                                                 inverted={true}
                                                 myAvatarUrl={user.avatarUrl}
                                                 otherAvatarUrl={relatedShelter?.logoUrl}
-                                                className="h-[650px] shadow-2xl shadow-gray-200 border-gray-100 rounded-[3rem]"
+                                                className="h-full shadow-2xl shadow-gray-200 border border-gray-100 rounded-[3rem]"
                                                 initialMessage={{ content: selectedInquiry.message, date: selectedInquiry.date, senderId: selectedInquiry.applicantId }}
                                             />
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="space-y-16">
-                                        {/* SECTION: ADOPTION INQUIRIES */}
+                                    <>
+                                        {/* APPLICATIONS LIST */}
                                         <section className="space-y-6">
-                                            <div className="flex items-center justify-between px-2">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="p-2.5 bg-blue-50 text-blue-600 rounded-2xl"><MessageCircle size={24} /></div>
-                                                    <h2 className="text-xl font-black text-gray-800 tracking-tight">Moje žiadosti o adopciu</h2>
-                                                </div>
-                                                {myApplications.length > 0 && <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-black uppercase">{myApplications.length} aktívne</span>}
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><MessageCircle size={24} /></div>
+                                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Žiadosti o adopciu</h2>
                                             </div>
+
                                             {myApplications.length > 0 ? (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     {myApplications.map(app => {
                                                         const status = getStatusInfo(app.status);
                                                         const pet = pets.find(p => p.id === app.petId);
-
-                                                        // OPRAVA LOGIKY: Zobraziť indikátor len ak je neprečítaná správa alebo nový status, ktorý sme ešte nevideli
                                                         const hasChatUnread = (app as any).hasUnreadMessages === true;
-                                                        const isNewStatusNotSeen = app.status !== 'Nová' && !seenInquiryIds.includes(app.id);
-                                                        const isUnread = hasChatUnread || isNewStatusNotSeen;
 
                                                         return (
                                                             <div
                                                                 key={app.id}
                                                                 onClick={() => handleInquiryClick(app)}
-                                                                className={`bg-white rounded-[2.5rem] p-6 border shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group flex flex-col h-full transform hover:-translate-y-1 relative ${isUnread ? 'border-brand-200 bg-orange-50/10' : 'border-gray-100'}`}
+                                                                className="group bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative"
                                                             >
-                                                                {isUnread && (
-                                                                    <div className="absolute top-6 right-6 w-3 h-3 bg-brand-500 rounded-full animate-pulse shadow-sm border-2 border-white"></div>
-                                                                )}
-
+                                                                {hasChatUnread && <div className="absolute top-6 right-6 w-3 h-3 bg-brand-500 rounded-full animate-pulse"></div>}
                                                                 <div className="flex items-start gap-4 mb-6">
-                                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gray-100 shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform"><img src={pet?.imageUrl} className="w-full h-full object-cover" alt="" /></div>
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <div className="flex items-center justify-between gap-2 mb-1">
-                                                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{new Date(app.date).toLocaleDateString('sk-SK')}</span>
-                                                                            <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase border tracking-widest ${status.bg} ${status.text} ${status.border}`}>{app.status}</span>
-                                                                        </div>
-                                                                        <h3 className={`font-black text-lg leading-tight group-hover:text-brand-600 transition ${isUnread ? 'text-gray-900' : 'text-gray-700'}`}>{app.petName}</h3>
+                                                                    <div className="w-20 h-20 rounded-[1.8rem] bg-gray-100 overflow-hidden shadow-inner flex-shrink-0">
+                                                                        <img src={pet?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <div className={`inline-block px-3 py-1 rounded-lg text-[10px] font-black mb-2 ${status.bg} ${status.text}`}>{app.status}</div>
+                                                                        <h3 className="text-xl font-black text-gray-900 leading-tight">{pet?.name}</h3>
+                                                                        <p className="text-xs text-gray-400 font-bold mt-1">{new Date(app.date).toLocaleDateString('sk-SK')}</p>
                                                                     </div>
                                                                 </div>
-
-                                                                <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <div className={`w-2 h-2 rounded-full ${status.dot}`}></div>
-                                                                        <span className={`text-[10px] font-black uppercase tracking-wider ${isUnread ? 'text-brand-600' : 'text-gray-500'}`}>
-                                                                            {hasChatUnread ? 'Nová správa!' : isNewStatusNotSeen ? 'Status sa zmenil' : 'Otvoriť chat'}
-                                                                        </span>
-                                                                    </div>
-                                                                    <ChevronRight size={14} className={`${isUnread ? 'text-brand-600' : 'text-gray-400'} group-hover:translate-x-1 transition-all`} />
+                                                                <div className="flex justify-between items-center pt-4 border-t border-gray-50">
+                                                                    <span className="text-xs font-black text-gray-400 group-hover:text-brand-600 transition-colors">Otvoriť chat</span>
+                                                                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-600 group-hover:text-white transition-all"><ChevronRight size={16} /></div>
                                                                 </div>
                                                             </div>
                                                         );
                                                     })}
                                                 </div>
                                             ) : (
-                                                <div className="bg-white rounded-[3rem] p-16 border-2 border-dashed border-gray-200 text-center flex flex-col items-center">
-                                                    <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-200 mb-6"><MessageCircle size={40} /></div>
-                                                    <h3 className="text-xl font-black text-gray-900 tracking-tight">Zatiaľ žiadne žiadosti</h3>
-                                                    <Link to="/pets" className="mt-8 px-10 py-4 bg-brand-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest">Hľadať zvieratko</Link>
+                                                <div className="bg-white rounded-[3rem] p-16 text-center border-2 border-dashed border-gray-200">
+                                                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mx-auto mb-4"><MessageCircle size={32} /></div>
+                                                    <p className="text-gray-400 font-medium">Zatiaľ žiadne žiadosti</p>
                                                 </div>
                                             )}
                                         </section>
 
-                                        {/* SECTION: VIRTUAL ADOPTIONS */}
-                                        <section className="space-y-8">
-                                            <div className="flex items-center justify-between px-2">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="p-2.5 bg-pink-50 text-pink-600 rounded-2xl shadow-sm border border-pink-100"><Heart size={24} fill="currentColor" /></div>
-                                                    <div><h2 className="text-2xl font-black text-gray-800 tracking-tight">Moji chránenci</h2><p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Sponzorstvo na diaľku</p></div>
-                                                </div>
-                                                <Link to="/pets" className="text-[10px] font-black uppercase text-pink-600 tracking-widest hover:text-pink-700 transition flex items-center gap-1.5">Sponzorovať ďalšieho <PlusCircle size={14} /></Link>
+                                        {/* FAVORITES SECTION */}
+                                        <section className="space-y-6 pt-8 border-t border-gray-200/50">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl"><Bookmark size={24} /></div>
+                                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Uložené</h2>
                                             </div>
+
+                                            {favoritePets.length > 0 ? (
+                                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                                                    {favoritePets.map(pet => (
+                                                        <Link key={pet.id} to={`/pets/${pet.id}`} className="group bg-white p-3 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                                            <div className="aspect-square rounded-[1.5rem] bg-gray-100 mb-3 overflow-hidden relative">
+                                                                <img src={pet.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={pet.name} />
+                                                                <button onClick={(e) => { e.preventDefault(); toggleFavorite(pet.id); }} className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-500 shadow-sm hover:scale-110 transition">
+                                                                    <Heart size={14} fill="currentColor" />
+                                                                </button>
+                                                            </div>
+                                                            <div className="px-2 pb-2 text-center">
+                                                                <h3 className="font-black text-gray-900 truncate">{pet.name}</h3>
+                                                                <p className="text-[10px] font-bold text-gray-400">{pet.breed}</p>
+                                                            </div>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className="text-gray-400 italic pl-4">Nemáte žiadne uložené zvieratká.</p>
+                                            )}
+                                        </section>
+
+                                        {/* VIRTUAL ADOPTIONS */}
+                                        <section className="space-y-6 pt-8 border-t border-gray-200/50">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="p-3 bg-pink-50 text-pink-600 rounded-2xl"><Sparkles size={24} /></div>
+                                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Virtuálne adopcie</h2>
+                                            </div>
+
                                             {virtualAdoptionsWithData.length > 0 ? (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                    {virtualAdoptionsWithData.map(adoption => (
-                                                        <div key={adoption.petId} className="bg-white rounded-[3.5rem] p-8 md:p-10 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 group relative overflow-hidden flex flex-col h-full">
-                                                            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-pink-50 to-transparent rounded-bl-[100px] -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700 pointer-events-none opacity-60"></div>
-                                                            <div className="flex gap-8 mb-10 relative z-10">
-                                                                <div className="relative flex-shrink-0">
-                                                                    <div className="w-28 h-28 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white"><img src={adoption.pet?.imageUrl} className="w-full h-full object-cover" alt="" /></div>
-                                                                    <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-2xl shadow-xl flex items-center justify-center border border-gray-50 group-hover:scale-110 transition-transform"><Sparkle size={20} className="text-yellow-400 fill-current" /></div>
+                                                <div className="grid grid-cols-1 gap-6">
+                                                    {virtualAdoptionsWithData.map(va => (
+                                                        <div key={va.petId} className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-6">
+                                                            <div className="w-24 h-24 rounded-[2rem] bg-gray-100 overflow-hidden shadow-md flex-shrink-0">
+                                                                <img src={va.pet?.imageUrl} className="w-full h-full object-cover" alt="" />
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <h3 className="text-xl font-black text-gray-900">{va.pet?.name}</h3>
+                                                                    <span className="px-2 py-1 bg-pink-50 text-pink-600 text-[9px] font-black rounded-lg">Sponzorované</span>
                                                                 </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-pink-50 text-pink-600 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 border border-pink-100 shadow-sm"><Star size={12} fill="currentColor" /> {adoption.months >= 6 ? 'Super rodič' : 'Verný priateľ'}</div>
-                                                                    <h3 className="font-black text-gray-900 text-3xl tracking-tight truncate group-hover:text-pink-600 transition">{adoption.pet?.name}</h3>
-                                                                    <div className="flex items-center gap-2 mt-2 text-gray-400 font-bold text-xs"><Calendar size={14} /><span>Pomáhate už <span className="text-pink-600">{adoption.months} mes.</span></span></div>
+                                                                <div className="flex gap-4 text-sm font-medium text-gray-500">
+                                                                    <span className="flex items-center gap-1"><Coins size={14} /> {va.totalDonated}€ celkovo</span>
+                                                                    <span className="flex items-center gap-1"><Calendar size={14} /> {va.months} mesiacov</span>
                                                                 </div>
                                                             </div>
-                                                            <div className="space-y-8 relative z-10 flex-1">
-                                                                <div className="grid grid-cols-2 gap-4">
-                                                                    <div className="bg-gray-50/80 p-4 rounded-[1.8rem] border border-gray-100 text-center"><span className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Mesačne</span><span className="text-2xl font-black text-gray-900">{adoption.amount} €</span></div>
-                                                                    <div className="bg-pink-50/50 p-4 rounded-[1.8rem] border border-pink-100 text-center"><span className="text-[9px] font-black text-pink-400 uppercase tracking-widest mb-1 block">Celková pomoc</span><span className="text-2xl font-black text-pink-600">{adoption.totalDonated} €</span></div>
-                                                                </div>
-                                                                <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-inner">
-                                                                    <div className="flex justify-between items-center mb-3"><div className="flex items-center gap-2"><Utensils size={14} className="text-brand-500" /><span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Naplnené potreby</span></div><span className="text-[11px] font-black text-brand-600">90%</span></div>
-                                                                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-4 p-0.5"><div className="h-full bg-gradient-to-r from-pink-400 to-brand-500 w-[90%] rounded-full shadow-lg"></div></div>
-                                                                    <div className="flex gap-4"><div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-500"></div><span className="text-[9px] font-black text-gray-400 uppercase">Strava</span></div><div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-green-500"></div><span className="text-[9px] font-black text-gray-400 uppercase">Zdravie</span></div></div>
-                                                                </div>
-                                                                <div className="flex gap-4 pt-2">
-                                                                    <Link to={`/pets/${adoption.petId}`} className="flex-1 py-4 bg-gray-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] text-center hover:bg-brand-600 transition">Navštíviť {adoption.pet?.name}</Link>
-                                                                    <button onClick={() => showToast("Spracúvame...", "info")} className="p-4 bg-white text-gray-400 border border-gray-100 rounded-2xl hover:text-brand-600 hover:border-brand-200 transition"><CreditCard size={20} /></button>
-                                                                </div>
-                                                            </div>
+                                                            <button className="px-6 py-3 bg-gray-900 text-white rounded-2xl font-black text-xs hover:bg-brand-600 transition">Detail</button>
                                                         </div>
                                                     ))}
                                                 </div>
                                             ) : (
-                                                <div className="bg-white rounded-[3rem] p-16 border-2 border-dashed border-gray-200 text-center flex flex-col items-center">
-                                                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-200 mb-6"><Heart size={40} /></div>
-                                                    <h3 className="text-xl font-black text-gray-900 tracking-tight">Zatiaľ žiadni chránenci</h3>
-                                                    <Link to="/support" className="mt-8 px-10 py-4 bg-brand-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest">Chcem pomôcť</Link>
+                                                <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-8 rounded-[2.5rem] flex items-center justify-between">
+                                                    <div>
+                                                        <h3 className="font-black text-lg text-gray-900 mb-1">Staňte sa hrdinom!</h3>
+                                                        <p className="text-sm text-gray-600 font-medium">Adoptujte si zvieratko na diaľku a pomôžte mu.</p>
+                                                    </div>
+                                                    <Link to="/support" className="px-6 py-3 bg-white text-pink-600 shadow-sm rounded-2xl font-black text-xs hover:scale-105 transition">Zistiť viac</Link>
                                                 </div>
                                             )}
                                         </section>
-
-                                        {/* SECTION: SAVED PETS - IMPROVED CARDS (2 PER ROW, NO TEXT ON PHOTO) */}
-                                        <section className="space-y-8">
-                                            <div className="flex items-center gap-3 px-2">
-                                                <div className="p-2.5 bg-orange-50 text-orange-600 rounded-2xl border border-orange-100 shadow-sm"><Bookmark size={24} fill="currentColor" /></div>
-                                                <div>
-                                                    <h2 className="text-2xl font-black text-gray-800 tracking-tight">Moji vyvolení kamoši</h2>
-                                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Zvieratká, ktoré vás chytili za srdce</p>
-                                                </div>
-                                            </div>
-                                            {favoritePets.length > 0 ? (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                    {favoritePets.map(pet => {
-                                                        const hasPrefs = user.preferences && user.preferences.types?.length > 0;
-                                                        const matchScore = hasPrefs ? 85 : 0;
-
-                                                        return (
-                                                            <div key={pet.id} className="relative group animate-in zoom-in-95 duration-500">
-                                                                <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full transform hover:-translate-y-2">
-
-                                                                    {/* Photo Area */}
-                                                                    <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
-                                                                        <img src={pet.imageUrl} className="w-full h-full object-cover transition duration-700 group-hover:scale-110" alt={pet.name} />
-
-                                                                        {/* AI Match Badge - Top Left */}
-                                                                        {hasPrefs && (
-                                                                            <div className="absolute top-5 left-5">
-                                                                                <div className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] shadow-xl flex items-center gap-2 border backdrop-blur-md ${matchScore > 80 ? 'bg-green-600/90 text-white border-green-500' : 'bg-orange-600/90 text-white border-orange-500'}`}>
-                                                                                    <Zap size={14} fill="currentColor" className={matchScore > 80 ? 'animate-pulse text-yellow-300' : ''} />
-                                                                                    <span>Zhoda {matchScore}%</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
-
-                                                                        {/* Status Badge - Top Right */}
-                                                                        {pet.adoptionStatus === 'Available' && (
-                                                                            <div className="absolute top-5 right-14 sm:right-5">
-                                                                                <div className="bg-white/90 backdrop-blur-md px-3 py-2 rounded-2xl shadow-xl border border-white flex items-center gap-2">
-                                                                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                                                    <span className="text-[10px] font-black text-gray-800 uppercase tracking-widest">Hľadá domov</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
-
-                                                                        {/* Trash Button */}
-                                                                        <button
-                                                                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(pet.id); }}
-                                                                            className="absolute top-5 right-5 p-3 bg-white text-gray-400 hover:text-red-500 rounded-2xl shadow-xl transition-all border border-gray-100 opacity-0 group-hover:opacity-100 active:scale-90"
-                                                                            title="Odstrániť z výberu"
-                                                                        >
-                                                                            <Trash2 size={18} />
-                                                                        </button>
-                                                                    </div>
-
-                                                                    {/* Content Area - Clean white background for best readability */}
-                                                                    <Link to={`/pets/${pet.id}`} className="p-8 flex flex-col flex-1 bg-white">
-                                                                        <div className="flex justify-between items-start mb-4">
-                                                                            <div className="min-w-0">
-                                                                                <div className="text-[10px] font-black text-brand-600 uppercase tracking-[0.25em] mb-1.5">{pet.breed}</div>
-                                                                                <h3 className="font-black text-gray-900 text-3xl truncate tracking-tight group-hover:text-brand-600 transition-colors leading-none">{pet.name}</h3>
-                                                                            </div>
-                                                                            <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm flex-shrink-0">
-                                                                                <ChevronRight size={28} />
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <p className="text-gray-500 text-sm line-clamp-2 mb-6 font-medium leading-relaxed">
-                                                                            {pet.description.replace(/\*\*/g, '')}
-                                                                        </p>
-
-                                                                        <div className="mt-auto flex flex-wrap items-center gap-6 text-gray-400 text-[11px] font-black uppercase tracking-widest pt-5 border-t border-gray-50">
-                                                                            <span className="flex items-center gap-2"><MapPin size={14} className="text-brand-500" /> {pet.location}</span>
-                                                                            <span className="flex items-center gap-2"><Clock size={14} className="text-blue-500" /> {formatSlovakAge(pet.age)}</span>
-                                                                            <span className="flex items-center gap-2"><Heart size={14} className="text-pink-500" /> {pet.gender}</span>
-                                                                        </div>
-                                                                    </Link>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            ) : (
-                                                <div className="bg-white rounded-[3rem] p-24 border border-dashed border-gray-200 text-center flex flex-col items-center group hover:border-brand-200 transition-colors">
-                                                    <div className="w-20 h-20 bg-gray-50 rounded-[2rem] flex items-center justify-center text-gray-200 mb-8 transition-transform group-hover:scale-110"><Bookmark size={40} /></div>
-                                                    <h3 className="text-xl font-black text-gray-900 tracking-tight">Zoznam vyvolených je prázdny</h3>
-                                                    <p className="text-gray-400 mt-2 max-w-xs font-medium">Kliknite na srdiečko pri inzeráte a uvidíte ho tu.</p>
-                                                    <Link to="/pets" className="mt-10 px-10 py-4 bg-brand-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Prezerať inzeráty</Link>
-                                                </div>
-                                            )}
-                                        </section>
-                                    </div>
+                                    </>
                                 )}
                             </div>
                         )}
 
-                        {/* TAB CONTENT: SETTINGS */}
+                        {/* SETTINGS TAB */}
                         {activeTab === 'settings' && (
-                            <div className="space-y-8 animate-in fade-in duration-500 pb-12">
-                                <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-gray-100">
-                                    <div className="flex items-center gap-4 mb-10">
-                                        <div className="p-3 bg-gray-50 text-gray-600 rounded-2xl"><Settings size={24} /></div>
-                                        <h2 className="text-xl font-black text-gray-800 tracking-tight">Nastavenia účtu</h2>
-                                    </div>
-                                    <div className="space-y-6">
-                                        {/* Notifikácie */}
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-gray-50 rounded-[2rem] border border-gray-100 gap-6">
-                                            <div className="flex gap-4 items-start">
-                                                <div className="p-2 bg-white rounded-xl text-brand-600 shadow-sm">
-                                                    {user.emailNotificationsEnabled ? <Bell size={20} /> : <BellOff size={20} />}
-                                                </div>
+                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
+                                    <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-8">Nastavenia účtu</h2>
+
+                                    <div className="divide-y divide-gray-100">
+                                        <div className="py-6 flex items-center justify-between">
+                                            <div className="flex gap-4 items-center">
+                                                <div className="p-3 bg-gray-50 text-gray-600 rounded-2xl"><Bell size={20} /></div>
                                                 <div>
-                                                    <p className="font-black text-gray-800 text-sm tracking-tight">E-mailové notifikácie</p>
-                                                    <p className="text-xs text-gray-500 font-medium mt-1">Upozorníme vás e-mailom na každú novú správu v chate.</p>
+                                                    <p className="font-black text-gray-900">E-mailové notifikácie</p>
+                                                    <p className="text-xs text-gray-500 font-bold mt-1">Dostávať novinky a aktualizácie e-mailom</p>
                                                 </div>
                                             </div>
                                             <button
                                                 onClick={toggleEmailNotifications}
-                                                className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border-2 ${user.emailNotificationsEnabled
-                                                        ? 'bg-brand-600 text-white border-brand-600 hover:bg-brand-700'
-                                                        : 'bg-white text-gray-400 border-gray-200 hover:border-brand-600 hover:text-brand-600'
-                                                    }`}
+                                                className={`w-14 h-8 rounded-full p-1 transition-colors duration-300 ${user.emailNotificationsEnabled ? 'bg-brand-500' : 'bg-gray-200'}`}
                                             >
-                                                {user.emailNotificationsEnabled ? 'Zapnuté' : 'Vypnuté'}
+                                                <div className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${user.emailNotificationsEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
                                             </button>
                                         </div>
 
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-gray-50 rounded-[2rem] border border-gray-100 gap-6">
-                                            <div className="flex gap-4 items-start"><div className="p-2 bg-white rounded-xl text-brand-600 shadow-sm"><ShieldCheck size={20} /></div><div><p className="font-black text-gray-800 text-sm tracking-tight">Prístupové heslo</p><p className="text-xs text-gray-500 font-medium mt-1">Zmeňte si heslo pre vyššiu bezpečnosť.</p></div></div>
-                                            <button onClick={handlePasswordReset} className="px-8 py-3 bg-white text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-xl border-2 border-gray-200 hover:bg-brand-600 hover:text-white transition-all shadow-sm">Zmeniť heslo</button>
+                                        <div className="py-6 flex items-center justify-between">
+                                            <div className="flex gap-4 items-center">
+                                                <div className="p-3 bg-gray-50 text-gray-600 rounded-2xl"><Lock size={20} /></div>
+                                                <div>
+                                                    <p className="font-black text-gray-900">Zmena hesla</p>
+                                                    <p className="text-xs text-gray-500 font-bold mt-1">Z bezpečnostných dôvodov odporúčame pravidelnú zmenu</p>
+                                                </div>
+                                            </div>
+                                            <button onClick={handlePasswordReset} className="px-5 py-2.5 bg-gray-50 text-gray-600 text-xs font-black rounded-xl hover:bg-gray-100 transition">Zmeniť heslo</button>
+                                        </div>
+
+                                        <div className="py-8 mt-4">
+                                            <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                                                <div className="flex gap-4 items-start">
+                                                    <div className="p-3 bg-white text-red-500 rounded-2xl shadow-sm"><Trash2 size={24} /></div>
+                                                    <div>
+                                                        <h3 className="font-black text-gray-900 text-lg">Zmazať účet</h3>
+                                                        <p className="text-sm text-gray-600 font-medium max-w-sm mt-1">Táto akcia je nevratná. Všetky vaše údaje a história budú navždy odstránené.</p>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => setShowDeleteConfirm(true)} className="px-6 py-3 bg-white border border-red-100 text-red-600 font-black text-xs rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm whitespace-nowrap">
+                                                    Odstrániť môj účet
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -803,6 +792,7 @@ const UserProfilePage: React.FC = () => {
                     </div>
                 </div>
             </div>
+
             <ConfirmationModal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} onConfirm={() => { setShowDeleteConfirm(false); logout(); }} title="Naozaj nás chcete opustiť?" message="Stratíte prístup k histórii." confirmText="Áno, zmazať účet" variant="danger" />
         </div>
     );

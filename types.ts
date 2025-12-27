@@ -2,6 +2,9 @@
 export enum PetType {
   DOG = 'Pes',
   CAT = 'Mačka',
+  RABBIT = 'Králik',
+  BIRD = 'Vták',
+  RODENT = 'Hlodavec',
   OTHER = 'Iné'
 }
 
@@ -42,7 +45,7 @@ export interface PetTraining {
 
 export interface PetRequirements {
   activityLevel: 'Nízka' | 'Stredná' | 'Vysoká';
-  suitableFor: string[]; 
+  suitableFor: string[];
   unsuitableFor: string[];
 }
 
@@ -107,7 +110,7 @@ export interface UserPreferences {
   genders: Gender[];
   ageRange: string[];
   temperament: string[];
-  preferredBreeds: string[]; 
+  preferredBreeds: string[];
   activityLevel: 'Nízka (Gaučák)' | 'Stredná (Prechádzky)' | 'Vysoká (Športovec)';
   socialRequirements: string[];
   specialNeedsAccepted: boolean;

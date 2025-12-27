@@ -10,17 +10,17 @@ import { formatSlovakAge } from '../utils/formatters';
 
 const PetListPage: React.FC = () => {
   const { toggleFavorite, isFavorite, userRole, currentUser } = useAuth();
-  const { pets } = usePets(); 
+  const { pets } = usePets();
   const { showToast } = useApp();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
+
   const [filterType, setFilterType] = useState<string>('all');
   const [filterLocation, setFilterLocation] = useState<string>('');
   const [filterAge, setFilterAge] = useState<string>('all');
   const [filterSize, setFilterSize] = useState<string>('all');
   const [filterTag, setFilterTag] = useState<string>('all');
-  
+
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const PetListPage: React.FC = () => {
     if (typeParam && (typeParam === PetType.DOG || typeParam === PetType.CAT)) {
       setFilterType(typeParam);
     } else {
-        setFilterType('all');
+      setFilterType('all');
     }
   }, [searchParams]);
 
@@ -71,12 +71,12 @@ const PetListPage: React.FC = () => {
   const handleFavoriteClick = (e: React.MouseEvent, petId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!currentUser) {
       showToast("Pre ukladanie obľúbených sa prosím prihláste.", "info");
       return;
     }
-    
+
     const wasFavorite = isFavorite(petId);
     toggleFavorite(petId);
     if (!wasFavorite) {
@@ -95,7 +95,7 @@ const PetListPage: React.FC = () => {
   ].filter(Boolean).length;
 
   const GenderIcon = ({ gender }: { gender: Gender }) => (
-      gender === Gender.MALE ? <span className="text-blue-500">♂</span> : <span className="text-pink-500">♀</span>
+    gender === Gender.MALE ? <span className="text-blue-500">♂</span> : <span className="text-pink-500">♀</span>
   );
 
   return (
@@ -112,30 +112,30 @@ const PetListPage: React.FC = () => {
           <div className="flex items-center justify-between mb-2 md:mb-4 pb-2 border-b border-gray-100">
             <div className="flex items-center gap-2 text-gray-700 font-bold">
               <Filter className="text-brand-600" size={20} />
-              <span className="text-sm uppercase tracking-widest">Filtrovať</span>
+              <span className="text-sm">Filtrovať</span>
               {activeFiltersCount > 0 && (
                 <span className="bg-brand-100 text-brand-700 text-xs font-black px-2 py-0.5 rounded-full ml-1">
                   {activeFiltersCount}
                 </span>
               )}
             </div>
-            
+
             <div className="flex items-center gap-3 md:hidden">
-                {activeFiltersCount > 0 && (
-                   <button onClick={resetFilters} className="text-xs text-red-500 font-bold hover:underline">Vymazať</button>
-                )}
-                <button onClick={() => setIsFiltersOpen(!isFiltersOpen)} className="p-1.5 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 transition">
-                  {isFiltersOpen ? <ChevronUp size={20}/> : <ChevronDown size={20}/>}
-                </button>
+              {activeFiltersCount > 0 && (
+                <button onClick={resetFilters} className="text-xs text-red-500 font-bold hover:underline">Vymazať</button>
+              )}
+              <button onClick={() => setIsFiltersOpen(!isFiltersOpen)} className="p-1.5 bg-gray-100 rounded-lg text-gray-600 hover:bg-gray-200 transition">
+                {isFiltersOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
             </div>
 
             {activeFiltersCount > 0 && (
-               <button onClick={resetFilters} className="hidden md:flex text-xs text-red-500 hover:text-red-700 items-center gap-1 font-black uppercase tracking-widest bg-red-50 px-3 py-1.5 rounded-xl transition">
-                 <X size={16} /> Vymazať filtre
-               </button>
+              <button onClick={resetFilters} className="hidden md:flex text-xs text-red-500 hover:text-red-700 items-center gap-1 font-black bg-red-50 px-3 py-1.5 rounded-xl transition">
+                <X size={16} /> Vymazať filtre
+              </button>
             )}
           </div>
-          
+
           <div className={`grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 ${isFiltersOpen ? 'grid' : 'hidden'} md:grid`}>
             <div className="relative col-span-1">
               <select
@@ -226,48 +226,46 @@ const PetListPage: React.FC = () => {
           {filteredPets.map((pet) => {
             const isFav = isFavorite(pet.id);
             return (
-              <Link 
-                key={pet.id} 
-                to={`/pets/${pet.id}`} 
+              <Link
+                key={pet.id}
+                to={`/pets/${pet.id}`}
                 className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full transform hover:-translate-y-2"
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                  <img 
-                    src={pet.imageUrl} 
-                    alt={pet.name} 
+                  <img
+                    src={pet.imageUrl}
+                    alt={pet.name}
                     className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                   />
-                  
+
                   <div className="absolute top-4 right-4 flex flex-col gap-2">
-                      <div className="bg-white/90 backdrop-blur px-2.5 py-1 rounded-xl text-[10px] font-black text-gray-800 shadow-sm border border-gray-100">
-                        {formatSlovakAge(pet.age)}
-                      </div>
+                    <div className="bg-white/90 backdrop-blur px-2.5 py-1 rounded-xl text-[10px] font-black text-gray-800 shadow-sm border border-gray-100">
+                      {formatSlovakAge(pet.age)}
+                    </div>
                   </div>
 
                   {!isShelter && (
-                      <button 
-                          onClick={(e) => handleFavoriteClick(e, pet.id)}
-                          className={`absolute top-4 left-4 p-2 rounded-xl transition-all shadow-md backdrop-blur-sm border ${
-                              isFav 
-                              ? 'bg-red-50 text-red-500 border-red-200' 
-                              : 'bg-white/80 text-gray-400 border-white hover:bg-white hover:text-red-500'
-                          }`}
-                      >
-                          <Heart size={18} className={isFav ? 'fill-current' : ''} />
-                      </button>
+                    <button
+                      onClick={(e) => handleFavoriteClick(e, pet.id)}
+                      className={`absolute top-4 left-4 p-2 rounded-xl transition-all shadow-md backdrop-blur-sm border ${isFav
+                          ? 'bg-red-50 text-red-500 border-red-200'
+                          : 'bg-white/80 text-gray-400 border-white hover:bg-white hover:text-red-500'
+                        }`}
+                    >
+                      <Heart size={18} className={isFav ? 'fill-current' : ''} />
+                    </button>
                   )}
 
                   {pet.adoptionStatus !== 'Available' && (
-                      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4">
-                          <span className={`px-4 py-2 rounded-2xl font-black uppercase tracking-wider text-xs shadow-xl ${
-                              pet.adoptionStatus === 'Reserved' ? 'bg-orange-600 text-white' : 'bg-gray-600 text-white'
-                          }`}>
-                              {pet.adoptionStatus === 'Reserved' ? 'Rezervovaný' : 'Adoptovaný'}
-                          </span>
-                      </div>
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-4">
+                      <span className={`px-4 py-2 rounded-2xl font-black text-xs shadow-xl ${pet.adoptionStatus === 'Reserved' ? 'bg-orange-600 text-white' : 'bg-gray-600 text-white'
+                        }`}>
+                        {pet.adoptionStatus === 'Reserved' ? 'Rezervovaný' : 'Adoptovaný'}
+                      </span>
+                    </div>
                   )}
                 </div>
-                
+
                 <div className="p-6 flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-black text-gray-900 group-hover:text-brand-600 transition truncate">{pet.name.replace(/\*\*/g, '')}</h3>
@@ -275,23 +273,23 @@ const PetListPage: React.FC = () => {
                       <GenderIcon gender={pet.gender} />
                     </div>
                   </div>
-                  
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 truncate">{pet.breed}</p>
+
+                  <p className="text-xs font-bold text-gray-400 mb-3 truncate">{pet.breed}</p>
 
                   <p className="text-gray-500 text-[13px] font-medium line-clamp-2 mb-4 leading-relaxed">
                     {pet.description.replace(/\*\*/g, '')}
                   </p>
-                  
+
                   <div className="flex flex-wrap gap-1.5 mb-6">
                     {pet.tags.slice(0, 2).map(tag => (
-                      <span key={tag} className="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-bold rounded-md uppercase tracking-tighter">
+                      <span key={tag} className="px-2 py-0.5 bg-brand-50 text-brand-700 text-[10px] font-bold rounded-md">
                         {tag}
                       </span>
                     ))}
                   </div>
 
                   <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div className="flex items-center text-gray-500 text-[11px] font-bold uppercase tracking-tight">
+                    <div className="flex items-center text-gray-500 text-[11px] font-bold">
                       <MapPin size={12} className="mr-1 text-brand-500" />
                       {pet.location}
                     </div>

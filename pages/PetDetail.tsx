@@ -218,15 +218,15 @@ const PetDetailPage: React.FC = () => {
                 </div>
                 <div className="flex justify-center gap-4 mb-8">
                     <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.age')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.age')}</div>
                         <div className="font-bold text-gray-900">{t('common.years', { count: pet.age })}</div>
                     </div>
                     <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.gender')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.gender')}</div>
                         <div className="font-bold text-gray-900">{pet.gender}</div>
                     </div>
                     <div className="text-center px-4 py-2 bg-gray-50 rounded-2xl min-w-[80px]">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.size')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.size')}</div>
                         <div className="font-bold text-gray-900">{pet.size}</div>
                     </div>
                 </div>
@@ -257,7 +257,7 @@ const PetDetailPage: React.FC = () => {
                 )}
                 {pet.adoptionFee > 0 && (
                     <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-                        <p className="text-xs text-gray-400 font-bold uppercase mb-1">{t('petDetail.adoptionFee')}</p>
+                        <p className="text-xs text-gray-400 font-bold mb-1">{t('petDetail.adoptionFee')}</p>
                         <p className="text-2xl font-extrabold text-gray-900">{pet.adoptionFee} €</p>
                     </div>
                 )}
@@ -268,7 +268,7 @@ const PetDetailPage: React.FC = () => {
                         {shelter?.logoUrl ? <img src={shelter.logoUrl} alt="" className="w-full h-full object-contain" /> : <Building2 size={24} className="text-gray-300" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-400 font-bold uppercase mb-0.5">{t('petDetail.shelter')}</div>
+                        <div className="text-xs text-gray-400 font-bold mb-0.5">{t('petDetail.shelter')}</div>
                         <h4 className="font-bold text-gray-900 truncate group-hover:text-brand-600">{shelter?.name || t('petDetail.loading')}</h4>
                     </div>
                     <ChevronRight className="text-gray-300" />
@@ -347,7 +347,7 @@ const PetDetailPage: React.FC = () => {
                                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2"><HomeIcon size={20} className="text-brand-600" /> {t('petDetail.home')}</h3>
                                 <div className="space-y-6">
                                     <div>
-                                        <div className="text-xs font-bold text-green-600 uppercase mb-2 flex items-center gap-1"><CheckCircle size={12} /> {t('petDetail.suitable')}</div>
+                                        <div className="text-xs font-bold text-green-600 mb-2 flex items-center gap-1"><CheckCircle size={12} /> {t('petDetail.suitable')}</div>
                                         <div className="flex flex-wrap gap-2">
                                             {pet.requirements?.suitableFor?.map(tag => <span key={tag} className="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-bold">{tag}</span>)}
                                         </div>

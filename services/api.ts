@@ -310,7 +310,42 @@ export const api = {
         try {
             const { data: profiles, error } = await supabase.from('profiles').select('*').eq('role', 'shelter');
             if (error) throw error;
-            return profiles.map(row => mapProfileFromDB(row) as Shelter);
+
+            // Fetch all pets to calculate stats dynamically
+            const { data: allPets } = await supabase.from('pets').select('shelter_id, adoption_status');
+
+            const statsMap = new Map<string, { currentAnimals: number, adoptions: number }>();
+
+            if (allPets) {
+                allPets.forEach((pet: any) => {
+                    const sid = pet.shelter_id;
+                    if (!sid) return;
+
+                    if (!statsMap.has(sid)) {
+                        statsMap.set(sid, { currentAnimals: 0, adoptions: 0 });
+                    }
+                    const stats = statsMap.get(sid)!;
+
+                    if (pet.adoption_status === 'Adopted') {
+                        stats.adoptions++;
+                    } else {
+                        stats.currentAnimals++;
+                    }
+                });
+            }
+
+            return profiles.map(row => {
+                const shelter = mapProfileFromDB(row) as Shelter;
+                const stats = statsMap.get(shelter.id);
+                if (stats) {
+                    shelter.stats = {
+                        views: shelter.stats.views, // Keep views primarily from profile stats (or could calculate too if tracked elsewhere)
+                        currentAnimals: stats.currentAnimals,
+                        adoptions: stats.adoptions
+                    };
+                }
+                return shelter;
+            });
         } catch (e) { return []; }
     },
 

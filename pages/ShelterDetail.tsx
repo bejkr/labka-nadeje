@@ -144,7 +144,7 @@ const ShelterDetailPage: React.FC = () => {
                                         </h1>
                                     </div>
 
-                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-gray-500 font-bold uppercase tracking-widest text-[11px] mt-4">
+                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-gray-500 font-bold text-[11px] mt-4">
                                         <span className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100"><MapPin size={16} className="text-brand-600" /> {shelter.location}</span>
                                         {shelter.isVerified && (
                                             <span className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-xl border border-green-100">
@@ -158,7 +158,7 @@ const ShelterDetailPage: React.FC = () => {
                                     <div className="flex gap-3 justify-center md:justify-end mt-4 md:mt-0 flex-shrink-0">
                                         <button
                                             onClick={() => setActiveTab('help')}
-                                            className="bg-brand-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-brand-700 transition shadow-xl shadow-brand-200 flex items-center gap-3 transform hover:-translate-y-1 active:scale-95"
+                                            className="bg-brand-600 text-white px-8 py-4 rounded-2xl font-black text-xs hover:bg-brand-700 transition shadow-xl shadow-brand-200 flex items-center gap-3 transform hover:-translate-y-1 active:scale-95"
                                         >
                                             <Heart size={20} fill="currentColor" className="text-brand-300" />
                                             {t('shelterDetail.supportButton')}
@@ -182,7 +182,7 @@ const ShelterDetailPage: React.FC = () => {
                         <div className="flex items-center border-b border-gray-200 overflow-x-auto bg-white/50 backdrop-blur-sm sticky top-20 z-20 rounded-t-3xl px-4">
                             <button
                                 onClick={() => setActiveTab('pets')}
-                                className={`px-6 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'pets'
+                                className={`px-6 py-5 text-[11px] font-black border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'pets'
                                     ? 'border-brand-600 text-brand-600'
                                     : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                                     }`}
@@ -191,7 +191,7 @@ const ShelterDetailPage: React.FC = () => {
                             </button>
                             <button
                                 onClick={() => setActiveTab('about')}
-                                className={`px-6 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'about'
+                                className={`px-6 py-5 text-[11px] font-black border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'about'
                                     ? 'border-brand-600 text-brand-600'
                                     : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                                     }`}
@@ -201,7 +201,7 @@ const ShelterDetailPage: React.FC = () => {
                             {!isShelterUser && (
                                 <button
                                     onClick={() => setActiveTab('help')}
-                                    className={`px-6 py-5 text-[11px] font-black uppercase tracking-[0.2em] border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'help'
+                                    className={`px-6 py-5 text-[11px] font-black border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'help'
                                         ? 'border-brand-600 text-brand-600'
                                         : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                                         }`}
@@ -229,7 +229,7 @@ const ShelterDetailPage: React.FC = () => {
 
                                                         <div className="absolute top-0 inset-x-0 p-4 flex justify-between items-start">
                                                             {pet.adoptionStatus !== 'Available' ? (
-                                                                <span className={`px-3 py-1 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg border ${pet.adoptionStatus === 'Reserved'
+                                                                <span className={`px-3 py-1 rounded-xl font-black text-[9px] shadow-lg border ${pet.adoptionStatus === 'Reserved'
                                                                     ? 'bg-orange-600 text-white border-orange-500'
                                                                     : 'bg-gray-700 text-white border-gray-600'
                                                                     }`}>
@@ -257,7 +257,7 @@ const ShelterDetailPage: React.FC = () => {
 
                                                         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-12">
                                                             <h3 className="text-2xl font-black text-white mb-0.5 tracking-tight">{pet.name.replace(/\*\*/g, '')}</h3>
-                                                            <p className="text-white/70 text-xs font-bold uppercase tracking-widest">{pet.breed}</p>
+                                                            <p className="text-white/70 text-xs font-bold">{pet.breed}</p>
                                                         </div>
                                                     </div>
 
@@ -268,8 +268,8 @@ const ShelterDetailPage: React.FC = () => {
 
                                                         <div className="flex items-center justify-between pt-5 border-t border-gray-50">
                                                             <div className="flex gap-2">
-                                                                <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-gray-100">{t('common.years', { count: pet.age })}</span>
-                                                                <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-gray-100">{pet.gender}</span>
+                                                                <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black rounded-lg border border-gray-100">{t('common.years', { count: pet.age })}</span>
+                                                                <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black rounded-lg border border-gray-100">{pet.gender}</span>
                                                             </div>
                                                             <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm">
                                                                 <ChevronRight size={20} />
@@ -309,15 +309,15 @@ const ShelterDetailPage: React.FC = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center group hover:border-brand-200 transition-colors">
                                         <div className="text-5xl font-black text-brand-600 mb-2 tracking-tighter group-hover:scale-110 transition-transform">{shelter.stats.adoptions}</div>
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('shelterDetail.stats.adopted')}</div>
+                                        <div className="text-[10px] font-black text-gray-400">{t('shelterDetail.stats.adopted')}</div>
                                     </div>
                                     <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center group hover:border-blue-200 transition-colors">
                                         <div className="text-5xl font-black text-blue-600 mb-2 tracking-tighter group-hover:scale-110 transition-transform">{shelter.stats.currentAnimals}</div>
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('shelterDetail.stats.care')}</div>
+                                        <div className="text-[10px] font-black text-gray-400">{t('shelterDetail.stats.care')}</div>
                                     </div>
                                     <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center group hover:border-green-200 transition-colors">
                                         <div className="text-5xl font-black text-green-600 mb-2 tracking-tighter group-hover:scale-110 transition-transform">{shelter.stats.views || 0}</div>
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t('shelterDetail.stats.views')}</div>
+                                        <div className="text-[10px] font-black text-gray-400">{t('shelterDetail.stats.views')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -343,9 +343,9 @@ const ShelterDetailPage: React.FC = () => {
 
                                         {shelter.bankAccount ? (
                                             <div>
-                                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-4 block">{t('shelterDetail.iban')}</label>
+                                                <label className="text-[10px] font-black text-gray-500 mb-4 block">{t('shelterDetail.iban')}</label>
                                                 <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-                                                    <code className="font-mono text-xl md:text-2xl tracking-widest text-white bg-white/5 p-4 rounded-2xl border border-white/5 break-all">
+                                                    <code className="font-mono text-xl md:text-2xl text-white bg-white/5 p-4 rounded-2xl border border-white/5 break-all">
                                                         {shelter.bankAccount}
                                                     </code>
                                                     <button
@@ -374,7 +374,7 @@ const ShelterDetailPage: React.FC = () => {
                                             </h3>
                                             <p className="text-sm text-gray-500 mt-1 font-medium">{t('shelterDetail.materialDesc')}</p>
                                         </div>
-                                        <span className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{t('shelterDetail.suppliesCount', { count: supplies.length })}</span>
+                                        <span className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-[10px] font-black">{t('shelterDetail.suppliesCount', { count: supplies.length })}</span>
                                     </div>
 
                                     {/* Tip for donors */}
@@ -382,7 +382,7 @@ const ShelterDetailPage: React.FC = () => {
                                         <div className="p-6 m-8 mb-4 bg-blue-50 rounded-[2rem] border border-blue-100 flex items-start gap-4 shadow-inner">
                                             <div className="p-2 bg-white rounded-xl text-blue-600 shadow-sm flex-shrink-0"><Info size={20} /></div>
                                             <div className="flex-1">
-                                                <p className="text-blue-900 text-sm font-black uppercase tracking-wider mb-2">{t('shelterDetail.donorTip')}:</p>
+                                                <p className="text-blue-900 text-sm font-black mb-2">{t('shelterDetail.donorTip')}:</p>
                                                 <p className="text-blue-800/80 text-xs leading-relaxed mb-4 font-medium">
                                                     {t('shelterDetail.tipDesc')}:
                                                 </p>
@@ -408,7 +408,7 @@ const ShelterDetailPage: React.FC = () => {
                                                 <li key={item.id} className="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group border-l-4" style={{ borderLeftColor: item.priority === 'Vysoká' ? '#ef4444' : item.priority === 'Stredná' ? '#f59e0b' : '#10b981' }}>
                                                     <div className="mb-4">
                                                         <div className="flex items-center justify-between mb-2">
-                                                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${item.priority === 'Vysoká' ? 'bg-red-50 text-red-600' :
+                                                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-md ${item.priority === 'Vysoká' ? 'bg-red-50 text-red-600' :
                                                                 item.priority === 'Stredná' ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'
                                                                 }`}>
                                                                 {item.priority === 'Vysoká' ? t('shelterDetail.priority.high') : item.priority === 'Stredná' ? t('shelterDetail.priority.medium') : t('shelterDetail.priority.low')}
@@ -422,12 +422,12 @@ const ShelterDetailPage: React.FC = () => {
                                                             href={item.link}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="flex items-center justify-center gap-2 bg-gray-900 text-white w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-600 transition shadow-lg active:scale-95"
+                                                            className="flex items-center justify-center gap-2 bg-gray-900 text-white w-full py-3 rounded-xl text-[10px] font-black hover:bg-brand-600 transition shadow-lg active:scale-95"
                                                         >
                                                             <ShoppingCart size={14} /> {t('shelterDetail.buyOnline')}
                                                         </a>
                                                     ) : (
-                                                        <div className="flex items-center justify-center gap-2 text-gray-400 bg-gray-50 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-gray-100 cursor-default">
+                                                        <div className="flex items-center justify-center gap-2 text-gray-400 bg-gray-50 py-3 rounded-xl text-[10px] font-black border border-gray-100 cursor-default">
                                                             <MapPin size={14} /> {t('shelterDetail.deliverPerson')}
                                                         </div>
                                                     )}
@@ -460,7 +460,7 @@ const ShelterDetailPage: React.FC = () => {
                                         <Mail size={20} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t('shelterDetail.email')}</div>
+                                        <div className="text-[10px] text-gray-400 font-black mb-1">{t('shelterDetail.email')}</div>
                                         <a href={`mailto:${shelter.email}`} className="text-gray-800 font-extrabold hover:text-brand-600 transition break-all text-sm">
                                             {shelter.email}
                                         </a>
@@ -472,7 +472,7 @@ const ShelterDetailPage: React.FC = () => {
                                         <Phone size={20} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t('shelterDetail.phone')}</div>
+                                        <div className="text-[10px] text-gray-400 font-black mb-1">{t('shelterDetail.phone')}</div>
                                         <a href={`tel:${shelter.phone}`} className="text-gray-800 font-extrabold hover:text-blue-600 transition text-sm">
                                             {shelter.phone}
                                         </a>
@@ -484,7 +484,7 @@ const ShelterDetailPage: React.FC = () => {
                                         <Clock size={20} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">{t('shelterDetail.hours')}</div>
+                                        <div className="text-[10px] text-gray-400 font-black mb-1">{t('shelterDetail.hours')}</div>
                                         <p className="text-gray-800 font-bold text-sm whitespace-pre-line leading-relaxed">
                                             {shelter.openingHours || t('shelterDetail.hoursFallback') || "Dohodou / Po tel. dohovore"}
                                         </p>
@@ -494,7 +494,7 @@ const ShelterDetailPage: React.FC = () => {
 
                             {hasSocials ? (
                                 <div className="mt-12 pt-8 border-t border-gray-50 relative z-10">
-                                    <p className="text-[9px] text-center text-gray-400 font-black uppercase tracking-[0.3em] mb-6">{t('shelterDetail.followUs')}</p>
+                                    <p className="text-[9px] text-center text-gray-400 font-black mb-6">{t('shelterDetail.followUs')}</p>
                                     <div className="flex justify-center gap-4">
                                         {shelter.socials?.facebook && (
                                             <a href={ensureUrl(shelter.socials.facebook)} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all shadow-sm hover:shadow-blue-200" title="Facebook">
@@ -515,7 +515,7 @@ const ShelterDetailPage: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="mt-12 pt-8 border-t border-gray-50 text-center relative z-10">
-                                    <p className="text-[9px] text-gray-400 font-black uppercase tracking-widest">{t('shelterDetail.noSocials')}</p>
+                                    <p className="text-[9px] text-gray-400 font-black">{t('shelterDetail.noSocials')}</p>
                                 </div>
                             )}
                         </div>

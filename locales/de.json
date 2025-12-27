@@ -24,7 +24,8 @@
         "terms": "Nutzungsbedingungen"
     },
     "home": {
-        "heroTitle": "Finden Sie Ihren treuen Freund",
+        "heroTitleStart": "Finden Sie Ihren",
+        "heroTitleEnd": "treuen Freund",
         "heroSubtitle": "Tausende Hunde in Tierheimen warten auf eine zweite Chance. Adoptieren Sie Liebe fürs Leben.",
         "heroButton": "Hunde anzeigen",
         "stats": {

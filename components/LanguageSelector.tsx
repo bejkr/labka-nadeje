@@ -44,7 +44,7 @@ const LanguageSelector: React.FC = () => {
                 aria-label="Select Language"
             >
                 <Globe size={18} />
-                <span className="uppercase">{currentLang.code}</span>
+                <span>{currentLang.code}</span>
             </button>
 
             {isOpen && (
@@ -56,7 +56,7 @@ const LanguageSelector: React.FC = () => {
                             className={`w-full text-left px-4 py-2 text-sm flex items-center gap-3 hover:bg-gray-50 transition-colors ${i18n.resolvedLanguage === lang.code ? 'text-brand-600 font-bold bg-brand-50' : 'text-gray-700'
                                 }`}
                         >
-                            <span className="w-6 font-mono uppercase text-xs text-gray-400">{lang.code}</span>
+                            <span className="w-6 font-mono text-xs text-gray-400">{lang.code}</span>
                             {lang.name}
                         </button>
                     ))}

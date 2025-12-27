@@ -24,7 +24,8 @@
         "terms": "Terms of Use"
     },
     "home": {
-        "heroTitle": "Find your faithful friend",
+        "heroTitleStart": "Find your",
+        "heroTitleEnd": "faithful friend",
         "heroSubtitle": "Thousands of dogs in shelters are waiting for a second chance. Adopt love for a lifetime.",
         "heroButton": "View Dogs",
         "stats": {
