@@ -31,7 +31,23 @@ const mapPetFromDB = (row: any): Pet => ({
     training: row.details?.training || {},
     requirements: row.details?.requirements || {},
     videoUrl: row.details?.videoUrl || '',
-    importantNotes: row.details?.importantNotes || ''
+    importantNotes: row.details?.importantNotes || '',
+    // Prefer the new SQL table 'pet_updates', fall back to JSONB for legacy data if needed, or merge them?
+    // For now, let's assume valid data will come from the new table for new updates. 
+    // We can map the SQL rows to our PetUpdate interface.
+    updates: (row.pet_updates || []).map((u: any) => ({
+        id: u.id,
+        petId: u.pet_id,
+        date: u.created_at,
+        title: u.title,
+        content: u.content,
+        imageUrl: u.image_url,
+        type: u.type
+    })).sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    // Fallback to old updates if new table is empty? 
+    // If we want to keep old data visible without migration, we could concat:
+    // .concat(row.details?.updates || [])
+    // But let's start clean or assume user wants the new system. Let's just use the table.
 });
 
 // Helper to map DB profile object to User or Shelter type
@@ -195,13 +211,46 @@ export const api = {
         if (cachedProfile && cachedProfile.role === 'user') { (cachedProfile as User).virtualAdoptions = virtualAdoptions; }
     },
 
-    async cancelVirtualAdoption(userId: string, petId: string) {
-        await supabase.from('virtual_adoptions').delete().eq('user_id', userId).eq('pet_id', petId);
-        const { data: current } = await supabase.from('profiles').select('user_data').eq('id', userId).single();
+    async cancelVirtualAdoption(id: string) {
+        // Mock implementation
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data: current } = await supabase.from('profiles').select('user_data').eq('id', session.user.id).single();
         const userData = current?.user_data || {};
-        const virtualAdoptions = (userData.virtualAdoptions || []).filter((a: any) => a.petId !== petId);
-        await supabase.from('profiles').update({ user_data: { ...userData, virtualAdoptions } }).eq('id', userId);
+        const virtualAdoptions = (userData.virtualAdoptions || []).map((va: VirtualAdoption) =>
+            va.id === id ? { ...va, status: 'cancelled' } : va
+        );
+
+        await supabase.from('profiles').update({ user_data: { ...userData, virtualAdoptions } }).eq('id', session.user.id);
         if (cachedProfile && cachedProfile.role === 'user') { (cachedProfile as User).virtualAdoptions = virtualAdoptions; }
+    },
+
+    async createVirtualAdoption(pet: Pet, amount: number) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error("Musíte byť prihlásený");
+
+        const newAdoption: VirtualAdoption = {
+            id: Math.random().toString(36).substr(2, 9),
+            userId: session.user.id,
+            petId: pet.id,
+            petName: pet.name,
+            petImage: pet.imageUrl,
+            amount: amount,
+            currency: 'eur',
+            status: 'active',
+            startDate: new Date().toISOString(),
+            nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        };
+
+        const { data: current } = await supabase.from('profiles').select('user_data').eq('id', session.user.id).single();
+        const userData = current?.user_data || {};
+        const virtualAdoptions = [...(userData.virtualAdoptions || []), newAdoption];
+
+        await supabase.from('profiles').update({ user_data: { ...userData, virtualAdoptions } }).eq('id', session.user.id);
+        if (cachedProfile && cachedProfile.role === 'user') { (cachedProfile as User).virtualAdoptions = virtualAdoptions; }
+
+        return newAdoption;
     },
 
     async getShelterVirtualAdoptionsCount(shelterId: string): Promise<number> {
@@ -234,7 +283,7 @@ export const api = {
     async getPets(): Promise<Pet[]> {
         try {
             const { data, error } = await supabase.from('pets')
-                .select('id, shelter_id, name, type, breed, age, gender, size, location, image_url, description, adoption_fee, adoption_status, is_visible, needs_foster, tags, posted_date, views, details')
+                .select('id, shelter_id, name, type, breed, age, gender, size, location, image_url, description, adoption_fee, adoption_status, is_visible, needs_foster, tags, posted_date, views, details, pet_updates(*)')
                 .order('posted_date', { ascending: false });
             if (error) throw error;
             return data?.map(mapPetFromDB) || [];
@@ -244,6 +293,16 @@ export const api = {
     async createPet(pet: Pet) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Nie ste prihlásený.");
+        const details: any = {
+            health: pet.health || {},
+            social: pet.social || {},
+            training: pet.training || {},
+            requirements: pet.requirements || {},
+            gallery: pet.gallery || [],
+            videoUrl: pet.videoUrl || '',
+            importantNotes: pet.importantNotes || '',
+            updates: pet.updates || []
+        };
         const dbPet = {
             shelter_id: user.id,
             name: pet.name,
@@ -262,7 +321,7 @@ export const api = {
             tags: pet.tags || [],
             posted_date: new Date().toISOString(),
             views: 0,
-            details: { gallery: pet.gallery || [], health: pet.health || {}, social: pet.social || {}, training: pet.training || {}, requirements: pet.requirements || {}, videoUrl: pet.videoUrl || '', importantNotes: pet.importantNotes || '' }
+            details: details
         };
         const { data, error } = await supabase.from('pets').insert(dbPet).select().single();
         if (error) throw error;
@@ -272,7 +331,7 @@ export const api = {
     async updatePet(pet: Pet) {
         const dbPet = {
             name: pet.name, type: pet.type, breed: pet.breed, age: Number(pet.age), gender: pet.gender, size: pet.size, location: pet.location, image_url: pet.imageUrl, description: pet.description, adoption_fee: Number(pet.adoptionFee || 0), adoption_status: pet.adoptionStatus, is_visible: pet.isVisible, needs_foster: pet.needsFoster, tags: pet.tags || [],
-            details: { gallery: pet.gallery || [], health: pet.health || {}, social: pet.social || {}, training: pet.training || {}, requirements: pet.requirements || {}, videoUrl: pet.videoUrl || '', importantNotes: pet.importantNotes || '' }
+            details: { gallery: pet.gallery || [], health: pet.health || {}, social: pet.social || {}, training: pet.training || {}, requirements: pet.requirements || {}, videoUrl: pet.videoUrl || '', importantNotes: pet.importantNotes || '', updates: pet.updates || [] }
         };
         const { error } = await supabase.from('pets').update(dbPet).eq('id', pet.id);
         if (error) throw error;
@@ -280,6 +339,20 @@ export const api = {
 
     async updatePetStatus(petId: string, status: string) {
         const { error } = await supabase.from('pets').update({ adoption_status: status }).eq('id', petId);
+        if (error) throw error;
+    },
+
+    async addPetUpdate(petId: string, update: any) {
+        // Insert into the new dedicated SQL table
+        const { error } = await supabase.from('pet_updates').insert({
+            pet_id: petId,
+            title: update.title,
+            content: update.content,
+            image_url: update.imageUrl,
+            type: update.type || 'status',
+            created_at: new Date().toISOString()
+        });
+
         if (error) throw error;
     },
 
@@ -361,7 +434,7 @@ export const api = {
     },
 
     async getPetsByShelter(shelterId: string): Promise<Pet[]> {
-        const { data } = await supabase.from('pets').select('*').eq('shelter_id', shelterId);
+        const { data } = await supabase.from('pets').select('*, pet_updates(*)').eq('shelter_id', shelterId);
         return data?.map(mapPetFromDB) || [];
     },
 
@@ -372,7 +445,7 @@ export const api = {
     },
 
     async adminGetAllPets(): Promise<(Pet & { shelterName?: string })[]> {
-        const { data, error } = await supabase.from('pets').select('*, profiles:shelter_id (name)').order('posted_date', { ascending: false });
+        const { data, error } = await supabase.from('pets').select('*, profiles:shelter_id (name), pet_updates(*)').order('posted_date', { ascending: false });
         if (error) throw error;
         return data.map((row: any) => ({ ...mapPetFromDB(row), shelterName: row.profiles?.name || 'Neznámy útulok' }));
     },

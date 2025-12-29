@@ -18,11 +18,12 @@ import {
 import { User, PetType, Size, Gender, HousingType, WorkMode, ExperienceLevel, UserPreferences, AdoptionInquiry, Shelter, Pet } from '../types';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ChatWindow from '../components/ChatWindow';
+import CertificateModal from '../components/CertificateModal';
 import { api } from '../services/api';
 
 
 const PreferenceChip: React.FC<{ label: string, active: boolean, onClick?: () => void, variant?: 'brand' | 'blue' | 'purple' | 'green' | 'gray' }> = ({ label, active, onClick, variant = 'brand' }) => {
-    const colors = {
+    const colors: Record<string, string> = {
         brand: active ? 'bg-brand-600 border-brand-600 text-white shadow-brand-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-brand-200 hover:text-brand-600 hover:bg-brand-50',
         blue: active ? 'bg-blue-600 border-blue-600 text-white shadow-blue-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-blue-200 hover:text-blue-600 hover:bg-blue-50',
         purple: active ? 'bg-purple-600 border-purple-600 text-white shadow-purple-200 shadow-lg' : 'bg-white border-gray-100 text-gray-400 hover:border-purple-200 hover:text-purple-600 hover:bg-purple-50',
@@ -48,7 +49,7 @@ const UserProfilePage: React.FC = () => {
     const { inquiries, updateInquiryStatus, markInquiryAsRead, seenInquiryIds, showToast } = useApp();
     const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'settings'>('about');
+    const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'virtual-adoptions' | 'settings'>('about');
     const [selectedInquiry, setSelectedInquiry] = useState<AdoptionInquiry | null>(null);
     const [relatedShelter, setRelatedShelter] = useState<Shelter | null>(null);
 
@@ -83,6 +84,7 @@ const UserProfilePage: React.FC = () => {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [selectedCertificatePet, setSelectedCertificatePet] = useState<any | null>(null);
 
     const user = useMemo(() => currentUser as User, [currentUser]);
 
@@ -139,6 +141,18 @@ const UserProfilePage: React.FC = () => {
         };
         fetchInquiryShelter();
     }, [selectedInquiry]);
+
+    const handleCancelAdoption = async (id: string) => {
+        if (!confirm("Naozaj chcete zrušiť túto virtuálnu adopciu?")) return;
+        try {
+            await api.cancelVirtualAdoption(id);
+            await updateUserProfile({}); // Refresh profile data
+            showToast("Virtuálna adopcia bola zrušená.", "success");
+        } catch (e) {
+            showToast("Chyba pri rušení adopcie.", "error");
+        }
+    };
+
 
     useEffect(() => {
         if (!user) return;
@@ -275,7 +289,8 @@ const UserProfilePage: React.FC = () => {
                     <div className="sticky top-6 z-30 p-2 bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl shadow-gray-200/50 rounded-3xl inline-flex gap-1">
                         {[
                             { id: 'about', label: 'Môj Profil', icon: UserIcon },
-                            { id: 'activity', label: 'Adopcie & Pomoc', icon: Activity },
+                            { id: 'activity', label: 'Žiadosti', icon: MessageCircle },
+                            { id: 'virtual-adoptions', label: 'Virtuálne adopcie', icon: Heart },
                             { id: 'settings', label: 'Nastavenia', icon: Settings }
                         ].map(tab => (
                             <button
@@ -337,6 +352,11 @@ const UserProfilePage: React.FC = () => {
                                 {user.isFosterParent && (
                                     <span className="px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg text-[10px] font-black flex items-center gap-1.5">
                                         <HomeIcon size={12} /> Dočaskár
+                                    </span>
+                                )}
+                                {virtualAdoptionsWithData.some(va => va.status === 'active') && (
+                                    <span className="px-3 py-1 bg-pink-50 text-pink-600 border border-pink-100 rounded-lg text-[10px] font-black flex items-center gap-1.5">
+                                        <Heart size={12} fill="currentColor" /> Virtuálny rodič
                                     </span>
                                 )}
                             </div>
@@ -665,6 +685,7 @@ const UserProfilePage: React.FC = () => {
                                             )}
                                         </section>
 
+
                                         {/* FAVORITES SECTION */}
                                         <section className="space-y-6 pt-8 border-t border-gray-200/50">
                                             <div className="flex items-center gap-3 mb-2">
@@ -693,51 +714,158 @@ const UserProfilePage: React.FC = () => {
                                                 <p className="text-gray-400 italic pl-4">Nemáte žiadne uložené zvieratká.</p>
                                             )}
                                         </section>
-
-                                        {/* VIRTUAL ADOPTIONS */}
-                                        <section className="space-y-6 pt-8 border-t border-gray-200/50">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="p-3 bg-pink-50 text-pink-600 rounded-2xl"><Sparkles size={24} /></div>
-                                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Virtuálne adopcie</h2>
-                                            </div>
-
-                                            {virtualAdoptionsWithData.length > 0 ? (
-                                                <div className="grid grid-cols-1 gap-6">
-                                                    {virtualAdoptionsWithData.map(va => (
-                                                        <div key={va.petId} className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center gap-6">
-                                                            <div className="w-24 h-24 rounded-[2rem] bg-gray-100 overflow-hidden shadow-md flex-shrink-0">
-                                                                <img src={va.pet?.imageUrl} className="w-full h-full object-cover" alt="" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                <div className="flex items-center gap-2 mb-1">
-                                                                    <h3 className="text-xl font-black text-gray-900">{va.pet?.name}</h3>
-                                                                    <span className="px-2 py-1 bg-pink-50 text-pink-600 text-[9px] font-black rounded-lg">Sponzorované</span>
-                                                                </div>
-                                                                <div className="flex gap-4 text-sm font-medium text-gray-500">
-                                                                    <span className="flex items-center gap-1"><Coins size={14} /> {va.totalDonated}€ celkovo</span>
-                                                                    <span className="flex items-center gap-1"><Calendar size={14} /> {va.months} mesiacov</span>
-                                                                </div>
-                                                            </div>
-                                                            <button className="px-6 py-3 bg-gray-900 text-white rounded-2xl font-black text-xs hover:bg-brand-600 transition">Detail</button>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-8 rounded-[2.5rem] flex items-center justify-between">
-                                                    <div>
-                                                        <h3 className="font-black text-lg text-gray-900 mb-1">Staňte sa hrdinom!</h3>
-                                                        <p className="text-sm text-gray-600 font-medium">Adoptujte si zvieratko na diaľku a pomôžte mu.</p>
-                                                    </div>
-                                                    <Link to="/support" className="px-6 py-3 bg-white text-pink-600 shadow-sm rounded-2xl font-black text-xs hover:scale-105 transition">Zistiť viac</Link>
-                                                </div>
-                                            )}
-                                        </section>
                                     </>
                                 )}
                             </div>
                         )}
 
-                        {/* SETTINGS TAB */}
+                        {/* VIRTUAL ADOPTIONS TAB */}
+                        {activeTab === 'virtual-adoptions' && (
+                            <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="p-3 bg-pink-50 text-pink-600 rounded-2xl"><Sparkles size={24} /></div>
+                                        <div>
+                                            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Moje virtuálne adopcie</h2>
+                                            <p className="text-sm text-gray-500 font-medium">Spravujte svoje pravidelné príspevky pre útulkáčov.</p>
+                                        </div>
+                                    </div>
+
+                                    {virtualAdoptionsWithData.length > 0 ? (
+                                        <>
+                                            <div className="grid grid-cols-1 gap-6">
+                                                {virtualAdoptionsWithData.map(va => (
+                                                    <div key={va.id} className={`bg-white p-6 rounded-[2.5rem] border-2 ${va.status === 'active' ? 'border-pink-100 shadow-lg shadow-pink-50' : 'border-gray-100 opacity-70'} flex flex-col md:flex-row items-center gap-6 relative overflow-hidden transition-all hover:border-pink-200`}>
+                                                        {va.status === 'active' && <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-black px-4 py-1 rounded-bl-2xl">AKTÍVNE</div>}
+                                                        {va.status === 'cancelled' && <div className="absolute top-0 right-0 bg-gray-400 text-white text-[10px] font-black px-4 py-1 rounded-bl-2xl">ZRUŠENÉ</div>}
+
+                                                        <div className="w-full md:w-32 h-32 rounded-[2rem] bg-gray-100 overflow-hidden shadow-md flex-shrink-0 relative group">
+                                                            <img src={va.petImage || va.pet?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
+                                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
+                                                        </div>
+
+                                                        <div className="flex-1 text-center md:text-left w-full">
+                                                            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                                                                <h3 className="text-2xl font-black text-gray-900">{va.petName || va.pet?.name}</h3>
+                                                                <span className="inline-flex items-center justify-center gap-1 px-3 py-1 bg-pink-50 text-pink-600 text-[10px] font-black rounded-full w-max mx-auto md:mx-0">
+                                                                    <Heart size={10} fill="currentColor" /> {va.amount} € mesačne
+                                                                </span>
+                                                            </div>
+
+                                                            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 text-sm font-bold text-gray-500 mt-4">
+                                                                <div className="bg-gray-50 px-4 py-2 rounded-xl flex flex-col md:block">
+                                                                    <span className="text-[10px] text-gray-400 block md:inline md:mr-2">Celkovo darované:</span>
+                                                                    <span className="text-brand-600">{va.totalDonated} €</span>
+                                                                </div>
+                                                                <div className="bg-gray-50 px-4 py-2 rounded-xl flex flex-col md:block">
+                                                                    <span className="text-[10px] text-gray-400 block md:inline md:mr-2">Doba podpory:</span>
+                                                                    <span className="text-gray-700">{va.months} mesiacov</span>
+                                                                </div>
+                                                                <div className="bg-gray-50 px-4 py-2 rounded-xl flex flex-col md:block">
+                                                                    <span className="text-[10px] text-gray-400 block md:inline md:mr-2">Ďalšia platba:</span>
+                                                                    <span className="text-gray-700">{new Date(va.nextBillingDate).toLocaleDateString()}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex flex-col gap-3 w-full md:w-auto">
+                                                            <div className="flex flex-col gap-2 w-full">
+                                                                <Link to={`/pets/${va.petId}`} className="px-6 py-3 bg-gray-900 text-white rounded-2xl font-black text-xs hover:bg-brand-600 transition text-center shadow-lg shadow-gray-200 hover:shadow-brand-200">
+                                                                    Pozrieť profil
+                                                                </Link>
+                                                                <button
+                                                                    onClick={() => setSelectedCertificatePet(va)}
+                                                                    className="px-6 py-3 bg-brand-50 text-brand-700 border-2 border-brand-100 rounded-2xl font-black text-xs hover:bg-brand-100 hover:border-brand-200 transition text-center flex items-center justify-center gap-2"
+                                                                >
+                                                                    <Award size={14} /> Certifikát
+                                                                </button>
+                                                            </div>
+                                                            {va.status === 'active' && (
+                                                                <button
+                                                                    onClick={() => handleCancelAdoption(va.id)}
+                                                                    className="px-6 py-3 bg-white border-2 border-red-50 text-red-400 rounded-2xl font-black text-xs hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition"
+                                                                >
+                                                                    Zrušiť predplatné
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {/* EXCLUSIVE UPDATES SECTION */}
+                                            <div className="mt-12 pt-12 border-t border-gray-100">
+                                                <div className="flex items-center gap-3 mb-8">
+                                                    <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><MessageCircle size={24} /></div>
+                                                    <div>
+                                                        <h3 className="text-xl font-black text-gray-900">Novinky z útulku</h3>
+                                                        <p className="text-sm text-gray-500 font-medium">Čo majú nové vaši zverenci.</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-[2.5rem] p-8 border border-gray-100 space-y-8">
+                                                    {(() => {
+                                                        const allUpdates = virtualAdoptionsWithData.flatMap(va =>
+                                                            (va.pet?.updates || []).map(update => ({
+                                                                ...update,
+                                                                petName: va.pet?.name || 'Zvieratko',
+                                                            }))
+                                                        ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                                                        if (allUpdates.length === 0) {
+                                                            return (
+                                                                <div className="flex flex-col items-center justify-center py-8 text-center">
+                                                                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-gray-300 mb-4 shadow-sm">
+                                                                        <Sparkles size={24} />
+                                                                    </div>
+                                                                    <p className="font-bold text-gray-400 text-sm">Zatiaľ žiadne novinky.</p>
+                                                                    <p className="text-xs text-gray-400 mt-1">Útulok čoskoro pridá aktualizácie o vašich zverencoch.</p>
+                                                                </div>
+                                                            );
+                                                        }
+
+                                                        return allUpdates.map(update => (
+                                                            <div key={update.id} className="flex gap-4">
+                                                                <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-pink-500 shadow-sm border border-pink-100">
+                                                                    {update.type === 'photo' ? <Camera size={20} /> : <Heart size={20} fill="currentColor" />}
+                                                                </div>
+                                                                <div>
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <span className="text-xs font-black text-gray-900">{update.petName}</span>
+                                                                        <span className="text-[10px] font-bold text-gray-400">• {new Date(update.date).toLocaleDateString('sk-SK')}</span>
+                                                                    </div>
+                                                                    <h4 className="text-sm font-bold text-gray-800 mb-1">{update.title}</h4>
+                                                                    <p className="text-sm text-gray-600 font-medium leading-relaxed break-words whitespace-pre-wrap">
+                                                                        {update.content}
+                                                                    </p>
+                                                                    {update.imageUrl && (
+                                                                        <div className="mt-3 max-w-sm rounded-xl overflow-hidden bg-gray-100 border border-gray-100">
+                                                                            <img src={update.imageUrl} className="w-full h-auto max-h-80 object-contain" alt="Aktualizácia" />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ));
+                                                    })()}
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-12 rounded-[2.5rem] text-center border-2 border-white shadow-sm">
+                                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-pink-400 mx-auto mb-6 shadow-sm animate-bounce">
+                                                <Heart size={32} fill="currentColor" />
+                                            </div>
+                                            <h3 className="font-black text-2xl text-gray-900 mb-2">Zatiaľ nikoho nepodporujete</h3>
+                                            <p className="text-gray-500 font-medium mb-8 max-w-md mx-auto">Vyberte si zvieratko z útulku a staňte sa jeho virtuálnym rodičom. Už od 5€ mesačne.</p>
+                                            <Link to="/" className="inline-block px-8 py-4 bg-white text-pink-600 shadow-xl shadow-pink-100 rounded-2xl font-black hover:scale-105 transition transform">
+                                                Nájsť zvieratko na adopciu
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {activeTab === 'settings' && (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                                 <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
@@ -787,11 +915,21 @@ const UserProfilePage: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         )}
                     </div>
+
                 </div>
             </div>
+
+
+            <CertificateModal
+                isOpen={!!selectedCertificatePet}
+                onClose={() => setSelectedCertificatePet(null)}
+                adoption={selectedCertificatePet}
+                userName={user.name}
+            />
 
             <ConfirmationModal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} onConfirm={() => { setShowDeleteConfirm(false); logout(); }} title="Naozaj nás chcete opustiť?" message="Stratíte prístup k histórii." confirmText="Áno, zmazať účet" variant="danger" />
         </div>

@@ -233,6 +233,7 @@
     "common": {
         "yes": "Yes",
         "no": "No",
+        "name": "Name",
         "years_one": "{{count}} year",
         "years_other": "{{count}} years"
     },

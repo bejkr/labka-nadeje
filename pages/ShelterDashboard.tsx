@@ -8,7 +8,7 @@ import {
     BarChart as ChartIcon, Search, Trash2, CheckCircle, XCircle,
     Upload, X, Sparkles, Pencil, Eye, EyeOff, LogOut, Users,
     Calendar, MapPin, Mail, Phone, ArrowUpRight, Filter, Building2, Camera, Save, Clock, CreditCard, Loader2,
-    Facebook, Instagram, Globe, TrendingUp, MousePointerClick, Menu, Link as LinkIcon, Truck, AlertTriangle, ArrowLeft, Quote, User, Check, AlertCircle, Home, Briefcase, Award, PieChart as PieChartIcon, TrendingDown, DollarSign, Heart, Baby, ShieldCheck, ExternalLink, ShoppingCart, UserPlus, UserCheck, Camera as CameraIcon, Bell, BellOff
+    Facebook, Instagram, Globe, TrendingUp, MousePointerClick, Menu, Link as LinkIcon, Truck, AlertTriangle, ArrowLeft, Quote, User, Check, AlertCircle, Home, Briefcase, Award, PieChart as PieChartIcon, TrendingDown, DollarSign, Heart, Baby, ShieldCheck, ExternalLink, ShoppingCart, UserPlus, UserCheck, Camera as CameraIcon, Bell, BellOff, Zap, Send
 } from 'lucide-react';
 import { Pet, PetType, AdoptionInquiry, Volunteer, ShelterSupply, Gender, Size, Shelter } from '../types';
 import { usePets } from '../contexts/PetContext';
@@ -38,7 +38,7 @@ const StatCard = ({ label, value, icon: Icon, color, subtext }: any) => (
     </div>
 );
 
-const OverviewSection = ({ onNavigate, pets, inquiries, shelter, seenInquiryIds }: { onNavigate: (tab: string) => void, pets: Pet[], inquiries: AdoptionInquiry[], shelter: Shelter, seenInquiryIds: string[] }) => {
+const OverviewSection = ({ onNavigate, pets, inquiries, shelter, seenInquiryIds }: { onNavigate: (tab: any) => void, pets: Pet[], inquiries: AdoptionInquiry[], shelter: Shelter, seenInquiryIds: string[] }) => {
     const activePets = pets.filter(p => p.adoptionStatus === 'Available').length;
 
     // Opravená logika počítania: Berieme buď nové dopyty (podľa statusu a seenIds) ALEBO akúkoľvek novú správu v chate
@@ -682,6 +682,220 @@ const AnalyticsSection = ({ pets, inquiries, virtualParents }: { pets: Pet[], in
     );
 };
 
+const ManageUpdatesSection = ({ pets }: { pets: Pet[] }) => {
+    const [selectedPetId, setSelectedPetId] = useState<string>(pets.length > 0 ? pets[0].id : '');
+    const [updateTitle, setUpdateTitle] = useState('');
+    const [updateContent, setUpdateContent] = useState('');
+    const [updateImage, setUpdateImage] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string>('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { showToast } = useApp();
+    const { refreshPets } = usePets();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const selectedPet = pets.find(p => p.id === selectedPetId);
+
+    // Sort pets alphabetically for easier finding
+    const sortedPets = [...pets].sort((a, b) => a.name.localeCompare(b.name));
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setUpdateImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewUrl(reader.result as string);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedPetId || !updateTitle || !updateContent) {
+            showToast('Vyplňte všetky povinné polia.', 'error');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            let imageUrl = '';
+            // In a real app, upload image to storage here
+            if (previewUrl) {
+                imageUrl = previewUrl; // For now use base64 or whatever we have
+            }
+
+            const newUpdate = {
+                id: Math.random().toString(36).substr(2, 9),
+                petId: selectedPetId,
+                date: new Date().toISOString(),
+                title: updateTitle,
+                content: updateContent,
+                imageUrl: imageUrl,
+                type: 'status'
+            };
+
+            await api.addPetUpdate(selectedPetId, newUpdate);
+
+            showToast('Aktualizácia bola úspešne pridaná.', 'success');
+            setUpdateTitle('');
+            setUpdateContent('');
+            setUpdateImage(null);
+            setPreviewUrl('');
+
+            // Refresh pets to show the new update immediately
+            await refreshPets();
+        } catch (error) {
+            console.error(error);
+            showToast('Nepodarilo sa pridať aktualizáciu.', 'error');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-300">
+            <div>
+                <h2 className="text-2xl font-bold text-gray-900">Správa noviniek</h2>
+                <p className="text-gray-500 text-sm">Informujte virtuálnych rodičov o tom, čo sa deje s ich zverencami.</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* FORM - Left Side */}
+                <div className="lg:col-span-7 space-y-6">
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Vyberte zviera</label>
+                                <select
+                                    value={selectedPetId}
+                                    onChange={(e) => setSelectedPetId(e.target.value)}
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none"
+                                >
+                                    {sortedPets.map(p => (
+                                        <option key={p.id} value={p.id}>{p.name} ({p.breed})</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Nadpis aktuality</label>
+                                <input
+                                    type="text"
+                                    value={updateTitle}
+                                    onChange={(e) => setUpdateTitle(e.target.value)}
+                                    placeholder="Napr. Maxík bol na prvej prechádzke!"
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Obsah správy</label>
+                                <textarea
+                                    value={updateContent}
+                                    onChange={(e) => setUpdateContent(e.target.value)}
+                                    rows={5}
+                                    placeholder="Opíšte, čo sa stalo, ako sa zvieratko má..."
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-brand-500 outline-none resize-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Fotografia (nepovinné)</label>
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-brand-300 hover:bg-brand-50 transition min-h-[160px]"
+                                >
+                                    {previewUrl ? (
+                                        <div className="relative w-full h-48">
+                                            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition rounded-lg">
+                                                <p className="text-white font-bold text-xs flex items-center gap-2"><Upload size={16} /> Zmeniť fotku</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-3">
+                                                <Camera size={24} />
+                                            </div>
+                                            <p className="text-sm font-bold text-gray-500">Kliknite pre nahranie fotky</p>
+                                            <p className="text-xs text-gray-400 mt-1">JPG, PNG do 5MB</p>
+                                        </>
+                                    )}
+                                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
+                                </div>
+                            </div>
+
+                            <div className="pt-4">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full bg-brand-600 text-white py-4 rounded-xl font-black hover:bg-brand-700 transition shadow-lg shadow-brand-200 flex items-center justify-center gap-2"
+                                >
+                                    {isSubmitting ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
+                                    Odoslať aktualizáciu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {/* PREVIEW / HISTORY - Right Side */}
+                <div className="lg:col-span-5 space-y-6">
+                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-xl">
+                        <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Eye size={20} className="text-brand-400" /> Náhľad pre virtuálneho rodiča</h3>
+                        <div className="bg-white rounded-2xl p-4 text-gray-900">
+                            <div className="flex gap-3">
+                                <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 flex-shrink-0">
+                                    <Heart size={18} fill="currentColor" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-black text-gray-900">{selectedPet?.name || 'Meno zvieratka'}</span>
+                                        <span className="text-[10px] font-bold text-gray-400">Práve teraz</span>
+                                    </div>
+                                    <h4 className="text-sm font-bold text-gray-800 mb-1">{updateTitle || 'Nadpis príspevku...'}</h4>
+                                    <p className="text-xs text-gray-500 leading-relaxed mb-3 break-words whitespace-pre-wrap">
+                                        {updateContent || 'Tu sa zobrazí text vašej aktualizácie...'}
+                                    </p>
+                                    {previewUrl && (
+                                        <div className="rounded-lg overflow-hidden w-full bg-gray-50">
+                                            <img src={previewUrl} className="w-full h-auto max-h-64 object-contain" alt="Náhľad" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-4 text-center">Takto uvidia novinku podporovatelia v ich profile.</p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-gray-900 mb-4">Nedávne aktualizácie pre {selectedPet?.name}</h3>
+                        <div className="space-y-4">
+                            {(selectedPet?.updates && selectedPet.updates.length > 0) ? (
+                                selectedPet.updates.map((update, index) => (
+                                    <div key={index} className="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-200 shadow-sm flex-shrink-0">
+                                            <Clock size={14} />
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-gray-400 font-bold mb-0.5">{new Date(update.date).toLocaleDateString('sk-SK')}</div>
+                                            <div className="text-xs font-black text-gray-900 line-clamp-1">{update.title}</div>
+                                            <div className="text-[10px] text-gray-500 line-clamp-2 mt-1">{update.content}</div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8 text-gray-400 text-xs italic">
+                                    Pre toto zvieratko zatiaľ neboli pridané žiadne novinky.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ShelterProfileForm = ({ shelter }: { shelter: Shelter }) => {
     const { updateUserProfile } = useAuth();
     const { showToast } = useApp();
@@ -1305,7 +1519,7 @@ const ShelterDashboard: React.FC = () => {
     const { currentUser, userRole, logout } = useAuth();
     const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'pets' | 'inquiries' | 'updates' | 'profile' | 'volunteers' | 'supplies' | 'analytics'>('overview');
     const [showModal, setShowModal] = useState(false);
     const [editingPet, setEditingPet] = useState<Pet | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -1362,6 +1576,7 @@ const ShelterDashboard: React.FC = () => {
                     <SidebarItem id="overview" icon={LayoutDashboard} label="Prehľad" />
                     <SidebarItem id="pets" icon={Dog} label="Moje zvieratá" />
                     <SidebarItem id="inquiries" icon={MessageSquare} label="Dopyty" badgeCount={unreadCount} />
+                    <SidebarItem id="updates" icon={Zap} label="Správa noviniek" />
                     <SidebarItem id="supplies" icon={Gift} label="Materiálna pomoc" />
                     <SidebarItem id="volunteers" icon={Users} label="Dobrovoľníci" />
                     <SidebarItem id="analytics" icon={ChartIcon} label="Analytika" />
@@ -1376,6 +1591,7 @@ const ShelterDashboard: React.FC = () => {
                     {activeTab === 'overview' && <OverviewSection onNavigate={setActiveTab} pets={myPets} inquiries={myInquiries} shelter={currentShelter} seenInquiryIds={seenInquiryIds} />}
                     {activeTab === 'pets' && <PetsSection onAdd={openAddModal} onEdit={openEditModal} pets={myPets} onDelete={deletePet} />}
                     {activeTab === 'inquiries' && <InquiriesSection inquiries={myInquiries} updateStatus={updateInquiryStatus} markInquiryAsRead={markInquiryAsRead} shelter={currentShelter} seenInquiryIds={seenInquiryIds} />}
+                    {activeTab === 'updates' && <ManageUpdatesSection pets={myPets} />}
                     {activeTab === 'profile' && <ShelterProfileForm shelter={currentShelter} />}
                     {activeTab === 'volunteers' && <VolunteersSection shelterId={currentShelter.id} />}
                     {activeTab === 'supplies' && <SuppliesSection shelterId={currentShelter.id} />}

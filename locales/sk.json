@@ -234,6 +234,7 @@
     "common": {
         "yes": "Áno",
         "no": "Nie",
+        "name": "Meno",
         "years_one": "{{count}} rok",
         "years_few": "{{count}} roky",
         "years_other": "{{count}} rokov"

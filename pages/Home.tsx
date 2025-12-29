@@ -196,7 +196,7 @@ const HomePage: React.FC = () => {
                     state={{ role: 'shelter' }}
                     className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-gray-700 bg-white border border-gray-100 hover:bg-gray-50 transition shadow-sm hover:shadow-md"
                   >
-                    Pre útulky
+                    {t('nav.forShelters')}
                   </Link>
                 )}
                 {isShelter && (
@@ -271,7 +271,7 @@ const HomePage: React.FC = () => {
                             <PetIcon size={24} />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-bold">Meno</p>
+                            <p className="text-xs text-gray-500 font-bold">{t('common.name')}</p>
                             <p className="text-lg font-extrabold text-gray-900">{pet.name.replace(/\*\*/g, '')}</p>
                           </div>
                         </div>
@@ -282,7 +282,7 @@ const HomePage: React.FC = () => {
                             <Sparkles size={24} fill="currentColor" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 font-bold">{formatSlovakAge(pet.age)}</p>
+                            <p className="text-xs text-gray-500 font-bold">{t('common.years', { count: pet.age })}</p>
                             <p className="text-sm font-extrabold text-gray-900">{pet.breed}</p>
                           </div>
                         </div>
@@ -378,7 +378,7 @@ const HomePage: React.FC = () => {
                     className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-xl text-xs font-bold text-gray-800 shadow-sm border border-gray-100">
-                    {formatSlovakAge(pet.age)}
+                    {t('common.years', { count: pet.age })}
                   </div>
                   {pet.adoptionStatus === 'Reserved' && (
                     <div className="absolute top-4 left-4">

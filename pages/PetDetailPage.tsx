@@ -7,8 +7,10 @@ import {
     Dog, XCircle, Share2,
     Facebook, Twitter, Mail, Link as LinkIcon, Copy,
     ArrowLeft, Calendar, Users, Loader2, EyeOff, ArrowRight, Video, Film, ShoppingCart, ChevronLeft, ChevronRight, Home as HomeIcon, Ruler, Baby,
-    Car, Moon, Sparkles as SparklesIcon, Footprints, Cat, AlertCircle, Pill, Utensils, Check, User as UserIcon, Send, ShieldCheck, Zap, CreditCard, LogIn, Star
+    Car, Moon, Sparkle, Sparkles as SparklesIcon, Footprints, Cat, AlertCircle, Pill, Utensils, Check, User as UserIcon, Send, ShieldCheck, Zap, CreditCard, LogIn, Star,
+    Quote, Bookmark, HeartHandshake, TrendingUp, PlusCircle, Bell, BellOff
 } from 'lucide-react';
+import VirtualAdoptionModal from '../components/VirtualAdoptionModal';
 import { useAuth } from '../contexts/AuthContext';
 import { usePets } from '../contexts/PetContext';
 import { useApp } from '../contexts/AppContext';
@@ -41,9 +43,8 @@ const PetDetailPage: React.FC = () => {
     const [isSubmittingApp, setIsSubmittingApp] = useState(false);
 
     // Virtual Adoption Selection State
-    const [selectedAmount, setSelectedAmount] = useState<number>(10);
-    const [customAmount, setCustomAmount] = useState<string>('');
-    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+    // Virtual Adoption Selection State
+    // Removed unused state vars
 
     // Gallery Logic
     const [activePhotoIndex, setActivePhotoIndex] = useState(0);
@@ -63,6 +64,9 @@ const PetDetailPage: React.FC = () => {
     const [translatedDescription, setTranslatedDescription] = useState<string | null>(null);
     const [translatedHealth, setTranslatedHealth] = useState<{ diet?: string, allergies?: string, medication?: string, importantNotes?: string } | null>(null);
     const [isTranslatingDescription, setIsTranslatingDescription] = useState(false);
+
+    // Virtual Parents State
+    const [virtualParents, setVirtualParents] = useState<any[]>([]);
 
     // Logic checks
     const isShelterUser = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
@@ -100,18 +104,34 @@ const PetDetailPage: React.FC = () => {
     }, [pet]);
 
     useEffect(() => {
-        const fetchShelter = async () => {
-            if (pet?.shelterId) {
+        const fetchData = async () => {
+            if (pet?.shelterId && id) {
                 try {
-                    const data = await api.getPublicShelter(pet.shelterId);
-                    setShelter(data);
+                    // Fetch shelter info
+                    const shelterData = await api.getPublicShelter(pet.shelterId);
+                    setShelter(shelterData);
+
+                    // Fetch virtual parents for this pet
+                    const allUsers = await api.getAllUsers();
+                    const parents = allUsers.filter(u =>
+                        u.role === 'user' &&
+                        u.virtualAdoptions?.some(va => va.petId === id && va.status === 'active')
+                    ).map(u => {
+                        const user = u as any; // Cast to access user-specific props safely
+                        return {
+                            name: user.name,
+                            img: user.avatarUrl || `https://ui-avatars.com/api/?name=${user.name}&background=random`
+                        };
+                    });
+                    setVirtualParents(parents);
+
                 } catch (e) {
-                    console.error("Failed to load shelter info");
+                    console.error("Failed to load shelter info or virtual parents", e);
                 }
             }
         };
-        fetchShelter();
-    }, [pet?.shelterId]);
+        fetchData();
+    }, [pet?.shelterId, id]);
 
     useEffect(() => {
         if (pet && currentUser && userRole === 'user' && !isShelterUser) {
@@ -174,7 +194,7 @@ const PetDetailPage: React.FC = () => {
         };
 
         translate();
-    }, [pet?.description, pet?.health, i18n.language]);
+    }, [pet?.description, pet?.health, i18n.language, pet?.importantNotes]);
 
     useEffect(() => {
         if (pet?.id) api.incrementPetViews(pet.id);
@@ -301,22 +321,7 @@ const PetDetailPage: React.FC = () => {
         }
     };
 
-    const handleStartPayment = async () => {
-        if (!pet) return;
-        const amount = customAmount ? parseFloat(customAmount) : selectedAmount;
-        if (isNaN(amount) || amount < 1) {
-            showToast(t('petDetail.invalidAmount'), "error");
-            return;
-        }
-        setIsProcessingPayment(true);
-        try {
-            const checkoutUrl = await api.createPaymentSession(pet.id, amount);
-            window.location.href = checkoutUrl;
-        } catch (e) {
-            showToast("Nepodarilo sa spustiť platbu.", "error");
-            setIsProcessingPayment(false);
-        }
-    };
+    // Payment handler moved to modal component
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(window.location.href);
@@ -589,6 +594,54 @@ const PetDetailPage: React.FC = () => {
                             )}
                         </div>
 
+                        {/* WALL OF FAME - Only visible if there are virtual parents */}
+                        {virtualParents.length > 0 && (
+                            <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-3xl p-8 shadow-sm border border-pink-100 relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                <div className="absolute top-0 right-0 p-4 opacity-5">
+                                    <Heart size={120} fill="currentColor" />
+                                </div>
+                                <div className="relative z-10">
+                                    <h2 className="text-xl font-black text-gray-900 mb-2 flex items-center gap-2">
+                                        <SparklesIcon size={20} className="text-pink-500" />
+                                        {t('petDetail.wallOfFame.title', 'Virtuálni rodičia')}
+                                    </h2>
+                                    <p className="text-sm text-gray-600 font-medium mb-6 max-w-lg">
+                                        {t('petDetail.wallOfFame.subtitle', 'Títo úžasní ľudia pomáhajú zabezpečiť šťastný život v útulku.')}
+                                    </p>
+
+                                    <div className="flex flex-wrap gap-4 items-center">
+                                        <div className="flex -space-x-4">
+                                            {virtualParents.map((parent, i) => (
+                                                <div key={i} className="w-12 h-12 rounded-full border-2 border-white shadow-md overflow-hidden relative group cursor-help">
+                                                    <img src={parent.img} alt={parent.name} className="w-full h-full object-cover" />
+                                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                                        {parent.name}
+                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="text-xs font-bold text-gray-500">
+                                            {virtualParents.length > 1
+                                                ? `+ ${virtualParents.length} ${t('petDetail.supporters', 'podporovateľov')}`
+                                                : `${t('petDetail.supporter', 'podporovateľ')}`
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 pt-6 border-t border-white/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-white rounded-full shadow-sm text-pink-500"><HeartHandshake size={20} /></div>
+                                            <p className="text-xs font-medium text-gray-700">
+                                                {t('petDetail.joinSupport', 'Pridajte sa k nim a staňte sa virtuálnym rodičom!')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
                                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2"><HomeIcon size={20} className="text-brand-600" /> {t('petDetail.home')}</h3>
@@ -673,379 +726,302 @@ const PetDetailPage: React.FC = () => {
                 </div>
 
                 {/* --- SUGGESTED PETS SECTION --- */}
-                {suggestedPets.length > 0 && (
-                    <div className="mt-24 pt-16 border-t border-gray-200">
-                        <div className="flex items-end justify-between mb-10">
-                            <div>
-                                <h2 className="text-3xl font-black tracking-tight text-gray-900">{t('petDetail.suggested.title')}</h2>
-                                <p className="text-gray-500 mt-2">{t('petDetail.suggested.subtitle')}</p>
-                            </div>
-                            <Link to="/pets" className="hidden sm:flex items-center gap-2 text-brand-600 font-bold hover:underline">
-                                {t('petDetail.suggested.viewAll')} <ArrowRight size={18} />
-                            </Link>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {suggestedPets.map(p => (
-                                <Link key={p.id} to={`/pets/${p.id}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
-                                    <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                                        <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover transition duration-700 group-hover:scale-110" />
-                                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-black text-gray-700 shadow-sm border border-gray-100">
-                                            {t('common.years', { count: p.age })}
-                                        </div>
-                                    </div>
-                                    <div className="p-5 flex-1 flex flex-col">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <h3 className="font-extrabold text-gray-900 group-hover:text-brand-600 transition truncate">{p.name}</h3>
-                                            <div className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">{p.type}</div>
-                                        </div>
-                                        <p className="text-gray-400 text-xs font-bold mb-4">{p.breed}</p>
-                                        <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between text-[11px] font-bold text-gray-500">
-                                            <span className="flex items-center gap-1"><MapPin size={12} className="text-brand-500" /> {p.location}</span>
-                                            <GenderLabel gender={p.gender} />
-                                        </div>
-                                    </div>
+                {
+                    suggestedPets.length > 0 && (
+                        <div className="mt-24 pt-16 border-t border-gray-200">
+                            <div className="flex items-end justify-between mb-10">
+                                <div>
+                                    <h2 className="text-3xl font-black tracking-tight text-gray-900">{t('petDetail.suggested.title')}</h2>
+                                    <p className="text-gray-500 mt-2">{t('petDetail.suggested.subtitle')}</p>
+                                </div>
+                                <Link to="/pets" className="hidden sm:flex items-center gap-2 text-brand-600 font-bold hover:underline">
+                                    {t('petDetail.suggested.viewAll')} <ArrowRight size={18} />
                                 </Link>
-                            ))}
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {suggestedPets.map(p => (
+                                    <Link key={p.id} to={`/pets/${p.id}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full transform hover:-translate-y-1">
+                                        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                                            <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover transition duration-700 group-hover:scale-110" />
+                                            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-black text-gray-700 shadow-sm border border-gray-100">
+                                                {t('common.years', { count: p.age })}
+                                            </div>
+                                        </div>
+                                        <div className="p-5 flex-1 flex flex-col">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <h3 className="font-extrabold text-gray-900 group-hover:text-brand-600 transition truncate">{p.name}</h3>
+                                                <div className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">{p.type}</div>
+                                            </div>
+                                            <p className="text-gray-400 text-xs font-bold mb-4">{p.breed}</p>
+                                            <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between text-[11px] font-bold text-gray-500">
+                                                <span className="flex items-center gap-1"><MapPin size={12} className="text-brand-500" /> {p.location}</span>
+                                                <GenderLabel gender={p.gender} />
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                            <div className="mt-10 text-center sm:hidden">
+                                <Link to="/pets" className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg">
+                                    Zobraziť všetky <ArrowRight size={16} />
+                                </Link>
+                            </div>
                         </div>
-                        <div className="mt-10 text-center sm:hidden">
-                            <Link to="/pets" className="inline-flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg">
-                                Zobraziť všetky <ArrowRight size={16} />
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )
+                }
+            </div >
 
             {/* --- LOGIN PROMPT MODAL --- */}
-            {isLoginPromptOpen && (
-                <div className="fixed inset-0 z-[150] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-8 text-center">
-                            <div className="mx-auto w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center text-brand-600 mb-6 border border-brand-100 shadow-sm">
-                                <LogIn size={36} />
-                            </div>
-                            <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Musíte sa prihlásiť</h3>
-                            <p className="text-sm text-gray-500 font-medium mb-8 leading-relaxed">
-                                Pre odoslanie žiadosti o adopciu je potrebné mať overený profil, aby útulok vedel, s kým komunikuje.
-                            </p>
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => navigate('/auth')}
-                                    className="w-full bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-lg shadow-brand-100 transition transform hover:-translate-y-1"
-                                >
-                                    Prihlásiť sa / Registrovať
-                                </button>
-                                <button
-                                    onClick={() => setIsLoginPromptOpen(false)}
-                                    className="w-full py-3 text-gray-400 font-bold text-sm hover:text-gray-600 transition"
-                                >
-                                    Zrušiť
-                                </button>
+            {
+                isLoginPromptOpen && (
+                    <div className="fixed inset-0 z-[150] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                        <div className="bg-white rounded-[2.5rem] w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+                            <div className="p-8 text-center">
+                                <div className="mx-auto w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center text-brand-600 mb-6 border border-brand-100 shadow-sm">
+                                    <LogIn size={36} />
+                                </div>
+                                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Musíte sa prihlásiť</h3>
+                                <p className="text-sm text-gray-500 font-medium mb-8 leading-relaxed">
+                                    Pre odoslanie žiadosti o adopciu je potrebné mať overený profil, aby útulok vedel, s kým komunikuje.
+                                </p>
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={() => navigate('/auth')}
+                                        className="w-full bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-lg shadow-brand-100 transition transform hover:-translate-y-1"
+                                    >
+                                        Prihlásiť sa / Registrovať
+                                    </button>
+                                    <button
+                                        onClick={() => setIsLoginPromptOpen(false)}
+                                        className="w-full py-3 text-gray-400 font-bold text-sm hover:text-gray-600 transition"
+                                    >
+                                        Zrušiť
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* --- VIRTUAL ADOPTION LOGIN PROMPT (WITH BENEFITS) --- */}
-            {isVirtualAdoptionLoginPromptOpen && (
-                <div className="fixed inset-0 z-[150] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-10 text-center">
-                            <div className="mx-auto w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center text-pink-600 mb-6 border border-pink-100 shadow-sm">
-                                <Heart size={40} fill="currentColor" />
-                            </div>
-                            <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Pomôžte {inflectNameToDative(pet.name)} na diaľku</h3>
-                            <p className="text-sm text-gray-500 font-medium mb-8">
-                                Virtuálna adopcia umožňuje podporiť zvieratko, aj keď si ho nemôžete vziať domov.
-                            </p>
+            {
+                isVirtualAdoptionLoginPromptOpen && (
+                    <div className="fixed inset-0 z-[150] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                        <div className="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+                            <div className="p-10 text-center">
+                                <div className="mx-auto w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center text-pink-600 mb-6 border border-pink-100 shadow-sm">
+                                    <Heart size={40} fill="currentColor" />
+                                </div>
+                                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Pomôžte {inflectNameToDative(pet.name)} na diaľku</h3>
+                                <p className="text-sm text-gray-500 font-medium mb-8">
+                                    Virtuálna adopcia umožňuje podporiť zvieratko, aj keď si ho nemôžete vziať domov.
+                                </p>
 
-                            <div className="space-y-4 mb-10">
-                                <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm"><Utensils size={20} /></div>
-                                    <span className="text-xs font-bold text-gray-700 leading-tight">Zabezpečíte plnú <br />misku krmiva</span>
+                                <div className="space-y-4 mb-10">
+                                    <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm"><Utensils size={20} /></div>
+                                        <span className="text-xs font-bold text-gray-700 leading-tight">Zabezpečíte plnú <br />misku krmiva</span>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Stethoscope size={20} /></div>
+                                        <span className="text-xs font-bold text-gray-700 leading-tight">Umožníte dôležitú <br />veterinárnu starostlivosť</span>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-pink-600 shadow-sm"><Star size={20} /></div>
+                                        <span className="text-xs font-bold text-gray-700 leading-tight">Darujete šťastnejší <br />život v útulku</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Stethoscope size={20} /></div>
-                                    <span className="text-xs font-bold text-gray-700 leading-tight">Umožníte dôležitú <br />veterinárnu starostlivosť</span>
-                                </div>
-                                <div className="flex items-center gap-4 text-left p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-pink-600 shadow-sm"><Star size={20} /></div>
-                                    <span className="text-xs font-bold text-gray-700 leading-tight">Darujete šťastnejší <br />život v útulku</span>
-                                </div>
-                            </div>
 
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => navigate('/auth')}
-                                    className="w-full bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-xl shadow-brand-100 transition transform hover:-translate-y-1 flex items-center justify-center gap-2"
-                                >
-                                    <LogIn size={20} />
-                                    Prihlásiť sa a pomôcť
-                                </button>
-                                <button
-                                    onClick={() => setIsVirtualAdoptionLoginPromptOpen(false)}
-                                    className="w-full py-3 text-gray-400 font-bold text-sm hover:text-gray-600 transition"
-                                >
-                                    Zatvoriť
-                                </button>
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={() => navigate('/auth')}
+                                        className="w-full bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-xl shadow-brand-100 transition transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                                    >
+                                        <LogIn size={20} />
+                                        Prihlásiť sa a pomôcť
+                                    </button>
+                                    <button
+                                        onClick={() => setIsVirtualAdoptionLoginPromptOpen(false)}
+                                        className="w-full py-3 text-gray-400 font-bold text-sm hover:text-gray-600 transition"
+                                    >
+                                        Zatvoriť
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* --- SHARE MODAL --- */}
-            {isShareModalOpen && (
-                <div className="fixed inset-0 z-[110] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-8">
-                            <div className="flex justify-between items-start mb-6">
-                                <div>
-                                    <h3 className="text-2xl font-black text-gray-900 tracking-tight">Zdieľať profil</h3>
-                                    <p className="text-sm text-gray-500 font-medium">Pomôžte {pet.name} nájsť domov.</p>
+            {
+                isShareModalOpen && (
+                    <div className="fixed inset-0 z-[110] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                        <div className="bg-white rounded-[2.5rem] w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+                            <div className="p-8">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div>
+                                        <h3 className="text-2xl font-black text-gray-900 tracking-tight">Zdieľať profil</h3>
+                                        <p className="text-sm text-gray-500 font-medium">Pomôžte {pet.name} nájsť domov.</p>
+                                    </div>
+                                    <button onClick={() => setIsShareModalOpen(false)} className="p-2 bg-gray-50 rounded-full text-gray-400 hover:text-gray-900 transition">
+                                        <X size={20} />
+                                    </button>
                                 </div>
-                                <button onClick={() => setIsShareModalOpen(false)} className="p-2 bg-gray-50 rounded-full text-gray-400 hover:text-gray-900 transition">
-                                    <X size={20} />
-                                </button>
-                            </div>
 
-                            <div className="space-y-3">
-                                <button
-                                    onClick={handleCopyLink}
-                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-200 transition group"
-                                >
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 group-hover:text-brand-600 shadow-sm transition">
-                                        {linkCopied ? <Check size={20} className="text-green-500" /> : <LinkIcon size={20} />}
-                                    </div>
-                                    <span className="font-bold text-gray-700 text-sm">{linkCopied ? 'Skopírované!' : 'Kopírovať odkaz'}</span>
-                                </button>
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={handleCopyLink}
+                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-200 transition group"
+                                    >
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 group-hover:text-brand-600 shadow-sm transition">
+                                            {linkCopied ? <Check size={20} className="text-green-500" /> : <LinkIcon size={20} />}
+                                        </div>
+                                        <span className="font-bold text-gray-700 text-sm">{linkCopied ? 'Skopírované!' : 'Kopírovať odkaz'}</span>
+                                    </button>
 
-                                <a
-                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-blue-200 transition group"
-                                >
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm transition">
-                                        <Facebook size={20} />
-                                    </div>
-                                    <span className="font-bold text-gray-700 text-sm">Zdieľať na Facebooku</span>
-                                </a>
+                                    <a
+                                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                                        target="_blank" rel="noopener noreferrer"
+                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-blue-200 transition group"
+                                    >
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm transition">
+                                            <Facebook size={20} />
+                                        </div>
+                                        <span className="font-bold text-gray-700 text-sm">Zdieľať na Facebooku</span>
+                                    </a>
 
-                                <a
-                                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Pozrite si tohto kamoša na adopciu: ${pet.name}`)}`}
-                                    target="_blank" rel="noopener noreferrer"
-                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-900 transition group"
-                                >
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-900 shadow-sm transition">
-                                        <Twitter size={20} />
-                                    </div>
-                                    <span className="font-bold text-gray-700 text-sm">Zdieľať na Twitteri / X</span>
-                                </a>
+                                    <a
+                                        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Pozrite si tohto kamoša na adopciu: ${pet.name}`)}`}
+                                        target="_blank" rel="noopener noreferrer"
+                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-900 transition group"
+                                    >
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-900 shadow-sm transition">
+                                            <Twitter size={20} />
+                                        </div>
+                                        <span className="font-bold text-gray-700 text-sm">Zdieľať na Twitteri / X</span>
+                                    </a>
 
-                                <a
-                                    href={`mailto:?subject=${encodeURIComponent(`Adopcia: ${pet.name}`)}&body=${encodeURIComponent(`Ahoj, pozri si toto zvieratko na adopciu: ${window.location.href}`)}`}
-                                    className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-brand-200 transition group"
-                                >
-                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm transition">
-                                        <Mail size={20} />
-                                    </div>
-                                    <span className="font-bold text-gray-700 text-sm">Poslať e-mailom</span>
-                                </a>
+                                    <a
+                                        href={`mailto:?subject=${encodeURIComponent(`Adopcia: ${pet.name}`)}&body=${encodeURIComponent(`Ahoj, pozri si toto zvieratko na adopciu: ${window.location.href}`)}`}
+                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-brand-200 transition group"
+                                    >
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm transition">
+                                            <Mail size={20} />
+                                        </div>
+                                        <span className="font-bold text-gray-700 text-sm">Poslať e-mailom</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* --- REDESIGNED ADOPTION APPLICATION MODAL --- */}
-            {isApplicationModalOpen && (
-                <div className="fixed inset-0 z-[120] overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                        {applicationSuccess ? (
-                            <div className="p-12 flex flex-col items-center text-center">
-                                <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-8 border border-green-100 shadow-inner">
-                                    <CheckCircle size={56} />
-                                </div>
-                                <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Úspešne odoslané!</h3>
-                                <p className="text-gray-500 mb-8 max-sm leading-relaxed">
-                                    Vaša žiadosť o adopciu {pet.name} bola doručená útulku. Celú konverzáciu nájdete vo svojom profile.
-                                </p>
-                                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                                    <button onClick={() => navigate('/profile')} className="flex-1 bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-lg shadow-brand-100 transition transform hover:-translate-y-0.5">
-                                        Prejsť do profilu
-                                    </button>
-                                    <button onClick={() => setIsApplicationModalOpen(false)} className="flex-1 bg-gray-100 text-gray-700 font-black py-4 rounded-2xl hover:bg-gray-200 transition">
-                                        Zavrieť
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <form onSubmit={handleApplicationSubmit}>
-                                <div className="p-8 pb-4 border-b border-gray-50 bg-gray-50/50">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border-2 border-white">
-                                                <img src={pet.imageUrl} className="w-full h-full object-cover" alt="" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">Mám záujem o {pet.name}</h3>
-                                                <p className="text-sm text-gray-500 font-medium">Pošlite útulku vašu nezáväznú žiadosť.</p>
-                                            </div>
-                                        </div>
-                                        <button type="button" onClick={() => setIsApplicationModalOpen(false)} className="p-2 bg-white rounded-full text-gray-400 hover:text-gray-900 shadow-sm border border-gray-100 transition">
-                                            <X size={20} />
+            {
+                isApplicationModalOpen && (
+                    <div className="fixed inset-0 z-[120] overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
+                        <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                            {applicationSuccess ? (
+                                <div className="p-12 flex flex-col items-center text-center">
+                                    <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-8 border border-green-100 shadow-inner">
+                                        <CheckCircle size={56} />
+                                    </div>
+                                    <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Úspešne odoslané!</h3>
+                                    <p className="text-gray-500 mb-8 max-sm leading-relaxed">
+                                        Vaša žiadosť o adopciu {pet.name} bola doručená útulku. Celú konverzáciu nájdete vo svojom profile.
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                                        <button onClick={() => navigate('/profile')} className="flex-1 bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-lg shadow-brand-100 transition transform hover:-translate-y-0.5">
+                                            Prejsť do profilu
+                                        </button>
+                                        <button onClick={() => setIsApplicationModalOpen(false)} className="flex-1 bg-gray-100 text-gray-700 font-black py-4 rounded-2xl hover:bg-gray-200 transition">
+                                            Zavrieť
                                         </button>
                                     </div>
                                 </div>
-
-                                <div className="p-8 space-y-6">
-                                    <div>
-                                        <label className="block text-xs font-black text-gray-400 mb-2 ml-1">{t('petDetail.yourMessage')}</label>
-                                        <textarea
-                                            required
-                                            className="w-full border border-gray-200 rounded-[1.5rem] p-4 h-40 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none text-sm font-medium transition-all bg-gray-50/30"
-                                            placeholder={t('petDetail.messagePlaceholder')}
-                                            value={applicationMessage}
-                                            onChange={(e) => setApplicationMessage(e.target.value)}
-                                        ></textarea>
-                                    </div>
-
-                                    <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex-shrink-0">
-                                                {(currentUser as User).avatarUrl ? <img src={(currentUser as User).avatarUrl} className="w-full h-full object-cover" /> : <UserIcon className="p-2 text-gray-300" />}
-                                            </div>
-                                            <div>
-                                                <div className="text-sm font-black text-gray-800">{(currentUser as User).name}</div>
-                                                <div className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
-                                                    <Mail size={10} /> {(currentUser as User).email}
+                            ) : (
+                                <form onSubmit={handleApplicationSubmit}>
+                                    <div className="p-8 pb-4 border-b border-gray-50 bg-gray-50/50">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border-2 border-white">
+                                                    <img src={pet.imageUrl} className="w-full h-full object-cover" alt="" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">Mám záujem o {pet.name}</h3>
+                                                    <p className="text-sm text-gray-500 font-medium">Pošlite útulku vašu nezáväznú žiadosť.</p>
                                                 </div>
                                             </div>
+                                            <button type="button" onClick={() => setIsApplicationModalOpen(false)} className="p-2 bg-white rounded-full text-gray-400 hover:text-gray-900 shadow-sm border border-gray-100 transition">
+                                                <X size={20} />
+                                            </button>
                                         </div>
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmittingApp || !applicationMessage.trim()}
-                                            className="w-full sm:w-auto bg-brand-600 text-white font-black px-10 py-4 rounded-2xl hover:bg-brand-700 shadow-xl shadow-brand-100 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:transform-none"
-                                        >
-                                            {isSubmittingApp ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-                                            {t('petDetail.submit')}
-                                        </button>
                                     </div>
-                                </div>
-                            </form>
-                        )}
+
+                                    <div className="p-8 space-y-6">
+                                        <div>
+                                            <label className="block text-xs font-black text-gray-400 mb-2 ml-1">{t('petDetail.yourMessage')}</label>
+                                            <textarea
+                                                required
+                                                className="w-full border border-gray-200 rounded-[1.5rem] p-4 h-40 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none text-sm font-medium transition-all bg-gray-50/30"
+                                                placeholder={t('petDetail.messagePlaceholder')}
+                                                value={applicationMessage}
+                                                onChange={(e) => setApplicationMessage(e.target.value)}
+                                            ></textarea>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex-shrink-0">
+                                                    {(currentUser as User).avatarUrl ? <img src={(currentUser as User).avatarUrl} className="w-full h-full object-cover" /> : <UserIcon className="p-2 text-gray-300" />}
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm font-black text-gray-800">{(currentUser as User).name}</div>
+                                                    <div className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
+                                                        <Mail size={10} /> {(currentUser as User).email}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmittingApp || !applicationMessage.trim()}
+                                                className="w-full sm:w-auto bg-brand-600 text-white font-black px-10 py-4 rounded-2xl hover:bg-brand-700 shadow-xl shadow-brand-100 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:transform-none"
+                                            >
+                                                {isSubmittingApp ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+                                                {t('petDetail.submit')}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* --- REDESIGNED VIRTUAL ADOPTION MODAL --- */}
-            {isVirtualAdoptionModalOpen && (
-                <div className="fixed inset-0 z-[130] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-8 pb-4 border-b border-gray-50 bg-gray-50/50">
-                            <div className="flex justify-between items-start mb-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border-2 border-white">
-                                        <img src={pet.imageUrl} className="w-full h-full object-cover" alt="" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">{t('petDetail.virtualAdopt')} {inflectNameToDative(pet.name)}</h3>
-                                        <p className="text-sm text-gray-500 font-medium">{t('home.virtualAdoption.description')}</p>
-                                    </div>
-                                </div>
-                                <button onClick={() => setIsVirtualAdoptionModalOpen(false)} className="p-2 bg-white rounded-full text-gray-400 hover:text-gray-900 shadow-sm border border-gray-100 transition">
-                                    <X size={20} />
-                                </button>
-                            </div>
-                        </div>
+            <VirtualAdoptionModal
+                isOpen={isVirtualAdoptionModalOpen}
+                onClose={() => setIsVirtualAdoptionModalOpen(false)}
+                pet={pet!}
+                onSuccess={() => {
+                    showToast(t('petDetail.toast.virtualAdoptionSuccess') || "Ďakujeme za vašu podporu!", "success");
+                }}
+            />
 
-                        <div className="p-8 space-y-8">
-                            <div>
-                                <label className="block text-xs font-bold text-gray-400 mb-4 ml-1">{t('petDetail.chooseAmount')}</label>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    {[
-                                        { val: 5, desc: 'Základná strava' },
-                                        { val: 10, desc: 'Strava + maškrty' },
-                                        { val: 20, desc: 'Kompletná starostlivosť' }
-                                    ].map(item => (
-                                        <button
-                                            key={item.val}
-                                            onClick={() => { setSelectedAmount(item.val); setCustomAmount(''); }}
-                                            className={`p-4 rounded-2xl border-2 transition-all text-left group ${selectedAmount === item.val && !customAmount
-                                                ? 'border-brand-600 bg-brand-50 shadow-md ring-4 ring-brand-500/10'
-                                                : 'border-gray-100 bg-white hover:border-brand-200'
-                                                }`}
-                                        >
-                                            <div className={`text-xl font-black mb-1 ${selectedAmount === item.val && !customAmount ? 'text-brand-600' : 'text-gray-900'}`}>
-                                                {item.val} €
-                                            </div>
-                                            <div className="text-[10px] font-bold text-gray-400 group-hover:text-gray-500">{item.desc}</div>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                <div className="mt-4 relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">{t('petDetail.otherAmount')}</div>
-                                    <input
-                                        type="number"
-                                        value={customAmount}
-                                        onChange={(e) => setCustomAmount(e.target.value)}
-                                        className="w-full pl-24 pr-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none font-bold text-gray-900 transition-all"
-                                        placeholder={t('petDetail.otherAmount')}
-                                    />
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">€</div>
-                                </div>
-                            </div>
-
-                            <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100">
-                                <h4 className="text-blue-900 font-bold text-sm flex items-center gap-2 mb-4">
-                                    <Zap size={18} className="text-blue-600" />
-                                    {t('petDetail.impactTitle', { name: inflectNameToDative(pet.name) })}
-                                </h4>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="flex flex-col items-center gap-2 text-center">
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm"><Utensils size={20} /></div>
-                                        <span className="text-[10px] font-bold text-blue-800 leading-tight">Plná miska <br />denne</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-2 text-center">
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Stethoscope size={20} /></div>
-                                        <span className="text-[10px] font-bold text-blue-800 leading-tight">Veterinárna <br />kontrola</span>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-2 text-center">
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Heart size={20} /></div>
-                                        <span className="text-[10px] font-bold text-blue-800 leading-tight">Lepší život <br />v útulku</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                                <div className="text-gray-400 text-xs font-medium flex items-center gap-2">
-                                    <ShieldCheck size={16} className="text-green-500" />
-                                    {t('petDetail.recurringDonation')}
-                                </div>
-                                <button
-                                    onClick={handleStartPayment}
-                                    disabled={isProcessingPayment}
-                                    className="w-full sm:w-auto bg-brand-600 text-white font-black px-10 py-4 rounded-2xl hover:bg-brand-700 shadow-xl shadow-brand-100 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-70 disabled:transform-none"
-                                >
-                                    {isProcessingPayment ? <Loader2 className="animate-spin" size={20} /> : <CreditCard size={20} />}
-                                    {t('petDetail.continueToPayment')}
-                                </button>
-                            </div>
-                        </div>
+            {
+                lightboxIndex !== null && (
+                    <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4" onClick={() => setLightboxIndex(null)}>
+                        <button className="absolute top-4 right-4 text-white p-2" onClick={() => setLightboxIndex(null)}><X size={36} /></button>
+                        <img src={uniquePhotos[lightboxIndex]} className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} alt="" />
                     </div>
-                </div>
-            )}
-
-            {lightboxIndex !== null && (
-                <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4" onClick={() => setLightboxIndex(null)}>
-                    <button className="absolute top-4 right-4 text-white p-2" onClick={() => setLightboxIndex(null)}><X size={36} /></button>
-                    <img src={uniquePhotos[lightboxIndex]} className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} alt="" />
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

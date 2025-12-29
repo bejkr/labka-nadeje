@@ -87,7 +87,8 @@ export const translateText = async (text: string, targetLanguage: string): Promi
   try {
     const prompt = `Prelož nasledujúci text o zvieratku z útulku do jazyka: ${targetLanguage}.
     Zachovaj emotívny a milý tón. Zachovaj formátovanie (nové riadky).
-    
+    DÔLEŽITÉ: Vráť LEN samotný preklad. Žiadne úvodné vety typu "Tu je preklad" alebo "Samozrejme".
+
     TEXT:
     ${text}`;
 

@@ -75,6 +75,17 @@ export interface Pet {
   isVisible: boolean;
   needsFoster: boolean;
   views: number;
+  updates?: PetUpdate[];
+}
+
+export interface PetUpdate {
+  id: string;
+  petId: string;
+  date: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  type: 'photo' | 'video' | 'status' | 'story';
 }
 
 export interface Shelter {
@@ -129,8 +140,15 @@ export type WorkMode = 'Práca z domu' | 'Hybrid' | 'V kancelárii/Terén' | 'Š
 export type ExperienceLevel = 'Začiatočník' | 'Mierne pokročilý' | 'Skúsený';
 
 export interface VirtualAdoption {
+  id: string; // Added ID for management
+  userId: string;
   petId: string;
+  petName: string; // Snapshot for display
+  petImage: string; // Snapshot for display
   amount: number;
+  currency: string;
+  status: 'active' | 'cancelled' | 'paused';
+  nextBillingDate: string;
   startDate: string;
 }
 
