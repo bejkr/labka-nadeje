@@ -305,7 +305,7 @@ const PetDetailPage: React.FC = () => {
                     <div className="lg:col-span-2 space-y-8">
                         {/* ... Gallery and Video ... */}
                         <div className={`grid gap-6 ${hasVideo ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
-                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 relative flex flex-col h-full ${hasVideo ? 'min-h-[300px]' : 'min-h-[500px]'}`}>
+                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 relative flex flex-col h-full ${hasVideo ? 'min-h-[400px]' : 'min-h-[750px]'}`}>
                                 <div className="relative flex-1 rounded-2xl overflow-hidden bg-gray-100 group mb-4">
                                     <img src={uniquePhotos[activePhotoIndex]} alt="" className="w-full h-full object-cover cursor-zoom-in absolute inset-0" onClick={() => setLightboxIndex(activePhotoIndex)} />
                                 </div>

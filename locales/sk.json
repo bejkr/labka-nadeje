@@ -21,7 +21,8 @@
         "emailPlaceholder": "Váš email",
         "copyright": "LabkaNádeje. Všetky dáta sú chránené.",
         "privacy": "GDPR",
-        "terms": "Podmienky používania"
+        "terms": "Podmienky používania",
+        "betaNotice": "Platforma je v štádiu vývoja. Chyby prosím hláste na info@labkanadeje.sk"
     },
     "home": {
         "heroTitleStart": "Nájdite svojho",
@@ -35,7 +36,7 @@
         },
         "quickSearch": {
             "title": "Rýchle vyhľadávanie",
-            "dogs": "Psi",
+            "dogs": "Psy",
             "cats": "Mačky",
             "all": "Všetky"
         },
@@ -106,7 +107,7 @@
         "backToList": "Späť na zoznam",
         "interestButton": "Mám záujem o adopciu",
         "applicationSent": "Žiadosť odoslaná",
-        "virtualAdopt": "Virtuálne adoptovať",
+        "virtualAdopt": "Už čoskoro",
         "ownerEdit": "Váš inzerát. Upraviť",
         "loginAsUser": "Prihláste sa ako používateľ.",
         "adoptionFee": "Adopčný poplatok",
@@ -120,7 +121,7 @@
         "activity": "Aktivita",
         "compatibility": "Znášanlivosť",
         "children": "Deti",
-        "dogs": "Psi",
+        "dogs": "Psy",
         "cats": "Mačky",
         "health": "Zdravie",
         "vaccination": "Očkovanie",
@@ -182,7 +183,18 @@
         "impactTitle": "Ako vaša pomoc zmení život {{name}}?",
         "recurringDonation": "Mesačný dar. Možno kedykoľvek zrušiť.",
         "continueToPayment": "Pokračovať k platbe",
-        "invalidAmount": "Zadajte platnú sumu (min. 1 €)."
+        "invalidAmount": "Zadajte platnú sumu (min. 1 €).",
+        "adoptionProcess": {
+            "title": "Ako prebieha adopcia?",
+            "step1": "Odoslanie záujmu",
+            "step1Desc": "Kontaktujte útulok cez formulár.",
+            "step2": "Komunikácia",
+            "step2Desc": "Útulok si s vami dohodne detaily.",
+            "step3": "Návšteva",
+            "step3Desc": "Zoznámte sa so zvieratkom osobne.",
+            "step4": "Nový domov",
+            "step4Desc": "Podpis zmluvy a prevzatie."
+        }
     },
     "shelterDetail": {
         "notFound": "Útulok sa nenašiel",
@@ -205,6 +217,9 @@
         },
         "financeTitle": "Finančná podpora",
         "financeDesc": "Príspevky na veterinárnu starostlivosť, lieky a krmivo.",
+        "finance": {
+            "noAccount": "Útulok zatiaľ neuviedol bankové spojenie."
+        },
         "iban": "IBAN / Číslo účtu",
         "materialHelp": "Materiálna pomoc",
         "materialDesc": "Veci, ktoré nám aktuálne najviac chýbajú.",
@@ -216,6 +231,7 @@
         "email": "E-mailová adresa",
         "phone": "Telefónne číslo",
         "hours": "Otváracie hodiny",
+        "hoursFallback": "Podľa dohody",
         "followUs": "Sledujte našu prácu",
         "noSocials": "Momentálne bez sociálnych sietí",
         "verified": "Overený partner",

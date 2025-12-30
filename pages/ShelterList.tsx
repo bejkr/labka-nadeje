@@ -59,6 +59,7 @@ const CITY_COORDS: Record<string, [number, number]> = {
     'Rožňava': [48.6611, 20.5317],
     'Revúca': [48.6835, 20.1171],
     'Veľký Krtíš': [48.2106, 19.3503],
+    'Čáry': [48.6653, 17.0789],
 };
 
 const DEFAULT_CENTER: [number, number] = [48.669, 19.699];
@@ -124,11 +125,11 @@ const ShelterListPage: React.FC = () => {
               <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 36px; height: 46px;">
                 <div style="width: 36px; height: 36px; background-color: #ea580c; border: 3px solid white; border-radius: 50%; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.4); display: flex; align-items: center; justify-content: center; z-index: 2;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
-                        <circle cx="12" cy="14" r="3.5" />
-                        <circle cx="7" cy="9" r="2.5" />
-                        <circle cx="11" cy="5" r="2.5" />
-                        <circle cx="16" cy="6" r="2.5" />
-                        <circle cx="20" cy="11" r="2.5" />
+                        <circle cx="12" cy="16" r="4" />
+                        <circle cx="7" cy="10" r="2.5" />
+                        <circle cx="10.5" cy="5" r="2.5" />
+                        <circle cx="13.5" cy="5" r="2.5" />
+                        <circle cx="17" cy="10" r="2.5" />
                     </svg>
                 </div>
                 <div style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 12px solid #ea580c; margin-top: -6px; z-index: 1;"></div>

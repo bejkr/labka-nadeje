@@ -41,7 +41,7 @@ export const getMatchAnalysis = async (pet: Pet, user: User): Promise<{ score: n
       ZVIERA (${pet.name}):
       - Plemeno: ${pet.breed}, Druh: ${pet.type}, Veľkosť: ${pet.size}
       - Aktivita: ${pet.requirements.activityLevel}, Samota: ${pet.training.aloneTime ? 'Áno' : 'Nie'}
-      - Sociálne: Deti (${pet.social.children}), Psi (${pet.social.dogs})
+      - Sociálne: Deti (${pet.social.children}), Psy (${pet.social.dogs})
 
       ČLOVEK (Preferencie):
       - Chce plemená: ${user.preferences?.preferredBreeds?.join(', ') || 'Akékoľvek'}

@@ -718,9 +718,14 @@ const ManageUpdatesSection = ({ pets }: { pets: Pet[] }) => {
         setIsSubmitting(true);
         try {
             let imageUrl = '';
-            // In a real app, upload image to storage here
-            if (previewUrl) {
-                imageUrl = previewUrl; // For now use base64 or whatever we have
+
+            if (updateImage) {
+                // Upload image to storage
+                imageUrl = await api.uploadFile(updateImage, 'images', 'updates');
+            } else if (previewUrl && !updateImage) {
+                // Keep existing URL if it's already a URL (not base64 from FileReader)
+                // If it's base64 but no file, something is wrong, but we'll assume valid case
+                imageUrl = previewUrl;
             }
 
             const newUpdate = {
@@ -1542,7 +1547,19 @@ const ShelterDashboard: React.FC = () => {
 
     const openAddModal = () => { setEditingPet(null); setShowModal(true); };
     const openEditModal = (pet: Pet) => { setEditingPet(pet); setShowModal(true); };
-    const handleSavePet = async (petData: Pet) => { if (editingPet) { await updatePet(petData); } else { await addPet(petData); } setShowModal(false); };
+    const handleSavePet = async (petData: Pet) => {
+        // Create a clean copy and remove updates to preventing sending them back to the server
+        // This fixes the issue where bloated update data (Base64 images) causes the update to fail
+        const cleanData = { ...petData };
+        delete cleanData.updates;
+
+        if (editingPet) {
+            await updatePet(cleanData);
+        } else {
+            await addPet(cleanData);
+        }
+        setShowModal(false);
+    };
 
     const SidebarItem = ({ id, icon: Icon, label, badgeCount }: any) => (
         <button

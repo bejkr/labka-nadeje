@@ -18,12 +18,12 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [pets, setPets] = useState<Pet[]>([]);
 
   const loadPets = async () => {
-      try {
-          const data = await api.getPets();
-          setPets(data);
-      } catch (e) {
-          console.error("Failed to load pets", e);
-      }
+    try {
+      const data = await api.getPets();
+      setPets(data);
+    } catch (e) {
+      console.error("Failed to load pets", e);
+    }
   };
 
   // Fetch pets on mount
@@ -42,31 +42,31 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const updatePet = async (updatedPet: Pet) => {
     try {
-        await api.updatePet(updatedPet);
-        await loadPets(); 
-    } catch (e) {
-        console.error("Update pet failed", e);
-        alert("Chyba pri ukladaní");
+      await api.updatePet(updatedPet);
+      await loadPets();
+    } catch (e: any) {
+      console.error("Update pet failed", e);
+      alert(`Chyba pri ukladaní: ${e.message || e.error_description || 'Neznáma chyba'}`);
     }
   };
 
   const addPet = async (newPet: Pet) => {
     try {
-        await api.createPet(newPet);
-        await loadPets();
+      await api.createPet(newPet);
+      await loadPets();
     } catch (e) {
-        console.error("Add pet failed", e);
-        alert("Chyba pri vytváraní");
+      console.error("Add pet failed", e);
+      alert("Chyba pri vytváraní");
     }
   };
 
   const deletePet = async (petId: string) => {
     try {
-        await api.deletePet(petId);
-        await loadPets();
+      await api.deletePet(petId);
+      await loadPets();
     } catch (e: any) {
-        console.error("PetContext Delete Error:", e);
-        throw e;
+      console.error("PetContext Delete Error:", e);
+      throw e;
     }
   };
 

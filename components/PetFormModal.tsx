@@ -430,7 +430,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                                         <select value={social.children || 'Neznáme'} onChange={e => setSocial({ ...social, children: e.target.value })} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white outline-none focus:border-brand-500 text-gray-900"><option>Vhodný</option><option>Nevhodný</option><option>Opatrne</option><option>Neznáme</option></select>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-2">Psi</label>
+                                        <label className="block text-xs font-bold text-gray-500 mb-2">Psy</label>
                                         <select value={social.dogs || 'Neznáme'} onChange={e => setSocial({ ...social, dogs: e.target.value })} className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white outline-none focus:border-brand-500 text-gray-900"><option>Vhodný</option><option>Nevhodný</option><option>Opatrne</option><option>Neznáme</option></select>
                                     </div>
                                     <div>

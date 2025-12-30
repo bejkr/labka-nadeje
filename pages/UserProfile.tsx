@@ -299,8 +299,9 @@ const UserProfilePage: React.FC = () => {
                                 className={`
                                     flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-xs font-black transition-all duration-300
                                     ${activeTab === tab.id
-                                        ? 'bg-gray-900 text-white shadow-lg shadow-gray-200 scale-100'
+                                        ? 'bg-brand-600 text-white shadow-lg shadow-brand-200 scale-100'
                                         : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}
+
                                 `}
                             >
                                 <tab.icon size={16} strokeWidth={2.5} /> {tab.label}
@@ -378,27 +379,27 @@ const UserProfilePage: React.FC = () => {
                         </div>
 
                         {/* PROGRESS CARD */}
-                        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500 rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000"></div>
+                        <div className="bg-gradient-to-br from-brand-500 to-brand-600 p-8 rounded-[2.5rem] shadow-xl shadow-brand-200 text-white relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full blur-[60px] opacity-20 group-hover:opacity-30 transition-opacity duration-1000"></div>
 
                             <div className="relative z-10">
                                 <div className="flex justify-between items-end mb-6">
                                     <div className="space-y-1">
-                                        <div className="text-[10px] font-black text-gray-400">Kompletnosť profilu</div>
+                                        <div className="text-[10px] font-black text-brand-100">Kompletnosť profilu</div>
                                         <div className="text-4xl font-black tracking-tighter">{completionPercent}%</div>
                                     </div>
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/10 bg-white/5`}>
-                                        <Trophy size={20} className={completionStatus.color.replace('text-', 'text-')} />
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/20 bg-white/10`}>
+                                        <Trophy size={20} className="text-white" />
                                     </div>
                                 </div>
 
-                                <div className="h-4 bg-gray-700 rounded-full overflow-hidden p-0.5 mb-4 shadow-inner">
-                                    <div className="h-full bg-gradient-to-r from-brand-400 to-indigo-400 rounded-full relative" style={{ width: `${completionPercent}%` }}>
-                                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                <div className="h-4 bg-black/20 rounded-full overflow-hidden p-0.5 mb-4 shadow-inner">
+                                    <div className="h-full bg-gradient-to-r from-white to-brand-100 rounded-full relative" style={{ width: `${completionPercent}%` }}>
+                                        <div className="absolute inset-0 bg-white/40 animate-pulse"></div>
                                     </div>
                                 </div>
 
-                                <p className="text-sm font-medium text-gray-300 leading-relaxed">
+                                <p className="text-sm font-medium text-brand-50 leading-relaxed">
                                     {completionStatus.sub}
                                 </p>
                             </div>

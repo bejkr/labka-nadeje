@@ -354,7 +354,15 @@ const Footer: React.FC = () => {
             </form>
           </div>
         </div>
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
+
+        <div className="mt-12 py-4 bg-gray-800/50 rounded-2xl border border-gray-700/50 text-center">
+          <p className="text-gray-400 text-xs font-medium flex items-center justify-center gap-2">
+            <ShieldAlert size={14} className="text-brand-500" />
+            {t('footer.betaNotice')}
+          </p>
+        </div>
+
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
           <div className="flex items-center gap-2">
             <Shield size={14} />
             <span>&copy; {new Date().getFullYear()} {t('footer.copyright')}</span>

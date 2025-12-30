@@ -5,7 +5,7 @@ import {
   ArrowRight, PawPrint, Heart, Building2, User, Calendar, Gift,
   ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles,
   ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook,
-  Instagram, Search as SearchIcon, Zap, Utensils, Shield
+  Instagram, Search as SearchIcon, Zap, Utensils, Shield, Megaphone
 } from 'lucide-react';
 import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -93,8 +93,8 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const posts = await api.getBlogPosts();
-        setRecentPosts(posts.slice(0, 3));
+        const posts = await api.getBlogPosts(3);
+        setRecentPosts(posts);
 
         const slides = await api.getPromoSlides();
         if (slides.length > 0) {
@@ -123,9 +123,6 @@ const HomePage: React.FC = () => {
   // Hero Slider State
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Promo Slider State
-  const [currentPromo, setCurrentPromo] = useState(0);
-
   // Auto-rotate Hero slides
   useEffect(() => {
     if (heroPets.length === 0) return;
@@ -135,14 +132,7 @@ const HomePage: React.FC = () => {
     return () => clearInterval(timer);
   }, [heroPets.length]);
 
-  // Auto-rotate Promo slides
-  useEffect(() => {
-    if (promoSlides.length === 0) return;
-    const timer = setInterval(() => {
-      setCurrentPromo((prev) => (prev + 1) % promoSlides.length);
-    }, 6000); // Slower rotation for reading text
-    return () => clearInterval(timer);
-  }, [promoSlides.length]);
+
 
   // Helper to determine icon based on pet type
   const getPetIcon = (type: PetType) => {
@@ -559,76 +549,74 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* --- PROMO SLIDER SECTION --- */}
-      <section className="py-20 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">{t('home.partners.title')}</h2>
-            <p className="text-gray-500 mt-2">{t('home.partners.subtitle')}</p>
+      {/* --- PARTNERS & OFFERS SECTION (GRID) --- */}
+      <section className="py-24 bg-white border-t border-gray-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mr-40 -mt-40 w-96 h-96 bg-brand-50 rounded-full blur-3xl opacity-50 mix-blend-multiply"></div>
+        <div className="absolute bottom-0 left-0 -ml-40 -mb-40 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-50 mix-blend-multiply"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center p-3 bg-brand-50 rounded-2xl mb-4 text-brand-600">
+              <Megaphone size={24} />
+            </div>
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">{t('home.partners.title')}</h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">{t('home.partners.subtitle')}</p>
           </div>
 
-          <div className="relative bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 h-auto md:h-[450px]">
+          <div className={`grid gap-8 ${promoSlides.length === 1 ? 'grid-cols-1 max-w-6xl mx-auto' : 'grid-cols-1 md:grid-cols-2'}`}>
             {promoSlides.map((slide, index) => {
-              const colors = COLOR_MAP[slide.iconType || 'star'] || COLOR_MAP.star;
-              const Icon = ICON_MAP[slide.iconType || 'star'] || Star;
+              const colors = COLOR_MAP[slide.iconType as keyof typeof COLOR_MAP] || COLOR_MAP.star;
+              const Icon = ICON_MAP[slide.iconType as keyof typeof ICON_MAP] || Star;
+              const isSingle = promoSlides.length === 1;
 
               return (
-                <div
-                  key={slide.id}
-                  className={`absolute inset-0 flex flex-col md:flex-row transition-opacity duration-1000 ${index === currentPromo ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                >
-                  {/* Left Content */}
-                  <div className={`md:w-1/2 p-8 md:p-12 flex flex-col justify-center ${colors.bg}`}>
-                    <div className="flex items-center gap-2 mb-6">
-                      <span className="bg-white/80 backdrop-blur text-gray-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-gray-100">
-                        {slide.badge}
-                      </span>
-                    </div>
-
-                    <h3 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
-                      {slide.title}
-                    </h3>
-
-                    <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                      {slide.description}
-                    </p>
-
-                    <div>
-                      <a
-                        href={slide.link}
-                        className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-brand-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                      >
-                        <Icon size={20} className={colors.text ? "" : "text-brand-400"} />
-                        {slide.cta}
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Right Image */}
-                  <div className="md:w-1/2 relative h-64 md:h-full overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent z-10 pointer-events-none md:hidden"></div>
+                <div key={slide.id} className={`group flex ${isSingle ? 'flex-col md:flex-row' : 'flex-col'} bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden hover:shadow-2xl hover:border-brand-100 transition-all duration-500 transform hover:-translate-y-2`}>
+                  {/* Card Header / Image */}
+                  <div className={`relative overflow-hidden ${isSingle ? 'h-64 md:h-96 md:w-1/2' : 'h-64'}`}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                     <img
                       src={slide.imageUrl}
                       alt={slide.title}
-                      className="w-full h-full object-cover transition-transform duration-[10s] ease-linear scale-100"
-                      style={{ transform: index === currentPromo ? 'scale(1.1)' : 'scale(1)' }}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                     />
+                    <div className="absolute top-6 left-6 z-20">
+                      <span className="bg-white/90 backdrop-blur-md text-gray-900 text-xs font-black px-4 py-2 rounded-xl shadow-sm flex items-center gap-2">
+                        <Icon size={14} className={colors.text} />
+                        {slide.badge}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className={`p-8 ${isSingle ? 'md:p-12 justify-center md:w-1/2' : 'flex-1'} flex flex-col relative`}>
+                    <h3 className={`${isSingle ? 'text-3xl md:text-4xl' : 'text-2xl'} font-black text-gray-900 mb-4 leading-tight group-hover:text-brand-600 transition-colors`}>
+                      {slide.title}
+                    </h3>
+                    <p className="text-gray-500 font-medium leading-relaxed mb-8 line-clamp-3">
+                      {slide.description}
+                    </p>
+
+                    <div className={`mt-auto ${isSingle ? '' : 'pt-8 border-t border-gray-50'} flex items-center justify-between`}>
+                      <a
+                        href={slide.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${colors.bg} ${colors.text} group-hover:bg-brand-600 group-hover:text-white`}
+                      >
+                        {slide.cta} <ArrowRight size={18} />
+                      </a>
+                    </div>
                   </div>
                 </div>
               );
             })}
-
-            {/* Slider Controls */}
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex gap-3">
-              {promoSlides.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentPromo(idx)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${currentPromo === idx ? 'bg-gray-900 w-8' : 'bg-gray-400/50 hover:bg-gray-600'}`}
-                />
-              ))}
-            </div>
           </div>
+
+          {promoSlides.length === 0 && (
+            <div className="text-center py-12 text-gray-400 bg-gray-50 rounded-[2.5rem] border border-dashed border-gray-200">
+              Žiadne aktívne ponuky momentálne.
+            </div>
+          )}
         </div>
       </section>
 

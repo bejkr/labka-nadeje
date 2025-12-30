@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
     MapPin, CheckCircle, Heart, Info, Building2,
@@ -8,7 +9,7 @@ import {
     Facebook, Twitter, Mail, Link as LinkIcon, Copy,
     ArrowLeft, Calendar, Users, Loader2, EyeOff, ArrowRight, Video, Film, ShoppingCart, ChevronLeft, ChevronRight, Home as HomeIcon, Ruler, Baby,
     Car, Moon, Sparkle, Sparkles as SparklesIcon, Footprints, Cat, AlertCircle, Pill, Utensils, Check, User as UserIcon, Send, ShieldCheck, Zap, CreditCard, LogIn, Star,
-    Quote, Bookmark, HeartHandshake, TrendingUp, PlusCircle, Bell, BellOff
+    Quote, Bookmark, HeartHandshake, TrendingUp, PlusCircle, Bell, BellOff, MessageCircle
 } from 'lucide-react';
 import VirtualAdoptionModal from '../components/VirtualAdoptionModal';
 import { useAuth } from '../contexts/AuthContext';
@@ -415,30 +416,50 @@ const PetDetailPage: React.FC = () => {
 
                 {/* LABKA ZHODA */}
                 {isRegularUser && (
-                    <div className="mb-8 p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-[10px] font-black text-gray-400">Labka Zhoda</span>
-                            {isAnalyzingMatch ? (
-                                <Loader2 size={14} className="animate-spin text-gray-400" />
-                            ) : (
-                                <span className={`text-xl font-black ${matchResult && matchResult.score > 70 ? 'text-green-600' : 'text-gray-900'}`}>
-                                    {matchResult ? `${matchResult.score}%` : '--%'}
+                    <div className="mb-8 relative overflow-hidden rounded-[2rem] p-6 bg-white border border-brand-100 shadow-lg shadow-brand-100/50 group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-3xl opacity-50 -mr-10 -mt-10 pointer-events-none"></div>
+
+                        <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 bg-brand-50 text-brand-600 rounded-lg">
+                                        <SparklesIcon size={14} />
+                                    </div>
+                                    <span className="text-xs font-black text-gray-500 uppercase tracking-wider">Labka Zhoda</span>
+                                </div>
+                                {isAnalyzingMatch ? (
+                                    <Loader2 size={16} className="animate-spin text-brand-500" />
+                                ) : (
+                                    <div className={`px-2.5 py-0.5 rounded-full text-[10px] font-black border ${matchResult && matchResult.score > 80 ? 'bg-green-50 text-green-700 border-green-100' : matchResult && matchResult.score > 50 ? 'bg-orange-50 text-orange-700 border-orange-100' : 'bg-red-50 text-red-700 border-red-100'}`}>
+                                        AI Analýza
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex items-end gap-3 mb-4">
+                                <span className="text-5xl font-black text-gray-900 tracking-tighter">
+                                    {matchResult ? matchResult.score : '--'}%
                                 </span>
+                                <span className="text-sm font-bold text-gray-400 mb-2">zhoda s vami</span>
+                            </div>
+
+                            <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden mb-4 border border-gray-100">
+                                <div
+                                    className="h-full bg-gradient-to-r from-brand-500 to-purple-600 rounded-full transition-all duration-1000 relative"
+                                    style={{ width: `${matchResult?.score || 0}%` }}
+                                >
+                                    <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
+                                </div>
+                            </div>
+
+                            {matchResult?.reason && (
+                                <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                    <p className="text-xs text-gray-600 leading-relaxed font-medium">
+                                        {matchResult.reason}
+                                    </p>
+                                </div>
                             )}
                         </div>
-
-                        <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-4">
-                            <div
-                                className="h-full bg-gray-900 transition-all duration-1000"
-                                style={{ width: `${matchResult?.score || 0}%` }}
-                            ></div>
-                        </div>
-
-                        {matchResult?.reason && (
-                            <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-                                {matchResult.reason}
-                            </p>
-                        )}
                     </div>
                 )}
 
@@ -471,7 +492,7 @@ const PetDetailPage: React.FC = () => {
                             {hasAlreadyApplied ? <><CheckCircle size={20} /> {t('petDetail.applicationSent')}</> : t('petDetail.interestButton')}
                         </button>
                         {!isAlreadyAdopted && pet.adoptionStatus === 'Available' && (
-                            <button onClick={handleVirtualAdoptionClick} className="w-full py-3 px-6 rounded-2xl font-bold text-brand-700 bg-brand-50 border border-brand-100 hover:bg-brand-100 transition flex items-center justify-center gap-2">
+                            <button disabled className="w-full py-3 px-6 rounded-2xl font-bold text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed flex items-center justify-center gap-2">
                                 <Heart size={18} /> {t('petDetail.virtualAdopt')}
                             </button>
                         )}
@@ -504,11 +525,52 @@ const PetDetailPage: React.FC = () => {
                     <span className="truncate">{shelter?.location || pet.location}</span>
                 </div>
             </Link>
+
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <div className="p-1.5 bg-brand-100 text-brand-600 rounded-lg">
+                        <SparklesIcon size={16} />
+                    </div>
+                    {t('petDetail.adoptionProcess.title')}
+                </h4>
+                <div className="relative">
+                    <div className="absolute left-3.5 top-3 bottom-3 w-0.5 bg-gray-100"></div>
+                    <div className="space-y-6 relative">
+                        {[
+                            { title: t('petDetail.adoptionProcess.step1'), desc: t('petDetail.adoptionProcess.step1Desc'), icon: Send, color: "bg-blue-100 text-blue-600" },
+                            { title: t('petDetail.adoptionProcess.step2'), desc: t('petDetail.adoptionProcess.step2Desc'), icon: MessageCircle, color: "bg-purple-100 text-purple-600" },
+                            { title: t('petDetail.adoptionProcess.step3'), desc: t('petDetail.adoptionProcess.step3Desc'), icon: Users, color: "bg-amber-100 text-amber-600" },
+                            { title: t('petDetail.adoptionProcess.step4'), desc: t('petDetail.adoptionProcess.step4Desc'), icon: HomeIcon, color: "bg-green-100 text-green-600" }
+                        ].map((step, idx) => (
+                            <div key={idx} className="flex gap-4">
+                                <div className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center border-2 border-white shadow-sm ${step.color}`}>
+                                    <step.icon size={14} />
+                                </div>
+                                <div>
+                                    <h5 className="text-sm font-bold text-gray-900">{step.title}</h5>
+                                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{step.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 
+
+
     return (
         <div className="bg-gray-50 min-h-screen pb-20 pt-6">
+            <Helmet>
+                <title>{pet.name} hľadá domov | LabkaNádeje</title>
+                <meta name="description" content={`Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description.substring(0, 150)}...`} />
+                <meta property="og:title" content={`${pet.name} hľadá domov | LabkaNádeje`} />
+                <meta property="og:description" content={`Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description.substring(0, 150)}...`} />
+                <meta property="og:image" content={pet.imageUrl} />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:type" content="website" />
+            </Helmet>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
                     <Link to="/pets" className="inline-flex items-center text-gray-500 hover:text-brand-600 font-bold transition">
@@ -530,7 +592,7 @@ const PetDetailPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-20">
                     <div className="lg:col-span-2 space-y-8">
                         <div className={`grid gap-6 ${hasVideo ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
-                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 relative flex flex-col h-full ${hasVideo ? 'min-h-[300px]' : 'min-h-[500px]'}`}>
+                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 relative flex flex-col h-full ${hasVideo ? 'min-h-[300px]' : 'min-h-[750px]'}`}>
                                 <div className="relative flex-1 rounded-2xl overflow-hidden bg-gray-100 group mb-4">
                                     <img src={uniquePhotos[activePhotoIndex]} alt="" className="w-full h-full object-cover cursor-zoom-in absolute inset-0" onClick={() => setLightboxIndex(activePhotoIndex)} />
                                 </div>

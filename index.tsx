@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { PetProvider } from './contexts/PetContext';
@@ -82,14 +83,16 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <AuthProvider>
-        {/* PetProvider must wrap AppProvider because AppContext uses usePets() */}
-        <PetProvider>
-          <AppProvider>
-            <App />
-          </AppProvider>
-        </PetProvider>
-      </AuthProvider>
+      <HelmetProvider>
+        <AuthProvider>
+          {/* PetProvider must wrap AppProvider because AppContext uses usePets() */}
+          <PetProvider>
+            <AppProvider>
+              <App />
+            </AppProvider>
+          </PetProvider>
+        </AuthProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   </React.StrictMode>
 );

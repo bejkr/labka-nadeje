@@ -41,7 +41,7 @@ const ShelterDetailPage: React.FC = () => {
                 const suppliesData = await api.getSupplies(id);
 
                 setShelter(shelterData);
-                setPets(petsData);
+                setPets(petsData.filter(p => p.isVisible));
                 setSupplies(suppliesData);
             } catch (e) {
                 console.error("Error fetching shelter data:", e);

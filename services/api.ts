@@ -550,12 +550,23 @@ export const api = {
             .neq('sender_id', currentUserId);
     },
 
-    async getBlogPosts(): Promise<BlogPost[]> {
+    async getBlogPosts(limit?: number): Promise<BlogPost[]> {
         try {
-            const { data } = await supabase.from('blog_posts').select('id, title, summary, image_url, created_at, author').order('created_at', { ascending: false });
+            let query = supabase.from('blog_posts').select('id, title, summary, image_url, created_at, author').order('created_at', { ascending: false });
+            if (limit) {
+                query = query.limit(limit);
+            }
+            const { data, error } = await query;
+            if (error) {
+                console.error("Supabase blog error:", error);
+                return [];
+            }
             if (!data) return [];
             return data.map((row: any) => ({ id: row.id, title: row.title, summary: row.summary, content: [], imageUrl: row.image_url, date: row.created_at, author: row.author }));
-        } catch (e) { return []; }
+        } catch (e) {
+            console.error("Blog fetch exception:", e);
+            return [];
+        }
     },
 
     async getBlogPost(id: string): Promise<BlogPost | undefined> {
