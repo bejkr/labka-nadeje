@@ -5,7 +5,8 @@ import {
   ArrowRight, PawPrint, Heart, Building2, User, Calendar, Gift,
   ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles,
   ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook,
-  Instagram, Search as SearchIcon, Zap, Utensils, Shield, Megaphone
+  Instagram, Search as SearchIcon, Zap, Utensils, Shield, Megaphone,
+  Award, FileCheck
 } from 'lucide-react';
 import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -88,6 +89,8 @@ const HomePage: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
   // Promo Slides State
   const [promoSlides, setPromoSlides] = useState<PromoSlide[]>([]);
+  // Platform Stats
+  const [stats, setStats] = useState({ waiting: 0, adopted: 0, shelters: 0 });
 
   // Fetch Data
   useEffect(() => {
@@ -102,6 +105,9 @@ const HomePage: React.FC = () => {
         } else {
           setPromoSlides(MOCK_PROMO_SLIDES);
         }
+
+        const statsData = await api.getPlatformStats();
+        setStats(statsData);
       } catch (error) {
         console.error("Failed to load home data", error);
         setPromoSlides(MOCK_PROMO_SLIDES);
@@ -324,21 +330,21 @@ const HomePage: React.FC = () => {
               <div className="inline-flex items-center justify-center p-4 bg-brand-100 text-brand-600 rounded-2xl mb-4">
                 <PawPrint size={32} />
               </div>
-              <h3 className="text-4xl font-extrabold text-gray-900 mb-1">500+</h3>
+              <h3 className="text-4xl font-extrabold text-gray-900 mb-1">{stats.waiting}</h3>
               <p className="text-gray-600 font-medium">{t('home.stats.waiting')}</p>
             </div>
             <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition duration-300">
               <div className="inline-flex items-center justify-center p-4 bg-brand-100 text-brand-600 rounded-2xl mb-4">
                 <Heart size={32} />
               </div>
-              <h3 className="text-4xl font-extrabold text-gray-900 mb-1">1200+</h3>
+              <h3 className="text-4xl font-extrabold text-gray-900 mb-1">{stats.adopted}</h3>
               <p className="text-gray-600 font-medium">{t('home.stats.adopted')}</p>
             </div>
             <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition duration-300">
               <div className="inline-flex items-center justify-center p-4 bg-brand-100 text-brand-600 rounded-2xl mb-4">
                 <Building2 size={32} />
               </div>
-              <h3 className="text-4xl font-extrabold text-gray-900 mb-1">40+</h3>
+              <h3 className="text-4xl font-extrabold text-gray-900 mb-1">{stats.shelters}</h3>
               <p className="text-gray-600 font-medium">{t('home.stats.shelters')}</p>
             </div>
           </div>
@@ -635,10 +641,7 @@ const HomePage: React.FC = () => {
 
                 {/* Content Side */}
                 <div className="lg:col-span-7">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 mb-8 animate-in slide-in-from-bottom duration-500">
-                    <Sparkles className="text-yellow-300" size={20} />
-                    <span className="text-sm font-black">{t('home.virtualAdoption.badge')}</span>
-                  </div>
+
 
                   <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tight">
                     {t('home.virtualAdoption.title')}
@@ -652,24 +655,24 @@ const HomePage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
                     <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                        <Utensils size={20} className="text-orange-200" />
+                        <Award size={20} className="text-yellow-200" />
                       </div>
-                      <h4 className="font-bold text-sm mb-1">{t('home.virtualAdoption.bowl')}</h4>
-                      <p className="text-xs text-brand-200 leading-tight">{t('home.virtualAdoption.bowlDesc')}</p>
+                      <h4 className="font-bold text-sm mb-1">Sieň Slávy</h4>
+                      <p className="text-xs text-brand-200 leading-tight">Vaše meno bude navždy svietiť na našej stene pomoci.</p>
                     </div>
                     <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                        <Stethoscope size={20} className="text-blue-200" />
+                        <FileCheck size={20} className="text-blue-200" />
                       </div>
-                      <h4 className="font-bold text-sm mb-1">{t('home.virtualAdoption.doctor')}</h4>
-                      <p className="text-xs text-brand-200 leading-tight">{t('home.virtualAdoption.doctorDesc')}</p>
+                      <h4 className="font-bold text-sm mb-1">Certifikát</h4>
+                      <p className="text-xs text-brand-200 leading-tight">Získate oficiálny certifikát virtuálneho rodiča.</p>
                     </div>
                     <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                         <Heart size={20} className="text-pink-200" />
                       </div>
-                      <h4 className="font-bold text-sm mb-1">{t('home.virtualAdoption.luck')}</h4>
-                      <p className="text-xs text-brand-200 leading-tight">{t('home.virtualAdoption.luckDesc')}</p>
+                      <h4 className="font-bold text-sm mb-1">Láska a Správy</h4>
+                      <p className="text-xs text-brand-200 leading-tight">Pravidelné fotky a novinky zo života chlpáča.</p>
                     </div>
                   </div>
 

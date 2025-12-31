@@ -25,6 +25,7 @@ import AuthPage from './pages/Auth';
 import AdminDashboard from './pages/AdminDashboard';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 import AdoptionAssistant from './components/AdoptionAssistant';
 import GDPRConsent from './components/GDPRConsent';
 import ScrollToTop from './components/ScrollToTop';
@@ -369,7 +370,7 @@ const Footer: React.FC = () => {
           </div>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-white transition">{t('footer.privacy')}</Link>
-            <Link to="/support" className="hover:text-white transition">{t('footer.terms')}</Link>
+            <Link to="/terms" className="hover:text-white transition">{t('footer.terms')}</Link>
           </div>
         </div>
       </div>
@@ -413,6 +414,7 @@ const App: React.FC = () => {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfUse />} />
           </Routes>
         </main>
         <Footer />

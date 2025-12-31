@@ -4,6 +4,10 @@ import { Pet, User, Shelter, AdoptionInquiry, VirtualAdoption, PetType, Gender, 
 
 // Cache for the current user profile to avoid redundant fetches
 let cachedProfile: User | Shelter | null = null;
+// Cache for platform stats
+let cachedStats: { waiting: number, adopted: number, shelters: number } | null = null;
+let lastStatsFetchTime = 0;
+const STATS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Helper to map DB pet object to Pet type
 const mapPetFromDB = (row: any): Pet => ({
@@ -609,5 +613,31 @@ export const api = {
     async subscribeToNewsletter(email: string) {
         const { error } = await supabase.from('newsletter_subscribers').insert({ email, created_at: new Date().toISOString() });
         if (error) { if (error.code === '23505') throw new Error("Tento e-mail je už prihlásený na odber."); throw error; }
+    },
+
+    async getPlatformStats() {
+        const now = Date.now();
+        if (cachedStats && (now - lastStatsFetchTime < STATS_CACHE_DURATION)) {
+            return cachedStats;
+        }
+
+        try {
+            const [waiting, adopted, shelters] = await Promise.all([
+                supabase.from('pets').select('*', { count: 'exact', head: true }).eq('adoption_status', 'Available').eq('is_visible', true),
+                supabase.from('pets').select('*', { count: 'exact', head: true }).eq('adoption_status', 'Adopted'),
+                supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'shelter')
+            ]);
+
+            cachedStats = {
+                waiting: waiting.count || 0,
+                adopted: adopted.count || 0,
+                shelters: shelters.count || 0
+            };
+            lastStatsFetchTime = now;
+
+            return cachedStats;
+        } catch (e) {
+            return cachedStats || { waiting: 0, adopted: 0, shelters: 0 };
+        }
     }
 };

@@ -75,11 +75,11 @@ const PrivacyPolicy: React.FC = () => {
                   <h3 className="font-bold text-blue-900 text-xl mb-2">Máte otázky k vašim údajom?</h3>
                   <p className="text-blue-800">Sme tu pre vás. Napíšte nášmu zodpovednému zástupcovi.</p>
                 </div>
-                <a 
-                  href="mailto:privacy@labkanadeje.sk" 
+                <a
+                  href="mailto:info@labkanadeje.sk"
                   className="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold shadow-sm hover:shadow-md transition flex items-center gap-2"
                 >
-                  <Mail size={20} /> privacy@labkanadeje.sk
+                  <Mail size={20} /> info@labkanadeje.sk
                 </a>
               </div>
             </div>
