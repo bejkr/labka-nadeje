@@ -208,6 +208,15 @@ const ShelterListPage: React.FC = () => {
                                         </div>
                                     </div>
 
+                                    {shelter.organizationType && shelter.organizationType !== 'shelter' && (
+                                        <div className="absolute top-4 left-4 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 shadow-sm flex items-center gap-1.5 transition-colors group-hover:bg-black/30 z-10">
+                                            <Building2 size={12} className="text-white" />
+                                            <span className="text-[10px] font-black text-white uppercase">
+                                                {shelter.organizationType === 'civic_association' ? 'OZ' : shelter.organizationType === 'volunteer' ? 'Dobrovoľníci' : 'KS'}
+                                            </span>
+                                        </div>
+                                    )}
+
                                     {shelter.isVerified && (
                                         <div className="absolute top-4 right-6 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 shadow-sm flex items-center gap-1.5 transition-colors group-hover:bg-white/40 z-10">
                                             <ShieldCheck size={14} className="text-white" />

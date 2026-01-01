@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Shelter } from '../types';
+import { User, Shelter, OrganizationType } from '../types';
 import { api } from '../services/api';
 import { supabase } from '../services/supabaseClient';
 
@@ -16,7 +16,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   registerUser: (name: string, email: string, password?: string) => Promise<any>;
-  registerShelter: (name: string, location: string, email: string, password?: string) => Promise<any>;
+  registerShelter: (name: string, location: string, email: string, organizationType: OrganizationType, password?: string) => Promise<any>;
 
   updateUserProfile: (data: Partial<User> | Partial<Shelter>) => Promise<void>;
   adoptVirtually: (petId: string, amount: number) => void;
@@ -133,16 +133,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return result;
   };
 
-  const registerShelter = async (name: string, location: string, email: string, password?: string) => {
+  const registerShelter = async (name: string, location: string, email: string, organizationType: OrganizationType, password?: string) => {
     const result = await api.register(email, password || 'password', { role: 'shelter', name });
     if (result.user) {
-      await api.updateProfile(result.user.id, { location } as Shelter, 'shelter');
-      const updatedUser = { ...result.user, location } as Shelter;
+      await api.updateProfile(result.user.id, { location, organizationType } as Shelter, 'shelter');
+      const updatedUser = { ...result.user, location, organizationType } as Shelter;
       setCurrentUser(updatedUser);
       setUserRole('shelter');
       // Send welcome email (fire and forget)
       supabase.functions.invoke('welcome-email', {
-        body: { email, name, role: 'shelter' }
+        body: { email, name, role: 'shelter', organizationType }
       }).catch(err => console.error("Failed to send welcome email:", err));
       return { ...result, user: updatedUser };
     }

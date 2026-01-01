@@ -75,7 +75,8 @@ const mapProfileFromDB = (row: any): User | Shelter => {
             shippingAddress: row.shelter_data?.shippingAddress || '',
             logoUrl: row.shelter_data?.logoUrl || '',
             socials: row.shelter_data?.socials || {},
-            stats: row.shelter_data?.stats || { adoptions: 0, currentAnimals: 0, views: 0 }
+            stats: row.shelter_data?.stats || { adoptions: 0, currentAnimals: 0, views: 0 },
+            organizationType: row.shelter_data?.organizationType || 'shelter'
         } as Shelter;
     }
     return {

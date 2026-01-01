@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { User, Shelter, OrganizationType } from '../types';
 import {
-  Building2, User, Lock, Mail, MapPin, ArrowLeft, CheckCircle,
+  Building2, User as UserIcon, Lock, Mail, MapPin, ArrowLeft, CheckCircle,
   RefreshCcw, MailCheck, Heart, Dog, LayoutDashboard,
   TrendingUp, Gift, Zap, Star, Users,
   Eye, EyeOff, AlertCircle, Quote
@@ -54,6 +55,7 @@ const AuthPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [name, setName] = useState('');
   const [locationField, setLocationField] = useState('');
+  const [organizationType, setOrganizationType] = useState<OrganizationType>('shelter');
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -79,7 +81,7 @@ const AuthPage: React.FC = () => {
       } else if (mode === 'register') {
         let result: any;
         if (role === 'user') { result = await registerUser(name, email, password); }
-        else { result = await registerShelter(name, locationField, email, password); }
+        else { result = await registerShelter(name, locationField, email, organizationType, password); }
         if (result?.verificationRequired) { setMode('verification-pending'); }
         else { navigate(role === 'user' ? '/profile' : '/shelter'); }
       } else if (mode === 'forgot') {
@@ -265,7 +267,7 @@ const AuthPage: React.FC = () => {
                       <label className="block text-[10px] font-black text-gray-400 mb-4">Vyberte si typ účtu</label>
                       <div className="grid grid-cols-2 gap-4">
                         <button type="button" onClick={() => setRole('user')} className={`flex flex-col items-center p-4 rounded-3xl border-2 transition-all ${role === 'user' ? 'border-brand-600 bg-brand-50' : 'border-gray-100 bg-gray-50'}`}>
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${role === 'user' ? 'bg-brand-600 text-white' : 'bg-white text-gray-400'}`}><User size={20} /></div>
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-2 ${role === 'user' ? 'bg-brand-600 text-white' : 'bg-white text-gray-400'}`}><UserIcon size={20} /></div>
                           <span className="text-xs font-black">Chcem adoptovať</span>
                         </button>
                         <button type="button" onClick={() => setRole('shelter')} className={`flex flex-col items-center p-4 rounded-3xl border-2 transition-all ${role === 'shelter' ? 'border-indigo-600 bg-indigo-50' : 'border-gray-100 bg-gray-50'}`}>
@@ -277,11 +279,35 @@ const AuthPage: React.FC = () => {
                   )}
 
                   {mode === 'register' && (
+                    <div className="space-y-3 mb-6">
+                      {role === 'shelter' && (
+                        <div className="space-y-2 mb-4">
+                          <label className="block text-[10px] font-black text-gray-400 mb-2">Typ organizácie</label>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button type="button" onClick={() => setOrganizationType('shelter')} className={`p-3 rounded-2xl border-2 transition-all text-center ${organizationType === 'shelter' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-gray-100 bg-white text-gray-500'}`}>
+                              <span className="text-xs font-black block">Útulok</span>
+                            </button>
+                            <button type="button" onClick={() => setOrganizationType('civic_association')} className={`p-3 rounded-2xl border-2 transition-all text-center ${organizationType === 'civic_association' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-gray-100 bg-white text-gray-500'}`}>
+                              <span className="text-xs font-black block">OZ</span>
+                            </button>
+                            <button type="button" onClick={() => setOrganizationType('quarantine_station')} className={`p-3 rounded-2xl border-2 transition-all text-center ${organizationType === 'quarantine_station' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-gray-100 bg-white text-gray-500'}`}>
+                              <span className="text-xs font-black block">KS / Dočasky</span>
+                            </button>
+                            <button type="button" onClick={() => setOrganizationType('volunteer')} className={`p-3 rounded-2xl border-2 transition-all text-center ${organizationType === 'volunteer' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-gray-100 bg-white text-gray-500'}`}>
+                              <span className="text-xs font-black block">Dobrovoľníci</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {mode === 'register' && (
                     <div>
                       <label className="block text-[10px] font-black text-gray-400 mb-2 ml-1">{role === 'user' ? 'Meno a priezvisko' : 'Názov útulku'}</label>
                       <div className="relative group">
                         <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${role === 'shelter' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-brand-500'} text-gray-400`}>
-                          {role === 'user' ? <User size={20} /> : <Building2 size={20} />}
+                          {role === 'user' ? <UserIcon size={20} /> : <Building2 size={20} />}
                         </div>
                         <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-brand-500/20 font-bold transition-all" placeholder={role === 'user' ? "Jozef Pekný" : "Názov vašej organizácie"} />
                       </div>

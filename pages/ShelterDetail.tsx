@@ -142,6 +142,11 @@ const ShelterDetailPage: React.FC = () => {
                                         <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-tight">
                                             {shelter.name}
                                         </h1>
+                                        {shelter.organizationType && shelter.organizationType !== 'shelter' && (
+                                            <span className="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider self-center">
+                                                {shelter.organizationType === 'civic_association' ? 'Občianske združenie' : shelter.organizationType === 'volunteer' ? 'Dobrovoľníci' : 'Karanténna stanica'}
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-gray-500 font-bold text-[11px] mt-4">

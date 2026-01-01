@@ -53,6 +53,7 @@ export const CITY_COORDS: Record<string, [number, number]> = {
     'Revúca': [48.6835, 20.1171],
     'Veľký Krtíš': [48.2106, 19.3503],
     'Čáry': [48.6653, 17.0789],
+    'Rakúsy': [49.1881, 20.3877],
 };
 
 export const getCoordinates = (location: string): [number, number] | null => {

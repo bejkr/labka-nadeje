@@ -88,9 +88,12 @@ export interface PetUpdate {
   type: 'photo' | 'video' | 'status' | 'story';
 }
 
+export type OrganizationType = 'shelter' | 'civic_association' | 'quarantine_station' | 'volunteer';
+
 export interface Shelter {
   id: string;
   role: 'shelter';
+  organizationType: OrganizationType;
   isSuperAdmin?: boolean;
   isVerified?: boolean;
   name: string;

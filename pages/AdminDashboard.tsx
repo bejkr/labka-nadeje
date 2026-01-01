@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
-import { User, Shelter, Pet, BlogPost, PromoSlide } from '../types';
+import { User, Shelter, Pet, BlogPost, PromoSlide, OrganizationType } from '../types';
 import { ShieldAlert, Users, Building2, Loader2, Search, Dog, Trash2, Edit2, BookOpen, Plus, CheckCircle, XCircle, Megaphone, Image as ImageIcon, User as UserIcon, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PetFormModal from '../components/PetFormModal';
@@ -116,6 +116,16 @@ const AdminDashboard: React.FC = () => {
         } catch (e) { console.error(e); }
     };
 
+    const handleUpdateShelterType = async (shelterId: string, newType: string) => {
+        try {
+            await api.updateProfile(shelterId, { organizationType: newType as OrganizationType } as Shelter, 'shelter');
+            setUsers(prev => prev.map(u => u.id === shelterId ? { ...u, organizationType: newType as OrganizationType } as Shelter : u));
+        } catch (e) {
+            console.error(e);
+            alert("Nepodarilo sa aktualizovať typ organizácie.");
+        }
+    };
+
     // --- Filtering ---
     const filteredUsers = users.filter(u => u.role === 'user' && (u.name.toLowerCase().includes(filter.toLowerCase()) || u.email.toLowerCase().includes(filter.toLowerCase())));
     const filteredShelters = users.filter(u => u.role === 'shelter' && (u.name.toLowerCase().includes(filter.toLowerCase()) || u.email.toLowerCase().includes(filter.toLowerCase())));
@@ -167,7 +177,7 @@ const AdminDashboard: React.FC = () => {
                             <thead className="bg-gray-50 text-gray-500">
                                 <tr>
                                     {activeTab === 'users' ? (<><th className="px-6 py-4 font-bold">Užívateľ</th><th className="px-6 py-4 font-bold">Email</th><th className="px-6 py-4 font-bold">Admin</th></>) :
-                                        activeTab === 'shelters' ? (<><th className="px-6 py-4 font-bold">Útulok</th><th className="px-6 py-4 font-bold">Lokalita</th><th className="px-6 py-4 font-bold text-center"><div className="flex items-center justify-center gap-1"><Eye size={16} /> Vhľady</div></th><th className="px-6 py-4 font-bold">Status</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) :
+                                        activeTab === 'shelters' ? (<><th className="px-6 py-4 font-bold">Útulok</th><th className="px-6 py-4 font-bold">Lokalita</th><th className="px-6 py-4 font-bold">Typ</th><th className="px-6 py-4 font-bold text-center"><div className="flex items-center justify-center gap-1"><Eye size={16} /> Vhľady</div></th><th className="px-6 py-4 font-bold">Status</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) :
                                             activeTab === 'pets' ? (<><th className="px-6 py-4 font-bold">Zviera</th><th className="px-6 py-4 font-bold">Útulok</th><th className="px-6 py-4 font-bold text-center"><div className="flex items-center justify-center gap-1"><Eye size={16} /> Vhľady</div></th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) :
                                                 activeTab === 'blog' ? (<><th className="px-6 py-4 font-bold">Článok</th><th className="px-6 py-4 font-bold">Autor</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>) :
                                                     (<><th className="px-6 py-4 font-bold">Banner / Partner</th><th className="px-6 py-4 font-bold">Badge</th><th className="px-6 py-4 text-right font-bold">Akcia</th></>)}
@@ -200,6 +210,18 @@ const AdminDashboard: React.FC = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">{shelter.location}</td>
+                                                <td className="px-6 py-4">
+                                                    <select
+                                                        value={shelter.organizationType || 'shelter'}
+                                                        onChange={(e) => handleUpdateShelterType(shelter.id, e.target.value)}
+                                                        className="px-2 py-1 rounded-lg border border-gray-200 text-xs font-bold bg-white focus:ring-2 focus:ring-brand-500 outline-none"
+                                                    >
+                                                        <option value="shelter">Útulok</option>
+                                                        <option value="civic_association">OZ</option>
+                                                        <option value="quarantine_station">KS / Doč</option>
+                                                        <option value="volunteer">Dobrovoľníci</option>
+                                                    </select>
+                                                </td>
                                                 <td className="px-6 py-4 text-center font-bold text-gray-600">{shelter.stats?.views || 0}</td>
                                                 <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-bold ${shelter.isVerified ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>{shelter.isVerified ? 'Overený' : 'Neoverený'}</span></td>
                                                 <td className="px-6 py-4 text-right"><button onClick={() => handleVerifyShelter(shelter.id, shelter.isVerified)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${shelter.isVerified ? 'bg-red-50 text-red-600' : 'bg-green-600 text-white'}`}>{shelter.isVerified ? 'Zrušiť overenie' : 'Overiť'}</button></td>
