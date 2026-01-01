@@ -49,7 +49,7 @@ const UserProfilePage: React.FC = () => {
     const { inquiries, updateInquiryStatus, markInquiryAsRead, seenInquiryIds, showToast } = useApp();
     const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'virtual-adoptions' | 'settings'>('about');
+    const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'virtual-adoptions' | 'settings' | 'favorites'>('about');
     const [selectedInquiry, setSelectedInquiry] = useState<AdoptionInquiry | null>(null);
     const [relatedShelter, setRelatedShelter] = useState<Shelter | null>(null);
 
@@ -289,8 +289,9 @@ const UserProfilePage: React.FC = () => {
                     <div className="sticky top-6 z-30 p-2 bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl shadow-gray-200/50 rounded-3xl inline-flex gap-1">
                         {[
                             { id: 'about', label: 'Môj Profil', icon: UserIcon },
+                            { id: 'favorites', label: 'Uložené', icon: Heart },
                             { id: 'activity', label: 'Žiadosti', icon: MessageCircle },
-                            { id: 'virtual-adoptions', label: 'Virtuálne adopcie', icon: Heart },
+                            { id: 'virtual-adoptions', label: 'Virtuálne adopcie', icon: Sparkles },
                             { id: 'settings', label: 'Nastavenia', icon: Settings }
                         ].map(tab => (
                             <button
@@ -685,38 +686,70 @@ const UserProfilePage: React.FC = () => {
                                                 </div>
                                             )}
                                         </section>
-
-
-                                        {/* FAVORITES SECTION */}
-                                        <section className="space-y-6 pt-8 border-t border-gray-200/50">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl"><Bookmark size={24} /></div>
-                                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Uložené</h2>
-                                            </div>
-
-                                            {favoritePets.length > 0 ? (
-                                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                                                    {favoritePets.map(pet => (
-                                                        <Link key={pet.id} to={`/pets/${pet.id}`} className="group bg-white p-3 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                                                            <div className="aspect-square rounded-[1.5rem] bg-gray-100 mb-3 overflow-hidden relative">
-                                                                <img src={pet.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={pet.name} />
-                                                                <button onClick={(e) => { e.preventDefault(); toggleFavorite(pet.id); }} className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-500 shadow-sm hover:scale-110 transition">
-                                                                    <Heart size={14} fill="currentColor" />
-                                                                </button>
-                                                            </div>
-                                                            <div className="px-2 pb-2 text-center">
-                                                                <h3 className="font-black text-gray-900 truncate">{pet.name}</h3>
-                                                                <p className="text-[10px] font-bold text-gray-400">{pet.breed}</p>
-                                                            </div>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <p className="text-gray-400 italic pl-4">Nemáte žiadne uložené zvieratká.</p>
-                                            )}
-                                        </section>
                                     </>
                                 )}
+                            </div>
+                        )}
+
+                        {/* FAVORITES TAB */}
+                        {activeTab === 'favorites' && (
+                            <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><Heart size={24} fill="currentColor" /></div>
+                                        <div>
+                                            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Uložené Zvieratká</h2>
+                                            <p className="text-sm text-gray-500 font-medium">Váš zoznam obľúbených miláčikov.</p>
+                                        </div>
+                                    </div>
+
+                                    {favoritePets.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                            {favoritePets.map(pet => (
+                                                <div key={pet.id} className="group bg-white p-4 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative">
+                                                    <button
+                                                        onClick={(e) => { e.preventDefault(); toggleFavorite(pet.id); }}
+                                                        className="absolute top-6 right-6 z-10 p-2 bg-white/90 backdrop-blur-sm rounded-full text-red-500 shadow-sm hover:bg-white hover:scale-110 transition"
+                                                        title="Odstrániť z uložených"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                    <Link to={`/pets/${pet.id}`} className="block aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-4 bg-gray-100 relative">
+                                                        <img src={pet.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={pet.name} />
+                                                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <div className="flex items-center gap-2 text-xs font-bold">
+                                                                <MapPin size={12} /> {pet.location}
+                                                            </div>
+                                                        </div>
+                                                    </Link>
+
+                                                    <div className="px-2 flex-1 flex flex-col">
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <h3 className="text-xl font-black text-gray-900 group-hover:text-brand-600 transition-colors">{pet.name}</h3>
+                                                            {pet.gender === 'Samec' ? <span className="p-1 bg-blue-50 text-blue-500 rounded-lg"><Dog size={14} /></span> : <span className="p-1 bg-pink-50 text-pink-500 rounded-lg"><Dog size={14} /></span>}
+                                                        </div>
+                                                        <p className="text-xs font-bold text-gray-400 mb-4">{pet.breed} • {pet.age} rokov</p>
+
+                                                        <div className="mt-auto pt-4 border-t border-gray-50 flex gap-2">
+                                                            <Link to={`/pets/${pet.id}`} className="flex-1 py-2.5 bg-gray-900 text-white text-xs font-black rounded-xl text-center hover:bg-brand-600 transition shadow-lg shadow-gray-200">
+                                                                Zobraziť profil
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-20 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200">
+                                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-gray-300 mx-auto mb-6 shadow-sm"><Heart size={32} /></div>
+                                            <h3 className="text-lg font-black text-gray-900 mb-2">Zatiaľ žiadne srdcovky</h3>
+                                            <p className="text-gray-400 font-medium max-w-xs mx-auto mb-8">Prehliadajte zvieratká a uložte si tie, ktoré vás chytia za srdce.</p>
+                                            <Link to="/pets" className="inline-flex items-center gap-2 px-8 py-3 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition shadow-xl shadow-brand-200">
+                                                <Dog size={18} /> Prehľadávať zvieratká
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
 

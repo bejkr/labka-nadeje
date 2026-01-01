@@ -24,17 +24,25 @@ const AuthPage: React.FC = () => {
   // Detect mode and role from URL or Navigation State
   useEffect(() => {
     const urlMode = searchParams.get('mode');
+    const urlRole = searchParams.get('role');
+
     if (urlMode === 'update-password') {
       setMode('update-password');
       const hasTokenInHash = window.location.hash.includes('access_token=') || window.location.hash.includes('code=');
       if (!hasTokenInHash && !isRecoveringPassword) {
         console.warn("Update password mode without active token in URL or context.");
       }
+    } else if (urlMode === 'register') {
+      setMode('register');
     }
 
-    if (location.state?.role === 'shelter') {
+    if (urlRole === 'shelter' || location.state?.role === 'shelter') {
       setRole('shelter');
-      setMode('register');
+      if (!urlMode || urlMode === 'register') {
+        setMode('register');
+      }
+    } else if (urlRole === 'user') {
+      setRole('user');
     }
   }, [searchParams, location.state, isRecoveringPassword]);
 
