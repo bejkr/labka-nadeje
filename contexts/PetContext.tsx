@@ -5,6 +5,7 @@ import { supabase } from '../services/supabaseClient';
 
 interface PetContextType {
   pets: Pet[];
+  loading: boolean;
   updatePet: (updatedPet: Pet) => Promise<void>;
   addPet: (newPet: Pet) => Promise<void>;
   deletePet: (petId: string) => Promise<void>;
@@ -16,13 +17,17 @@ const PetContext = createContext<PetContextType | undefined>(undefined);
 
 export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const loadPets = async () => {
+    setLoading(true);
     try {
       const data = await api.getPets();
       setPets(data);
     } catch (e) {
       console.error("Failed to load pets", e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,7 +80,7 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   return (
-    <PetContext.Provider value={{ pets, updatePet, addPet, deletePet, getPet, refreshPets: loadPets }}>
+    <PetContext.Provider value={{ pets, loading, updatePet, addPet, deletePet, getPet, refreshPets: loadPets }}>
       {children}
     </PetContext.Provider>
   );

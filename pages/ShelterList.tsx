@@ -4,63 +4,9 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Shelter } from '../types';
 import { MapPin, Phone, Mail, ArrowRight, Building2, Loader2, Search, CheckCircle2, Users, Heart, ExternalLink, ChevronRight, Dog, Sparkles, ShieldCheck, PawPrint } from 'lucide-react';
+import ShelterCardSkeleton from '../components/skeletons/ShelterCardSkeleton';
 
-// Rozšírený zoznam súradníc slovenských miest pre geokódovanie v prototype
-const CITY_COORDS: Record<string, [number, number]> = {
-    'Bratislava': [48.1486, 17.1077],
-    'Košice': [48.7164, 21.2611],
-    'Prešov': [49.0018, 21.2393],
-    'Žilina': [49.2231, 18.7394],
-    'Banská Bystrica': [48.7363, 19.1462],
-    'Nitra': [48.3061, 18.0764],
-    'Trnava': [48.3709, 17.5826],
-    'Trenčín': [48.8945, 18.0444],
-    'Martin': [49.0616, 18.9248],
-    'Poprad': [49.0561, 20.2960],
-    'Prievidza': [48.7721, 18.6252],
-    'Zvolen': [48.5763, 19.1276],
-    'Považská Bystrica': [49.1170, 18.4509],
-    'Nové Zámky': [47.9854, 18.1619],
-    'Michalovce': [48.7543, 21.9195],
-    'Spišská Nová Ves': [48.9446, 20.5615],
-    'Komárno': [47.7636, 18.1267],
-    'Levice': [48.2156, 18.6071],
-    'Humenné': [48.9370, 21.9163],
-    'Bardejov': [49.2918, 21.2727],
-    'Liptovský Mikuláš': [49.0820, 19.6133],
-    'Piešťany': [48.5915, 17.8282],
-    'Ružomberok': [49.0806, 19.3017],
-    'Topoľčany': [48.5600, 18.1750],
-    'Lučenec': [48.3325, 19.6671],
-    'Čadca': [49.4350, 18.7889],
-    'Dubnica nad Váhom': [48.9567, 18.1726],
-    'Rimavská Sobota': [48.3828, 20.0224],
-    'Partizánske': [48.6270, 18.3746],
-    'Šaľa': [48.1517, 17.8806],
-    'Dunajská Streda': [47.9946, 17.6195],
-    'Pezinok': [48.2856, 17.2652],
-    'Senec': [48.2194, 17.4001],
-    'Senica': [48.6792, 17.3669],
-    'Skalica': [48.8444, 17.2253],
-    'Malacky': [48.4363, 17.0216],
-    'Hlohovec': [48.4323, 17.7979],
-    'Galanta': [48.1901, 17.7275],
-    'Myjava': [48.7516, 17.5674],
-    'Bánovce nad Bebravou': [48.7188, 18.2575],
-    'Nové Mesto nad Váhom': [48.7562, 17.8306],
-    'Púchov': [49.1246, 18.3262],
-    'Kežmarok': [49.1345, 20.4311],
-    'Stará Ľubovňa': [49.3013, 20.6896],
-    'Detva': [48.5606, 19.4184],
-    'Brezno': [48.8043, 19.6456],
-    'Dolný Kubín': [49.2089, 19.2974],
-    'Trebišov': [48.6293, 21.7224],
-    'Snina': [48.9877, 22.1504],
-    'Rožňava': [48.6611, 20.5317],
-    'Revúca': [48.6835, 20.1171],
-    'Veľký Krtíš': [48.2106, 19.3503],
-    'Čáry': [48.6653, 17.0789],
-};
+import { CITY_COORDS, getCoordinates } from '../utils/geoUtils';
 
 const DEFAULT_CENTER: [number, number] = [48.669, 19.699];
 
@@ -142,11 +88,7 @@ const ShelterListPage: React.FC = () => {
         };
 
         filteredShelters.forEach(shelter => {
-            let coords = CITY_COORDS[shelter.location];
-            if (!coords) {
-                const foundCityKey = Object.keys(CITY_COORDS).find(city => shelter.location.toLowerCase().includes(city.toLowerCase()));
-                if (foundCityKey) coords = CITY_COORDS[foundCityKey];
-            }
+            const coords = getCoordinates(shelter.location);
 
             if (coords) {
                 const jitterCoords: [number, number] = [
@@ -167,11 +109,7 @@ const ShelterListPage: React.FC = () => {
 
         if (searchTerm && filteredShelters.length > 0 && filteredShelters.length < shelters.length) {
             const firstShelter = filteredShelters[0];
-            let coords = CITY_COORDS[firstShelter.location];
-            if (!coords) {
-                const foundCityKey = Object.keys(CITY_COORDS).find(city => firstShelter.location.toLowerCase().includes(city.toLowerCase()));
-                if (foundCityKey) coords = CITY_COORDS[foundCityKey];
-            }
+            const coords = getCoordinates(firstShelter.location);
             if (coords) mapInstance.current.flyTo(coords, 10, { duration: 1.5 });
         }
     }, [loading, filteredShelters, searchTerm]);
@@ -233,7 +171,11 @@ const ShelterListPage: React.FC = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex justify-center py-20"><Loader2 className="animate-spin text-brand-600" size={48} /></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <ShelterCardSkeleton key={i} />
+                        ))}
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredShelters.map(shelter => (

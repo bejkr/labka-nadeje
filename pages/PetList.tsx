@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Filter, MapPin, Calendar, Ruler, Tag, X, Heart, Activity, ArrowRight, Dog, Cat, ChevronDown, ChevronUp, Sparkles as SparklesIcon, ExternalLink } from 'lucide-react';
+import PetCardSkeleton from '../components/skeletons/PetCardSkeleton';
 import { PetType, Size, Gender } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { usePets } from '../contexts/PetContext';
@@ -10,7 +11,7 @@ import { formatSlovakAge } from '../utils/formatters';
 
 const PetListPage: React.FC = () => {
   const { toggleFavorite, isFavorite, userRole, currentUser } = useAuth();
-  const { pets } = usePets();
+  const { pets, loading } = usePets();
   const { showToast } = useApp();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -223,7 +224,11 @@ const PetListPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-          {filteredPets.map((pet) => {
+          {loading ? (
+            Array.from({ length: 8 }).map((_, i) => (
+              <PetCardSkeleton key={i} />
+            ))
+          ) : filteredPets.map((pet) => {
             const isFav = isFavorite(pet.id);
             return (
               <Link

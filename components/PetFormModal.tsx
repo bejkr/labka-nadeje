@@ -159,8 +159,8 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
     const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            if (file.size > 50 * 1024 * 1024) {
-                alert("Video je príliš veľké. Maximálna veľkosť je 50MB.");
+            if (file.size > 200 * 1024 * 1024) {
+                alert("Video je príliš veľké. Maximálna veľkosť je 200MB.");
                 return;
             }
             setVideoFile(file);
@@ -220,7 +220,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
 
             const commonData = {
                 name: petName, breed: petBreed, type: petType, gender: petGender, size: petSize,
-                age: parseFloat(petAge) || 0,
+                age: parseFloat(petAge.replace(',', '.')) || 0,
                 location: petLocation,
                 tags: petTraitsState.split(',').map(t => t.trim()).filter(Boolean),
                 description: petBio || 'Bez popisu',
@@ -254,7 +254,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
             onClose();
         } catch (e: any) {
             console.error(e);
-            alert(`Chyba pri ukladaní: ${e.message || 'Neznáma chyba'}`);
+            alert(`Chyba pri ukladaní: ${e.message || JSON.stringify(e) || 'Neznáma chyba'}`);
         } finally {
             setLoading(false);
         }
@@ -351,7 +351,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                             <div className="grid grid-cols-2 gap-6 text-gray-900">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1.5">Vek (roky) <span className="text-red-500">*</span></label>
-                                    <input value={petAge} onChange={e => setPetAge(e.target.value)} type="number" min="0" step="0.1" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 transition" onKeyDown={(e) => ['e', 'E', '-', '+'].includes(e.key) && e.preventDefault()} />
+                                    <input value={petAge} onChange={e => setPetAge(e.target.value)} type="text" inputMode="decimal" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 transition" placeholder="Napr. 2,5" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1.5">Veľkosť <span className="text-red-500">*</span></label>
@@ -382,7 +382,7 @@ const PetFormModal: React.FC<PetFormModalProps> = ({ isOpen, onClose, pet, shelt
                                             {videoFile ? (
                                                 <div className="flex items-center gap-2 text-green-700 font-bold text-sm"><Film size={20} /><span>{videoFile.name}</span><button onClick={(e) => { e.stopPropagation(); setVideoFile(null); }} className="p-1 hover:bg-green-200 rounded-full"><X size={14} /></button></div>
                                             ) : (
-                                                <><Upload className="text-gray-400 mb-1" size={24} /><span className="text-sm text-gray-500 font-medium">Kliknite pre výber videa (max 50MB)</span></>
+                                                <><Upload className="text-gray-400 mb-1" size={24} /><span className="text-sm text-gray-500 font-medium">Kliknite pre výber videa (max 200MB)</span></>
                                             )}
                                             <input type="file" ref={videoInputRef} className="hidden" accept="video/*" onChange={handleVideoUpload} />
                                         </div>

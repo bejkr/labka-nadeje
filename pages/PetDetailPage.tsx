@@ -20,6 +20,7 @@ import { api } from '../services/api';
 import { getMatchAnalysis, translateText } from '../services/geminiService';
 import { formatSlovakAge, inflectNameToDative } from '../utils/formatters';
 import { useTranslation } from 'react-i18next';
+import MiniMap from '../components/MiniMap';
 
 const PetDetailPage: React.FC = () => {
     const { t, i18n } = useTranslation();
@@ -526,6 +527,10 @@ const PetDetailPage: React.FC = () => {
                 </div>
             </Link>
 
+            <div className="mb-6 mt-6">
+                <MiniMap location={shelter?.location || pet.location} className="w-full h-48" />
+            </div>
+
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
                 <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <div className="p-1.5 bg-brand-100 text-brand-600 rounded-lg">
@@ -608,11 +613,11 @@ const PetDetailPage: React.FC = () => {
                             </div>
                             {hasVideo && pet.videoUrl && (
                                 <div className="flex flex-col h-full justify-start">
-                                    <div className="relative w-full rounded-3xl overflow-hidden shadow-lg border border-gray-200 bg-black aspect-[9/16] max-h-[450px]">
+                                    <div className="relative w-full rounded-3xl overflow-hidden shadow-lg border border-gray-200 bg-black aspect-[3/4] max-h-[500px]">
                                         {pet.videoUrl.includes('youtube') || pet.videoUrl.includes('youtu.be') || pet.videoUrl.includes('vimeo') ? (
                                             <iframe src={getVideoEmbedUrl(pet.videoUrl)} title="Video" className="w-full h-full absolute inset-0" frameBorder="0" allow="autoplay; playsinline" allowFullScreen></iframe>
                                         ) : (
-                                            <video controls autoPlay muted loop playsInline className="w-full h-full absolute inset-0 object-cover"><source src={pet.videoUrl} type="video/mp4" /></video>
+                                            <video controls autoPlay muted loop playsInline className="w-full h-full absolute inset-0 object-contain bg-black"><source src={pet.videoUrl} type="video/mp4" /></video>
                                         )}
                                     </div>
                                 </div>

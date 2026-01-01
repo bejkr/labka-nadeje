@@ -123,7 +123,7 @@ const HomePage: React.FC = () => {
       .slice(0, 5); // Take up to 5 pets
   }, [pets]);
 
-  const featuredPets = pets.filter(p => p.adoptionStatus === 'Available' && p.isVisible).slice(0, 3);
+  const featuredPets = pets.filter(p => p.adoptionStatus === 'Available' && p.isVisible).slice(0, 6);
   const fosterPets = pets.filter(p => p.needsFoster && p.isVisible).slice(0, 3);
 
   // Hero Slider State
