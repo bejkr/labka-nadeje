@@ -75,8 +75,8 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const getPet = (id: string) => {
-    return pets.find(p => p.id === id);
+  const getPet = (idOrSlug: string) => {
+    return pets.find(p => p.id === idOrSlug || p.slug === idOrSlug);
   };
 
   return (

@@ -366,7 +366,7 @@ const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredPets.map((pet) => (
-              <Link key={pet.id} to={`/pets/${pet.id}`} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
+              <Link key={pet.id} to={`/pets/${pet.slug || pet.id}`} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                   <img
                     src={pet.imageUrl}
@@ -627,137 +627,134 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* --- REIMAGINED VIRTUAL ADOPTION SECTION --- */}
-      {!isShelter && (
-        <section className="py-24 bg-white overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-br from-brand-600 via-brand-700 to-orange-800 rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden shadow-2xl">
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-brand-600 via-brand-700 to-orange-800 rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden shadow-2xl">
 
-              {/* Decorative elements */}
-              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-white opacity-5 rounded-full blur-[120px] animate-pulse"></div>
-              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-yellow-400 opacity-5 rounded-full blur-[120px] animate-pulse delay-700"></div>
-              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-white opacity-5 rounded-full blur-[120px] animate-pulse"></div>
+            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-yellow-400 opacity-5 rounded-full blur-[120px] animate-pulse delay-700"></div>
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
 
-              <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
 
-                {/* Content Side */}
-                <div className="lg:col-span-7">
+              {/* Content Side */}
+              <div className="lg:col-span-7">
 
 
-                  <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tight">
-                    {t('home.virtualAdoption.title')}
-                  </h2>
+                <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] tracking-tight">
+                  {t('home.virtualAdoption.title')}
+                </h2>
 
-                  <p className="text-brand-100 text-xl md:text-2xl mb-12 leading-relaxed font-medium">
-                    {t('home.virtualAdoption.description')}
-                  </p>
+                <p className="text-brand-100 text-xl md:text-2xl mb-12 leading-relaxed font-medium">
+                  {t('home.virtualAdoption.description')}
+                </p>
 
-                  {/* Impact Micro-cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
-                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                        <Award size={20} className="text-yellow-200" />
-                      </div>
-                      <h4 className="font-bold text-sm mb-1">Sieň Slávy</h4>
-                      <p className="text-xs text-brand-200 leading-tight">Vaše meno bude navždy svietiť na našej stene pomoci.</p>
+                {/* Impact Micro-cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
+                  <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
+                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <Award size={20} className="text-yellow-200" />
                     </div>
-                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                        <FileCheck size={20} className="text-blue-200" />
-                      </div>
-                      <h4 className="font-bold text-sm mb-1">Certifikát</h4>
-                      <p className="text-xs text-brand-200 leading-tight">Získate oficiálny certifikát virtuálneho rodiča.</p>
-                    </div>
-                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                        <Heart size={20} className="text-pink-200" />
-                      </div>
-                      <h4 className="font-bold text-sm mb-1">Láska a Správy</h4>
-                      <p className="text-xs text-brand-200 leading-tight">Pravidelné fotky a novinky zo života chlpáča.</p>
-                    </div>
+                    <h4 className="font-bold text-sm mb-1">Sieň Slávy</h4>
+                    <p className="text-xs text-brand-200 leading-tight">Vaše meno bude navždy svietiť na našej stene pomoci.</p>
                   </div>
-
-                  <div className="flex flex-col sm:flex-row gap-5">
-                    <Link
-                      to="/pets"
-                      className="inline-flex items-center justify-center px-10 py-5 bg-white text-brand-700 font-black text-xs rounded-2xl hover:bg-brand-50 transition shadow-2xl shadow-brand-900/40 transform hover:-translate-y-1 active:scale-95 group"
-                    >
-                      {t('home.virtualAdoption.select')} <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                    <Link
-                      to="/support"
-                      className="inline-flex items-center justify-center px-10 py-5 bg-transparent text-white font-black text-xs rounded-2xl hover:bg-white/10 transition border-2 border-white/30 hover:border-white active:scale-95"
-                    >
-                      {t('home.virtualAdoption.howItWorks')}
-                    </Link>
+                  <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
+                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <FileCheck size={20} className="text-blue-200" />
+                    </div>
+                    <h4 className="font-bold text-sm mb-1">Certifikát</h4>
+                    <p className="text-xs text-brand-200 leading-tight">Získate oficiálny certifikát virtuálneho rodiča.</p>
+                  </div>
+                  <div className="p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition group">
+                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <Heart size={20} className="text-pink-200" />
+                    </div>
+                    <h4 className="font-bold text-sm mb-1">Láska a Správy</h4>
+                    <p className="text-xs text-brand-200 leading-tight">Pravidelné fotky a novinky zo života chlpáča.</p>
                   </div>
                 </div>
 
-                {/* Visual Side (Mock UI Card) */}
-                <div className="lg:col-span-5 relative hidden lg:block">
-                  <div className="relative group">
-                    {/* Shadow pulse */}
-                    <div className="absolute inset-0 bg-brand-400 rounded-[2.5rem] blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
-
-                    {/* The "Virtual Parent" Promo Card */}
-                    <div className="relative bg-white rounded-[2.5rem] p-6 shadow-2xl text-gray-900 transform rotate-2 hover:rotate-0 transition-transform duration-700 overflow-hidden border-4 border-white/20">
-
-                      <div className="relative h-64 rounded-3xl overflow-hidden mb-6">
-                        <img
-                          src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80$0"
-                          alt="Caked dog"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-xl text-[10px] font-black shadow-lg">
-                          {t('home.virtualAdoption.mock.needs')}
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="text-2xl font-black tracking-tight text-gray-900">Bak</h3>
-                            <p className="text-xs font-bold text-gray-400">Kríženec • 8 rokov</p>
-                          </div>
-                          <div className="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 shadow-inner">
-                            <Heart size={24} fill="currentColor" />
-                          </div>
-                        </div>
-
-                        {/* Progress Simulation */}
-                        <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                          <div className="flex justify-between text-[10px] font-black text-gray-400 mb-2">
-                            <span>{t('home.virtualAdoption.mock.fulfillment')}</span>
-                            <span className="text-brand-600">65%</span>
-                          </div>
-                          <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div className="h-full bg-brand-600 w-[65%] rounded-full shadow-[0_0_10px_rgba(234,88,12,0.3)]"></div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 pt-2">
-                          <div className="flex -space-x-3">
-                            {[1, 2, 3].map(i => (
-                              <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-gray-${i * 100 + 100} flex items-center justify-center text-[10px] font-bold text-white`}>
-                                <User size={14} />
-                              </div>
-                            ))}
-                          </div>
-                          <span className="text-[11px] font-bold text-gray-500">{t('home.virtualAdoption.mock.parents')}</span>
-                        </div>
-                      </div>
-
-                      {/* Glass effect overlays */}
-                      <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-brand-500/20 rounded-full blur-2xl"></div>
-                    </div>
-                  </div>
+                <div className="flex flex-col sm:flex-row gap-5 items-center">
+                  <button
+                    disabled
+                    className="inline-flex items-center justify-center px-10 py-5 bg-white/10 text-white/50 font-black text-xs rounded-2xl cursor-not-allowed border-2 border-white/10"
+                  >
+                    {t('home.virtualAdoption.select')} <span className="ml-3 px-2 py-0.5 bg-white/20 rounded text-[10px] text-white">Čoskoro</span>
+                  </button>
+                  <button
+                    disabled
+                    className="inline-flex items-center justify-center px-10 py-5 bg-transparent text-white/30 font-black text-xs rounded-2xl cursor-not-allowed border-2 border-white/10"
+                  >
+                    {t('home.virtualAdoption.howItWorks')}
+                  </button>
                 </div>
-
               </div>
+
+              {/* Visual Side (Mock UI Card) */}
+              <div className="lg:col-span-5 relative hidden lg:block">
+                <div className="relative group">
+                  {/* Shadow pulse */}
+                  <div className="absolute inset-0 bg-brand-400 rounded-[2.5rem] blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
+
+                  {/* The "Virtual Parent" Promo Card */}
+                  <div className="relative bg-white rounded-[2.5rem] p-6 shadow-2xl text-gray-900 transform rotate-2 hover:rotate-0 transition-transform duration-700 overflow-hidden border-4 border-white/20">
+
+                    <div className="relative h-64 rounded-3xl overflow-hidden mb-6">
+                      <img
+                        src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80$0"
+                        alt="Caked dog"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-xl text-[10px] font-black shadow-lg">
+                        {t('home.virtualAdoption.mock.needs')}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="text-2xl font-black tracking-tight text-gray-900">Bak</h3>
+                          <p className="text-xs font-bold text-gray-400">Kríženec • 8 rokov</p>
+                        </div>
+                        <div className="w-12 h-12 bg-brand-50 rounded-2xl flex items-center justify-center text-brand-600 shadow-inner">
+                          <Heart size={24} fill="currentColor" />
+                        </div>
+                      </div>
+
+                      {/* Progress Simulation */}
+                      <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <div className="flex justify-between text-[10px] font-black text-gray-400 mb-2">
+                          <span>{t('home.virtualAdoption.mock.fulfillment')}</span>
+                          <span className="text-brand-600">65%</span>
+                        </div>
+                        <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-brand-600 w-[65%] rounded-full shadow-[0_0_10px_rgba(234,88,12,0.3)]"></div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2">
+                        <div className="flex -space-x-3">
+                          {[1, 2, 3].map(i => (
+                            <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-gray-${i * 100 + 100} flex items-center justify-center text-[10px] font-bold text-white`}>
+                              <User size={14} />
+                            </div>
+                          ))}
+                        </div>
+                        <span className="text-[11px] font-bold text-gray-500">{t('home.virtualAdoption.mock.parents')}</span>
+                      </div>
+                    </div>
+
+                    {/* Glass effect overlays */}
+                    <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-brand-500/20 rounded-full blur-2xl"></div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
-        </section>
-      )
-      }
+        </div>
+      </section>
     </div >
   );
 };

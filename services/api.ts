@@ -29,6 +29,7 @@ const mapPetFromDB = (row: any): Pet => ({
     tags: Array.isArray(row.tags) ? row.tags : [],
     postedDate: row.posted_date || new Date().toISOString(),
     views: Number(row.views || 0),
+    slug: row.slug,
     gallery: row.details?.gallery || [],
     health: row.details?.health || {},
     social: row.details?.social || {},
@@ -288,16 +289,22 @@ export const api = {
     async getPets(): Promise<Pet[]> {
         try {
             const { data, error } = await supabase.from('pets')
-                .select('id, shelter_id, name, type, breed, age, gender, size, location, image_url, description, adoption_fee, adoption_status, is_visible, needs_foster, tags, posted_date, views, details, pet_updates(*)')
+                .select('id, slug, shelter_id, name, type, breed, age, gender, size, location, image_url, description, adoption_fee, adoption_status, is_visible, needs_foster, tags, posted_date, views, details, pet_updates(*)')
                 .order('posted_date', { ascending: false });
             if (error) throw error;
             return data?.map(mapPetFromDB) || [];
         } catch (e) { return []; }
     },
 
-    async createPet(pet: Pet) {
+    async createPet(pet: Pet, shelterIdOverride?: string) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Nie ste prihlásený.");
+        // Verify admin status if overriding
+        if (shelterIdOverride) {
+            const { data: profile } = await supabase.from('profiles').select('is_super_admin').eq('id', user.id).single();
+            if (!profile?.is_super_admin) throw new Error("Nemáte oprávnenie na túto akciu.");
+        }
+
         const details: any = {
             health: pet.health || {},
             social: pet.social || {},
@@ -309,7 +316,7 @@ export const api = {
             updates: pet.updates || []
         };
         const dbPet = {
-            shelter_id: user.id,
+            shelter_id: shelterIdOverride || user.id,
             name: pet.name,
             type: pet.type,
             breed: pet.breed,
@@ -439,7 +446,7 @@ export const api = {
     },
 
     async getPetsByShelter(shelterId: string): Promise<Pet[]> {
-        const { data } = await supabase.from('pets').select('*, pet_updates(*)').eq('shelter_id', shelterId);
+        const { data } = await supabase.from('pets').select('*, slug, pet_updates(*)').eq('shelter_id', shelterId);
         return data?.map(mapPetFromDB) || [];
     },
 
@@ -450,7 +457,7 @@ export const api = {
     },
 
     async adminGetAllPets(): Promise<(Pet & { shelterName?: string })[]> {
-        const { data, error } = await supabase.from('pets').select('*, profiles:shelter_id (name), pet_updates(*)').order('posted_date', { ascending: false });
+        const { data, error } = await supabase.from('pets').select('*, slug, profiles:shelter_id (name), pet_updates(*)').order('posted_date', { ascending: false });
         if (error) throw error;
         return data.map((row: any) => ({ ...mapPetFromDB(row), shelterName: row.profiles?.name || 'Neznámy útulok' }));
     },

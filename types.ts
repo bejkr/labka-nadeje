@@ -75,6 +75,7 @@ export interface Pet {
   isVisible: boolean;
   needsFoster: boolean;
   views: number;
+  slug?: string;
   updates?: PetUpdate[];
 }
 

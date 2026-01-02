@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useApp } from '../contexts/AppContext';
 import { api } from '../services/api';
 import { User, Shelter, Pet, BlogPost, PromoSlide, OrganizationType } from '../types';
-import { ShieldAlert, Users, Building2, Loader2, Search, Dog, Trash2, Edit2, BookOpen, Plus, CheckCircle, XCircle, Megaphone, Image as ImageIcon, User as UserIcon, Eye } from 'lucide-react';
+import { ShieldAlert, Users, Building2, Loader2, Search, Dog, Trash2, Edit2, BookOpen, Plus, CheckCircle, XCircle, Megaphone, Image as ImageIcon, User as UserIcon, Eye, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PetFormModal from '../components/PetFormModal';
 import BlogFormModal from '../components/BlogFormModal';
@@ -13,6 +14,7 @@ import AdminAnalytics from '../components/AdminAnalytics';
 
 const AdminDashboard: React.FC = () => {
     const { currentUser } = useAuth();
+    const { showToast } = useApp();
     const navigate = useNavigate();
     const [users, setUsers] = useState<(User | Shelter)[]>([]);
     const [pets, setPets] = useState<(Pet & { shelterName?: string })[]>([]);
@@ -36,6 +38,13 @@ const AdminDashboard: React.FC = () => {
     // Confirmation States
     const [confirmDelete, setConfirmDelete] = useState<{ id: string, type: 'pet' | 'blog' | 'promo', name: string } | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    // Image Upload State
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploadingShelterId, setUploadingShelterId] = useState<string | null>(null);
+
+    // Add Pet State
+    const [selectedShelterIdForPet, setSelectedShelterIdForPet] = useState<string | null>(null);
 
     const isSuperAdmin = (currentUser as any)?.isSuperAdmin;
 
@@ -126,6 +135,29 @@ const AdminDashboard: React.FC = () => {
         }
     };
 
+    const handleLogoClick = (shelterId: string) => {
+        setUploadingShelterId(shelterId);
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file || !uploadingShelterId) return;
+
+        try {
+            // Optimistic or loading state could be better, but direct update is fine for admin
+            const url = await api.uploadFile(file, 'images', 'avatars');
+            await api.updateProfile(uploadingShelterId, { logoUrl: url }, 'shelter');
+            setUsers(prev => prev.map(u => u.id === uploadingShelterId ? { ...u, logoUrl: url } as Shelter : u));
+        } catch (error) {
+            console.error(error);
+            alert('Nepodarilo sa nahrať logo.');
+        } finally {
+            setUploadingShelterId(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
+
     // --- Filtering ---
     const filteredUsers = users.filter(u => u.role === 'user' && (u.name.toLowerCase().includes(filter.toLowerCase()) || u.email.toLowerCase().includes(filter.toLowerCase())));
     const filteredShelters = users.filter(u => u.role === 'shelter' && (u.name.toLowerCase().includes(filter.toLowerCase()) || u.email.toLowerCase().includes(filter.toLowerCase())));
@@ -203,8 +235,15 @@ const AdminDashboard: React.FC = () => {
                                             <tr key={shelter.id} className="hover:bg-gray-50 transition">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-lg bg-white border border-gray-100 overflow-hidden flex items-center justify-center p-1">
+                                                        <div
+                                                            className="w-10 h-10 rounded-lg bg-white border border-gray-100 overflow-hidden flex items-center justify-center p-1 relative group cursor-pointer"
+                                                            onClick={() => handleLogoClick(shelter.id)}
+                                                            title="Zmeniť logo"
+                                                        >
                                                             {shelter.logoUrl ? <img src={shelter.logoUrl} className="w-full h-full object-contain" alt="" /> : <Building2 className="text-gray-300" size={18} />}
+                                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+                                                                <Upload size={14} className="text-white" />
+                                                            </div>
                                                         </div>
                                                         <span className="font-bold">{shelter.name}</span>
                                                     </div>
@@ -224,7 +263,21 @@ const AdminDashboard: React.FC = () => {
                                                 </td>
                                                 <td className="px-6 py-4 text-center font-bold text-gray-600">{shelter.stats?.views || 0}</td>
                                                 <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-bold ${shelter.isVerified ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>{shelter.isVerified ? 'Overený' : 'Neoverený'}</span></td>
-                                                <td className="px-6 py-4 text-right"><button onClick={() => handleVerifyShelter(shelter.id, shelter.isVerified)} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${shelter.isVerified ? 'bg-red-50 text-red-600' : 'bg-green-600 text-white'}`}>{shelter.isVerified ? 'Zrušiť overenie' : 'Overiť'}</button></td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        <button
+                                                            onClick={() => setSelectedShelterIdForPet(shelter.id)}
+                                                            className="p-2 bg-brand-50 text-brand-600 rounded-lg hover:bg-brand-100 transition"
+                                                            title="Pridať zviera"
+                                                        >
+                                                            <Plus size={18} />
+                                                        </button>
+                                                        <button onClick={() => handleVerifyShelter(shelter.id, shelter.isVerified)} className={`p-2 rounded-lg transition ${shelter.isVerified ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`} title={shelter.isVerified ? "Zrušiť overenie" : "Overiť"}>
+                                                            <CheckCircle size={18} />
+                                                        </button>
+                                                        <button className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition" title="Zmazať"><Trash2 size={18} /></button>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))) :
                                             activeTab === 'pets' ? (filteredPets.map(pet => (
@@ -277,6 +330,21 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {editingPet && <PetFormModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} pet={editingPet} shelterId={editingPet.shelterId} onSave={handleSavePet} defaultLocation="" />}
+            {/* Pet Form Modal for Admin */}
+            <PetFormModal
+                isOpen={!!selectedShelterIdForPet}
+                onClose={() => setSelectedShelterIdForPet(null)}
+                shelterId={selectedShelterIdForPet || undefined}
+                onSave={async (petData) => {
+                    if (selectedShelterIdForPet) {
+                        await api.createPet(petData, selectedShelterIdForPet);
+                        loadData();
+                        setSelectedShelterIdForPet(null);
+                        showToast("Zviera úspešne pridané", "success");
+                    }
+                }}
+            />
+
             <BlogFormModal isOpen={isBlogModalOpen} onClose={() => setIsBlogModalOpen(false)} post={editingPost} onSave={handleSavePost} />
             <PromoFormModal isOpen={isPromoModalOpen} onClose={() => setIsPromoModalOpen(false)} slide={editingSlide} onSave={loadData} />
 
@@ -287,6 +355,14 @@ const AdminDashboard: React.FC = () => {
                 isLoading={isProcessing}
                 title={`Vymazať ${confirmDelete?.type === 'pet' ? 'inzerát' : confirmDelete?.type === 'blog' ? 'článok' : 'banner'}?`}
                 message={`Naozaj chcete natrvalo vymazať "${confirmDelete?.name}"? Táto akcia je nevratná.`}
+            />
+
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
             />
         </div>
     );

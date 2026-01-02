@@ -412,51 +412,63 @@ const UserProfilePage: React.FC = () => {
 
                         {/* ABOUT TAB */}
                         {activeTab === 'about' && (
-                            <div className="space-y-6">
+                            <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
+
                                 {/* BIO SECTION */}
-                                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
-                                    <div className="flex justify-between items-center mb-8">
-                                        <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-                                            <span className="p-3 bg-brand-50 text-brand-600 rounded-2xl"><Smile size={24} /></span>
+                                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100 relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-8 relative z-10">
+                                        <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center">
+                                                <Smile size={24} strokeWidth={2.5} />
+                                            </div>
                                             O mne
                                         </h2>
-                                        <button onClick={() => setIsEditingBio(!isEditingBio)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors">
-                                            {isEditingBio ? <X size={20} /> : <Edit2 size={18} />}
+                                        <button
+                                            onClick={() => setIsEditingBio(!isEditingBio)}
+                                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all active:scale-95"
+                                        >
+                                            {isEditingBio ? <X size={20} /> : <Edit2 size={20} />}
                                         </button>
                                     </div>
 
                                     {isEditingBio ? (
-                                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
+                                        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 relative z-10">
                                             <textarea
                                                 value={bioInput}
                                                 onChange={e => setBioInput(e.target.value)}
-                                                className="w-full bg-gray-50 border-2 border-gray-100 rounded-[2rem] p-6 min-h-[160px] focus:bg-white focus:border-brand-500 outline-none text-base font-medium transition-all resize-none"
-                                                placeholder="Povedzte nám niečo o sebe..."
+                                                className="w-full bg-gray-50 border-2 border-gray-100 rounded-[2rem] p-6 min-h-[180px] focus:bg-white focus:border-brand-500 outline-none text-lg font-medium text-gray-700 transition-all resize-none leading-relaxed"
+                                                placeholder="Napíšte nám niečo o sebe, svojej skúsenosti so zvieratami a prečo hľadáte nového člena rodiny..."
                                             />
-                                            <div className="flex gap-4">
+                                            <div className="flex flex-col md:flex-row gap-4">
                                                 <div className="relative flex-1">
-                                                    <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                                    <Clock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
                                                     <input
                                                         value={availability}
                                                         onChange={e => setAvailability(e.target.value)}
-                                                        className="w-full pl-10 pr-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-brand-500 outline-none transition-all"
-                                                        placeholder="Vaša časová dostupnosť"
+                                                        className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-brand-500 outline-none transition-all"
+                                                        placeholder="Napr. Víkendy, Práca z domu, Večery..."
                                                     />
                                                 </div>
-                                                <button onClick={handleSaveBio} className="px-8 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-colors shadow-lg shadow-brand-200">
-                                                    Uložiť
+                                                <button onClick={handleSaveBio} className="px-10 py-4 bg-gray-900 text-white rounded-2xl font-black text-sm hover:bg-brand-600 transition-all shadow-xl hover:shadow-brand-200 active:scale-95">
+                                                    Uložiť zmeny
                                                 </button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100/50 relative group hover:bg-white transition-all duration-300">
-                                            <Quote size={40} className="absolute top-6 left-6 text-brand-100 -z-10 group-hover:scale-110 transition-transform" />
-                                            <p className="text-lg text-gray-600 italic leading-loose font-medium relative z-10 pl-4">{user.bio || "Zatiaľ ste o sebe nič nenapísali..."}</p>
+                                        <div className="relative z-10">
+                                            <div className="prose prose-lg text-gray-600 font-medium leading-relaxed mb-8">
+                                                {user.bio ? (
+                                                    <p className="whitespace-pre-wrap">{user.bio}</p>
+                                                ) : (
+                                                    <p className="text-gray-400 italic">Zatiaľ ste o sebe nič nenapísali. Pridajte krátky popis, aby sme vás lepšie spoznali.</p>
+                                                )}
+                                            </div>
 
                                             {user.availability && (
-                                                <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-3">
-                                                    <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black">Dostupnosť</div>
-                                                    <span className="font-bold text-gray-800 text-sm">{user.availability}</span>
+                                                <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-blue-50/50 text-blue-700 rounded-2xl border border-blue-100/50">
+                                                    <span className="text-[11px] font-black uppercase tracking-wider text-blue-400">Dostupnosť</span>
+                                                    <div className="w-1 h-4 bg-blue-200 rounded-full"></div>
+                                                    <span className="font-bold text-sm">{user.availability}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -465,69 +477,94 @@ const UserProfilePage: React.FC = () => {
 
                                 {/* HOUSEHOLD SECTION */}
                                 <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
-                                    <div className="flex justify-between items-center mb-8">
-                                        <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-                                            <span className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><HomeIcon size={24} /></span>
+                                    <div className="flex justify-between items-center mb-10">
+                                        <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center">
+                                                <HomeIcon size={24} strokeWidth={2.5} />
+                                            </div>
                                             Domácnosť
                                         </h2>
-                                        <button onClick={() => setIsEditingHousehold(!isEditingHousehold)} className="text-indigo-600 font-black text-[10px] px-5 py-2.5 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-colors">
-                                            {isEditingHousehold ? 'Zatvoriť' : 'Upraviť'}
+                                        <button onClick={() => setIsEditingHousehold(!isEditingHousehold)} className="px-6 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-xs hover:bg-indigo-100 transition-colors">
+                                            {isEditingHousehold ? 'Zrušiť úpravy' : 'Upraviť'}
                                         </button>
                                     </div>
 
                                     {isEditingHousehold ? (
-                                        <div className="space-y-6 animate-in slide-in-from-top-2">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-8 animate-in slide-in-from-top-2">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                                 {['housingType', 'workMode', 'experienceLevel'].map(field => (
-                                                    <div key={field} className="space-y-2">
-                                                        <label className="text-[10px] font-black text-gray-400 pl-2">
-                                                            {field === 'housingType' ? 'Bývanie' : field === 'workMode' ? 'Práca' : 'Skúsenosti'}
+                                                    <div key={field} className="space-y-3">
+                                                        <label className="text-xs font-black text-gray-400 uppercase tracking-wide pl-1">
+                                                            {field === 'housingType' ? 'Typ bývania' : field === 'workMode' ? 'Pracovný režim' : 'Skúsenosti'}
                                                         </label>
-                                                        <div className="relative">
+                                                        <div className="relative group">
                                                             <select
                                                                 value={(householdData as any)[field]}
                                                                 onChange={e => setHouseholdData({ ...householdData, [field]: e.target.value })}
-                                                                className="w-full p-4 pr-10 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-800 outline-none focus:border-indigo-500 focus:bg-white transition-all appearance-none cursor-pointer"
+                                                                className="w-full p-4 pr-10 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold text-gray-800 outline-none focus:border-indigo-500 focus:bg-white transition-all appearance-none cursor-pointer group-hover:border-gray-200"
                                                             >
+                                                                <option value="" disabled>Vyberte možnosť</option>
                                                                 {field === 'housingType' && ['Byt', 'Dom', 'Dom so záhradou'].map(o => <option key={o} value={o}>{o}</option>)}
-                                                                {field === 'workMode' && ['Práca z domu', 'Hybrid', 'V kancelárii'].map(o => <option key={o} value={o}>{o}</option>)}
-                                                                {field === 'experienceLevel' && ['Začiatočník', 'Mierne pokročilý', 'Skúsený'].map(o => <option key={o} value={o}>{o}</option>)}
+                                                                {field === 'workMode' && ['Práca z domu', 'Hybrid', 'V kancelárii', 'Študent', 'Dôchodca'].map(o => <option key={o} value={o}>{o}</option>)}
+                                                                {field === 'experienceLevel' && ['Prvé zvieratko', 'Mierne pokročilý', 'Skúsený chovateľ', 'Expert'].map(o => <option key={o} value={o}>{o}</option>)}
                                                             </select>
-                                                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                                                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-hover:text-gray-600 transition-colors" size={16} />
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="flex gap-4 pt-4">
-                                                {[
-                                                    { key: 'hasChildren', label: 'Deti v rodine', icon: Baby, color: 'text-pink-500', bg: 'bg-pink-50', border: 'border-pink-200' },
-                                                    { key: 'hasOtherPets', label: 'Iné zvieratá', icon: Dog, color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-200' }
-                                                ].map(item => (
-                                                    <label key={item.key} className={`flex-1 flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 cursor-pointer transition-all ${(householdData as any)[item.key] ? `${item.bg} ${item.border}` : 'bg-gray-50 border-gray-100 hover:bg-gray-100'}`}>
-                                                        <input type="checkbox" checked={(householdData as any)[item.key]} onChange={e => setHouseholdData({ ...householdData, [item.key]: e.target.checked })} className="hidden" />
-                                                        <item.icon size={24} className={(householdData as any)[item.key] ? item.color : 'text-gray-300'} />
-                                                        <span className={`text-[10px] font-black ${(householdData as any)[item.key] ? 'text-gray-800' : 'text-gray-400'}`}>{item.label}</span>
-                                                    </label>
-                                                ))}
+
+                                            <div className="p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                                                <label className="text-xs font-black text-gray-400 uppercase tracking-wide mb-4 block">Členovia domácnosti</label>
+                                                <div className="flex gap-4">
+                                                    {[
+                                                        { key: 'hasChildren', label: 'Deti v domácnosti', icon: Baby, color: 'text-pink-500', bg: 'peer-checked:bg-pink-50', border: 'peer-checked:border-pink-200', text: 'peer-checked:text-pink-700' },
+                                                        { key: 'hasOtherPets', label: 'Iné zvieratá', icon: Dog, color: 'text-orange-500', bg: 'peer-checked:bg-orange-50', border: 'peer-checked:border-orange-200', text: 'peer-checked:text-orange-700' }
+                                                    ].map(item => (
+                                                        <label key={item.key} className="flex-1 cursor-pointer group relative">
+                                                            <input type="checkbox" checked={(householdData as any)[item.key]} onChange={e => setHouseholdData({ ...householdData, [item.key]: e.target.checked })} className="peer hidden" />
+                                                            <div className={`p-6 rounded-2xl border-2 border-transparent bg-white shadow-sm flex flex-col items-center gap-3 transition-all duration-200 hover:scale-[1.02] ${item.bg} ${item.border}`}>
+                                                                <div className={`w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center ${item.color} group-hover:bg-white transition-colors`}>
+                                                                    <item.icon size={24} />
+                                                                </div>
+                                                                <span className={`font-bold text-sm text-gray-400 ${item.text} transition-colors`}>{item.label}</span>
+                                                                <div className="absolute top-4 right-4 w-6 h-6 rounded-full border-2 border-gray-100 peer-checked:bg-green-500 peer-checked:border-green-500 flex items-center justify-center text-white scale-0 peer-checked:scale-100 transition-transform">
+                                                                    <CheckCircle size={14} />
+                                                                </div>
+                                                            </div>
+                                                        </label>
+                                                    ))}
+                                                </div>
                                             </div>
-                                            <div className="flex justify-end pt-4">
-                                                <button onClick={handleSaveHousehold} className="px-10 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition">Uložiť</button>
+
+                                            <div className="flex justify-end pt-4 border-t border-gray-50">
+                                                <button onClick={handleSaveHousehold} className="px-10 py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-200 hover:bg-indigo-700 transition active:scale-95">
+                                                    Uložiť informácie
+                                                </button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                                             {[
-                                                { label: 'Bývanie', val: user.household?.housingType, icon: HomeIcon, color: 'text-blue-500' },
-                                                { label: 'Práca', val: user.household?.workMode, icon: Briefcase, color: 'text-purple-500' },
-                                                { label: 'Deti', val: user.household?.hasChildren ? 'Áno' : 'Nie', icon: Baby, color: 'text-pink-500' },
-                                                { label: 'Zvieratá', val: user.household?.hasOtherPets ? 'Áno' : 'Nie', icon: Dog, color: 'text-orange-500' }
+                                                { label: 'Bývanie', val: user.household?.housingType, icon: HomeIcon, theme: 'blue' },
+                                                { label: 'Práca / Režim', val: user.household?.workMode, icon: Briefcase, theme: 'purple' },
+                                                { label: 'Deti', val: user.household?.hasChildren ? 'Sú v rodine' : 'Bez detí', icon: Baby, theme: 'pink' },
+                                                { label: 'Zvieratá', val: user.household?.hasOtherPets ? 'Máme zvieratá' : 'Bez zvierat', icon: Dog, theme: 'orange' }
                                             ].map(item => (
-                                                <div key={item.label} className="bg-gray-50 p-5 rounded-[2rem] border border-gray-100 flex flex-col items-center text-center gap-3">
-                                                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center"><item.icon size={18} className={item.color} /></div>
-                                                    <div>
-                                                        <div className="text-[9px] font-black text-gray-400 mb-1">{item.label}</div>
-                                                        <div className="text-sm font-bold text-gray-800">{item.val || '-'}</div>
+                                                <div key={item.label} className={`group p-6 rounded-[2rem] border transition-all duration-300 hover:-translate-y-1 ${item.theme === 'blue' ? 'bg-blue-50/30 border-blue-100 hover:shadow-lg hover:shadow-blue-100' :
+                                                    item.theme === 'purple' ? 'bg-purple-50/30 border-purple-100 hover:shadow-lg hover:shadow-purple-100' :
+                                                        item.theme === 'pink' ? 'bg-pink-50/30 border-pink-100 hover:shadow-lg hover:shadow-pink-100' :
+                                                            'bg-orange-50/30 border-orange-100 hover:shadow-lg hover:shadow-orange-100'
+                                                    }`}>
+                                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${item.theme === 'blue' ? 'bg-blue-100 text-blue-600' :
+                                                        item.theme === 'purple' ? 'bg-purple-100 text-purple-600' :
+                                                            item.theme === 'pink' ? 'bg-pink-100 text-pink-600' :
+                                                                'bg-orange-100 text-orange-600'
+                                                        }`}>
+                                                        <item.icon size={22} strokeWidth={2.5} />
                                                     </div>
+                                                    <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1">{item.label}</div>
+                                                    <div className="text-base font-bold text-gray-900">{item.val || '-'}</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -536,26 +573,28 @@ const UserProfilePage: React.FC = () => {
 
                                 {/* PREFERENCES SECTION */}
                                 <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm border border-gray-100">
-                                    <div className="flex justify-between items-center mb-8">
-                                        <h2 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-3">
-                                            <span className="p-3 bg-purple-50 text-purple-600 rounded-2xl"><Heart size={24} /></span>
+                                    <div className="flex justify-between items-center mb-10">
+                                        <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center">
+                                                <Heart size={24} strokeWidth={2.5} />
+                                            </div>
                                             Preferencie
                                         </h2>
-                                        <button onClick={() => setIsEditingPreferences(!isEditingPreferences)} className="text-purple-600 font-black text-[10px] px-5 py-2.5 bg-purple-50 rounded-xl hover:bg-purple-100 transition-colors">
-                                            {isEditingPreferences ? 'Zatvoriť' : 'Upraviť'}
+                                        <button onClick={() => setIsEditingPreferences(!isEditingPreferences)} className="px-6 py-2.5 bg-purple-50 text-purple-600 rounded-xl font-bold text-xs hover:bg-purple-100 transition-colors">
+                                            {isEditingPreferences ? 'Zrušiť úpravy' : 'Upraviť'}
                                         </button>
                                     </div>
 
                                     {isEditingPreferences ? (
-                                        <div className="space-y-10 animate-in slide-in-from-top-2">
+                                        <div className="space-y-12 animate-in slide-in-from-top-2">
                                             {[
-                                                { title: 'Druh zvieratka', items: [PetType.DOG, PetType.CAT, PetType.RABBIT, PetType.BIRD, PetType.RODENT], key: 'types', variant: 'brand' },
-                                                { title: 'Veľkosť', items: [Size.SMALL, Size.MEDIUM, Size.LARGE], key: 'sizes', variant: 'blue' },
-                                                { title: 'Vek', items: ['Šteňa/Mača', 'Mladý', 'Dospelý', 'Senior'], key: 'ageRange', variant: 'green' },
+                                                { title: 'O aké zvieratko máte záujem?', items: [PetType.DOG, PetType.CAT, PetType.RABBIT, PetType.BIRD, PetType.RODENT], key: 'types', variant: 'brand' },
+                                                { title: 'Preferovaná veľkosť (pri psoch)', items: [Size.SMALL, Size.MEDIUM, Size.LARGE], key: 'sizes', variant: 'blue' },
+                                                { title: 'Veková kategória', items: ['Šteňa/Mača', 'Mladý', 'Dospelý', 'Senior'], key: 'ageRange', variant: 'green' },
                                                 { title: 'Pohlavie', items: [Gender.MALE, Gender.FEMALE], key: 'genders', format: (g: any) => g === Gender.MALE ? 'Samec' : 'Samica', variant: 'purple' }
                                             ].map((group: any) => (
                                                 <div key={group.key} className="space-y-4">
-                                                    <h3 className="text-xs font-black text-gray-400 ml-1">{group.title}</h3>
+                                                    <h3 className="text-sm font-black text-gray-900 ml-1">{group.title}</h3>
                                                     <div className="flex flex-wrap gap-3">
                                                         {group.items.map((item: any) => (
                                                             <PreferenceChip
@@ -569,16 +608,42 @@ const UserProfilePage: React.FC = () => {
                                                     </div>
                                                 </div>
                                             ))}
-                                            <div className="flex justify-end pt-6">
-                                                <button onClick={handleSavePreferences} className="px-10 py-4 bg-purple-600 text-white rounded-2xl font-black text-xs shadow-xl shadow-purple-200 hover:bg-purple-700 transition">Uložiť preferencie</button>
+                                            <div className="flex justify-end pt-6 border-t border-gray-50">
+                                                <button onClick={handleSavePreferences} className="px-10 py-4 bg-purple-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-purple-200 hover:bg-purple-700 transition active:scale-95">
+                                                    Uložiť preferencie
+                                                </button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex flex-wrap gap-2">
-                                            {user.preferences?.types?.map(t => <span key={t} className="px-4 py-2 bg-brand-50 text-brand-700 rounded-xl text-xs font-black">{t}</span>)}
-                                            {user.preferences?.sizes?.map(s => <span key={s} className="px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-xs font-black">{s}</span>)}
-                                            {user.preferences?.ageRange?.map(a => <span key={a} className="px-4 py-2 bg-green-50 text-green-700 rounded-xl text-xs font-black">{a}</span>)}
-                                            {!user.preferences && <span className="text-gray-400 italic">Zatiaľ žiadne preferencie...</span>}
+                                        <div className="space-y-8">
+                                            {[
+                                                { title: 'Hľadám', items: user.preferences?.types, variant: 'brand' },
+                                                { title: 'Pohlavie', items: user.preferences?.genders?.map(g => g === Gender.MALE ? 'Samec' : 'Samica'), variant: 'purple' },
+                                                { title: 'Veľkosti', items: user.preferences?.sizes, variant: 'blue' },
+                                                { title: 'Vek', items: user.preferences?.ageRange, variant: 'green' },
+                                            ].filter(g => g.items && g.items.length > 0).length > 0 ? (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                                    {[
+                                                        { title: 'Hľadám', items: user.preferences?.types, color: 'text-brand-600', bg: 'bg-brand-50' },
+                                                        { title: 'Pohlavie', items: user.preferences?.genders?.map(g => g === Gender.MALE ? 'Samec' : 'Samica'), color: 'text-purple-600', bg: 'bg-purple-50' },
+                                                        { title: 'Veľkosti', items: user.preferences?.sizes, color: 'text-blue-600', bg: 'bg-blue-50' },
+                                                        { title: 'Vek', items: user.preferences?.ageRange, color: 'text-green-600', bg: 'bg-green-50' },
+                                                    ].filter(g => g.items && g.items.length > 0).map(group => (
+                                                        <div key={group.title} className="space-y-3">
+                                                            <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider">{group.title}</h4>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {group.items.map((item: any) => (
+                                                                    <span key={item} className={`px-4 py-2 ${group.bg} ${group.color} rounded-xl text-sm font-bold`}>{item}</span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-12 rounded-[2rem] bg-gray-50 border-2 border-dashed border-gray-100">
+                                                    <span className="text-gray-400 font-medium">Zatiaľ ste si nenastavili žiadne preferencie.</span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -648,7 +713,7 @@ const UserProfilePage: React.FC = () => {
                                             </div>
 
                                             {myApplications.length > 0 ? (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="grid grid-cols-1 gap-8">
                                                     {myApplications.map(app => {
                                                         const status = getStatusInfo(app.status);
                                                         const pet = pets.find(p => p.id === app.petId);
@@ -658,22 +723,46 @@ const UserProfilePage: React.FC = () => {
                                                             <div
                                                                 key={app.id}
                                                                 onClick={() => handleInquiryClick(app)}
-                                                                className="group bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative"
+                                                                className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col md:flex-row"
                                                             >
-                                                                {hasChatUnread && <div className="absolute top-6 right-6 w-3 h-3 bg-brand-500 rounded-full animate-pulse"></div>}
-                                                                <div className="flex items-start gap-4 mb-6">
-                                                                    <div className="w-20 h-20 rounded-[1.8rem] bg-gray-100 overflow-hidden shadow-inner flex-shrink-0">
-                                                                        <img src={pet?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
+                                                                {/* Left Section: Image & Status */}
+                                                                <div className="w-full md:w-1/3 bg-gray-50/50 p-8 flex flex-col items-center justify-center text-center relative group-hover:bg-brand-50/30 transition-colors">
+                                                                    <div className="w-32 h-32 rounded-[2rem] bg-white shadow-lg overflow-hidden mb-6 relative group-hover:scale-105 transition-transform duration-500">
+                                                                        <img src={pet?.imageUrl} className="w-full h-full object-cover" alt="" />
+                                                                        {hasChatUnread && <div className="absolute top-3 right-3 w-4 h-4 bg-red-500 border-2 border-white rounded-full animate-pulse"></div>}
                                                                     </div>
-                                                                    <div>
-                                                                        <div className={`inline-block px-3 py-1 rounded-lg text-[10px] font-black mb-2 ${status.bg} ${status.text}`}>{app.status}</div>
-                                                                        <h3 className="text-xl font-black text-gray-900 leading-tight">{pet?.name}</h3>
-                                                                        <p className="text-xs text-gray-400 font-bold mt-1">{new Date(app.date).toLocaleDateString('sk-SK')}</p>
+                                                                    <h3 className="text-2xl font-black text-gray-900 mb-2">{pet?.name}</h3>
+                                                                    <div className={`inline-block px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider ${status.bg} ${status.text}`}>
+                                                                        {app.status}
                                                                     </div>
                                                                 </div>
-                                                                <div className="flex justify-between items-center pt-4 border-t border-gray-50">
-                                                                    <span className="text-xs font-black text-gray-400 group-hover:text-brand-600 transition-colors">Otvoriť chat</span>
-                                                                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-brand-600 group-hover:text-white transition-all"><ChevronRight size={16} /></div>
+
+                                                                {/* Right Section: Content */}
+                                                                <div className="p-8 md:p-10 flex-1 flex flex-col">
+                                                                    <div className="flex justify-between items-start mb-6">
+                                                                        <div>
+                                                                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Dátum žiadosti</div>
+                                                                            <div className="font-bold text-gray-900 flex items-center gap-2">
+                                                                                <Calendar size={16} className="text-gray-400" />
+                                                                                {new Date(app.date).toLocaleDateString('sk-SK')}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="hidden md:block">
+                                                                            <ChevronRight size={24} className="text-gray-300 group-hover:text-brand-600 group-hover:translate-x-1 transition-all" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="mb-8 flex-1">
+                                                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Vaša správa</div>
+                                                                        <p className="text-gray-600 font-medium italic leading-relaxed line-clamp-2 md:line-clamp-3">"{app.message}"</p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-100">
+                                                                        <span className="flex-1 text-sm font-black text-gray-900 group-hover:text-brand-600 transition-colors">Prejsť do konverzácie</span>
+                                                                        <button className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold text-xs group-hover:bg-brand-600 transition-colors shadow-lg shadow-gray-200 flex items-center gap-2">
+                                                                            Otvoriť chat <ArrowRight size={16} />
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         );

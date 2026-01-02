@@ -233,7 +233,7 @@ const PetListPage: React.FC = () => {
             return (
               <Link
                 key={pet.id}
-                to={`/pets/${pet.id}`}
+                to={`/pets/${pet.slug || pet.id}`}
                 className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full transform hover:-translate-y-2"
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
