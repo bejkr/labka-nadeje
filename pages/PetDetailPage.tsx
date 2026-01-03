@@ -585,7 +585,10 @@ const PetDetailPage: React.FC = () => {
                         {t('petDetail.backToList')}
                     </Link>
                     <div className="flex gap-2">
-                        <button onClick={() => setIsShareModalOpen(true)} className="p-2.5 bg-white text-gray-600 hover:text-brand-600 rounded-full shadow-sm border border-gray-200 transition"><Share2 size={20} /></button>
+                        <button onClick={() => setIsShareModalOpen(true)} className="px-4 py-2.5 bg-white text-gray-600 hover:text-brand-600 rounded-full shadow-sm border border-gray-200 transition flex items-center gap-2 font-bold text-sm">
+                            <Share2 size={18} />
+                            {t('common.share')}
+                        </button>
                         {!isShelterUser && (
                             <button onClick={handleFavoriteToggle} className={`p-2.5 rounded-full shadow-sm border transition ${isFavorite(pet.id) ? 'bg-red-50 text-red-500 border-red-100' : 'bg-white text-gray-400 border-gray-200 hover:text-red-500'}`}>
                                 <Heart size={20} className={isFavorite(pet.id) ? 'fill-current' : ''} />

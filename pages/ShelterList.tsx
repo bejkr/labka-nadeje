@@ -34,10 +34,13 @@ const ShelterListPage: React.FC = () => {
     }, []);
 
     const filteredShelters = useMemo(() => {
-        return shelters.filter(s =>
-            s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            s.location.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return shelters.filter(s => {
+            const normalizedName = s.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (normalizedName.includes('testovaci utulok')) return false;
+
+            return s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                s.location.toLowerCase().includes(searchTerm.toLowerCase());
+        });
     }, [shelters, searchTerm]);
 
     useEffect(() => {

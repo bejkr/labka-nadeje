@@ -6,7 +6,7 @@ import {
   ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles,
   ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook,
   Instagram, Search as SearchIcon, Zap, Utensils, Shield, Megaphone,
-  Award, FileCheck
+  Award, FileCheck, MessageCircle
 } from 'lucide-react';
 import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -351,6 +351,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+
+
       {/* Featured Pets (Urgent) */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -407,61 +409,112 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Temporary Foster Care Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                <HomeIcon className="text-indigo-600" size={32} />
-                {t('home.foster.title')}
-              </h2>
-              <p className="mt-2 text-gray-600">
-                {t('home.foster.description')}
+      {/* How it Works Section */}
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-50/50 rounded-full blur-3xl mix-blend-multiply"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">{t('home.howItWorks.title')}</h2>
+            <p className="text-xl text-gray-600 leading-relaxed">{t('home.howItWorks.subtitle')}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Connecting Line (Desktop) */}
+            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-gray-200 via-brand-200 to-gray-200 z-0"></div>
+
+            {/* Step 1 */}
+            <div className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-24 h-24 bg-white rounded-3xl border-2 border-gray-100 shadow-xl flex items-center justify-center text-brand-600 mb-8 group-hover:scale-110 group-hover:border-brand-200 group-hover:text-brand-700 transition duration-300">
+                <SearchIcon size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('home.howItWorks.step1Title')}</h3>
+              <p className="text-gray-600 leading-relaxed max-w-xs mx-auto">
+                {t('home.howItWorks.step1Desc')}
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-24 h-24 bg-white rounded-3xl border-2 border-gray-100 shadow-xl flex items-center justify-center text-brand-600 mb-8 group-hover:scale-110 group-hover:border-brand-200 group-hover:text-brand-700 transition duration-300">
+                <MessageCircle size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('home.howItWorks.step2Title')}</h3>
+              <p className="text-gray-600 leading-relaxed max-w-xs mx-auto">
+                {t('home.howItWorks.step2Desc')}
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-24 h-24 bg-white rounded-3xl border-2 border-gray-100 shadow-xl flex items-center justify-center text-brand-600 mb-8 group-hover:scale-110 group-hover:border-brand-200 group-hover:text-brand-700 transition duration-300">
+                <HomeIcon size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{t('home.howItWorks.step3Title')}</h3>
+              <p className="text-gray-600 leading-relaxed max-w-xs mx-auto">
+                {t('home.howItWorks.step3Desc')}
               </p>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {fosterPets.length > 0 ? fosterPets.map((pet) => (
-              <Link key={pet.id} to={`/pets/${pet.id}`} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-indigo-100 ring-1 ring-indigo-50 transform hover:-translate-y-1">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src={pet.imageUrl}
-                    alt={pet.name}
-                    className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-md">
-                    Dočasná opatera
-                  </div>
-                </div>
-                <div className="p-6 bg-indigo-50/30">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-extrabold text-gray-900 group-hover:text-indigo-600 transition">{pet.name.replace(/\*\*/g, '')}</h3>
-                    <span className="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-lg">{pet.breed}</span>
-                  </div>
-                  <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed">
-                    {pet.description.replace(/\*\*/g, '')}
-                  </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-indigo-100">
-                    <div className="flex items-center text-gray-400 text-xs font-bold">
-                      <MapPin size={14} className="mr-1.5" />
-                      {pet.location}
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition shadow-sm">
-                      <ArrowRight size={16} />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            )) : (
-              <div className="col-span-3 text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-                <p className="text-gray-500 font-medium">{t('home.foster.empty')}</p>
-              </div>
-            )}
-          </div>
         </div>
       </section>
+
+      {/* Temporary Foster Care Section */}
+      {fosterPets.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                  <HomeIcon className="text-indigo-600" size={32} />
+                  {t('home.foster.title')}
+                </h2>
+                <p className="mt-2 text-gray-600">
+                  {t('home.foster.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {fosterPets.map((pet) => (
+                <Link key={pet.id} to={`/pets/${pet.id}`} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-indigo-100 ring-1 ring-indigo-50 transform hover:-translate-y-1">
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={pet.imageUrl}
+                      alt={pet.name}
+                      className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-md">
+                      Dočasná opatera
+                    </div>
+                  </div>
+                  <div className="p-6 bg-indigo-50/30">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-extrabold text-gray-900 group-hover:text-indigo-600 transition">{pet.name.replace(/\*\*/g, '')}</h3>
+                      <span className="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-lg">{pet.breed}</span>
+                    </div>
+                    <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed">
+                      {pet.description.replace(/\*\*/g, '')}
+                    </p>
+                    <div className="flex items-center justify-between pt-4 border-t border-indigo-100">
+                      <div className="flex items-center text-gray-400 text-xs font-bold">
+                        <MapPin size={14} className="mr-1.5" />
+                        {pet.location}
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition shadow-sm">
+                        <ArrowRight size={16} />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Social Media Community Section */}
       <section className="py-16 bg-white border-t border-gray-100">

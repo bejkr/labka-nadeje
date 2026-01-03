@@ -17,6 +17,7 @@ import { useApp } from '../contexts/AppContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import PetFormModal from '../components/PetFormModal';
+import PetImportModal from '../components/PetImportModal';
 import ChatWindow from '../components/ChatWindow';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { formatSlovakAge } from '../utils/formatters';
@@ -184,7 +185,7 @@ const OverviewSection = ({ onNavigate, pets, inquiries, shelter, seenInquiryIds 
     );
 };
 
-const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onEdit: (p: Pet) => void, pets: Pet[], onDelete: (id: string) => Promise<void> }) => {
+const PetsSection = ({ onAdd, onImport, onEdit, pets, onDelete }: { onAdd: () => void, onImport: () => void, onEdit: (p: Pet) => void, pets: Pet[], onDelete: (id: string) => Promise<void> }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [petToDelete, setPetToDelete] = useState<Pet | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -221,6 +222,9 @@ const PetsSection = ({ onAdd, onEdit, pets, onDelete }: { onAdd: () => void, onE
                 </div>
                 <button onClick={onAdd} className="bg-brand-600 text-white px-5 py-2.5 rounded-xl hover:bg-brand-700 transition flex items-center gap-2 font-bold shadow-lg shadow-brand-200">
                     <Plus size={20} /> Pridať zviera
+                </button>
+                <button onClick={onImport} className="bg-white text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl hover:bg-gray-50 transition flex items-center gap-2 font-bold ml-2">
+                    <Upload size={20} /> Import CSV
                 </button>
             </div>
 
@@ -1521,25 +1525,30 @@ const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
 const ShelterDashboard: React.FC = () => {
     const { pets, updatePet, addPet, deletePet } = usePets();
     const { inquiries, updateInquiryStatus, markInquiryAsRead, seenInquiryIds, unreadCount } = useApp();
-    const { currentUser, userRole, logout } = useAuth();
+    const { currentUser, userRole, logout, isLoading } = useAuth();
     const navigate = useNavigate();
 
     const [activeTab, setActiveTab] = useState<'overview' | 'pets' | 'inquiries' | 'updates' | 'profile' | 'volunteers' | 'supplies' | 'analytics'>('overview');
     const [showModal, setShowModal] = useState(false);
+    const [showImportModal, setShowImportModal] = useState(false);
     const [editingPet, setEditingPet] = useState<Pet | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [vpCount, setVpCount] = useState(0);
 
     useEffect(() => {
+        if (isLoading) return;
         if (!currentUser || userRole !== 'shelter') { navigate('/auth'); return; }
 
         const fetchStats = async () => {
-            const count = await api.getShelterVirtualAdoptionsCount(currentUser.id);
-            setVpCount(count);
+            if (currentUser?.id) {
+                const count = await api.getShelterVirtualAdoptionsCount(currentUser.id);
+                setVpCount(count);
+            }
         };
         fetchStats();
-    }, [currentUser, userRole, navigate, activeTab]);
+    }, [currentUser, userRole, navigate, activeTab, isLoading]);
 
+    if (isLoading) return <div className="flex items-center justify-center min-h-screen bg-gray-50"><Loader2 className="animate-spin text-brand-600" size={48} /></div>;
     if (!currentUser || userRole !== 'shelter') return null;
     const currentShelter = currentUser as Shelter;
     const myPets = pets.filter(p => p.shelterId === currentShelter.id);
@@ -1606,7 +1615,7 @@ const ShelterDashboard: React.FC = () => {
             <main className="flex-1 p-4 md:p-10 overflow-y-auto h-[calc(100vh-64px)] md:h-screen bg-gray-50">
                 <div className="max-w-7xl mx-auto">
                     {activeTab === 'overview' && <OverviewSection onNavigate={setActiveTab} pets={myPets} inquiries={myInquiries} shelter={currentShelter} seenInquiryIds={seenInquiryIds} />}
-                    {activeTab === 'pets' && <PetsSection onAdd={openAddModal} onEdit={openEditModal} pets={myPets} onDelete={deletePet} />}
+                    {activeTab === 'pets' && <PetsSection onAdd={openAddModal} onImport={() => setShowImportModal(true)} onEdit={openEditModal} pets={myPets} onDelete={deletePet} />}
                     {activeTab === 'inquiries' && <InquiriesSection inquiries={myInquiries} updateStatus={updateInquiryStatus} markInquiryAsRead={markInquiryAsRead} shelter={currentShelter} seenInquiryIds={seenInquiryIds} />}
                     {activeTab === 'updates' && <ManageUpdatesSection pets={myPets} />}
                     {activeTab === 'profile' && <ShelterProfileForm shelter={currentShelter} />}
@@ -1616,6 +1625,7 @@ const ShelterDashboard: React.FC = () => {
                 </div>
             </main>
             <PetFormModal isOpen={showModal} onClose={() => setShowModal(false)} pet={editingPet} shelterId={currentShelter.id} onSave={handleSavePet} defaultLocation={currentShelter.location} />
+            <PetImportModal isOpen={showImportModal} onClose={() => setShowImportModal(false)} onSuccess={() => window.location.reload()} />
         </div>
     );
 };

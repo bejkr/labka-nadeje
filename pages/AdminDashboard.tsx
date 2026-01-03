@@ -13,7 +13,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import AdminAnalytics from '../components/AdminAnalytics';
 
 const AdminDashboard: React.FC = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, isLoading: isAuthLoading } = useAuth();
     const { showToast } = useApp();
     const navigate = useNavigate();
     const [users, setUsers] = useState<(User | Shelter)[]>([]);
@@ -72,12 +72,17 @@ const AdminDashboard: React.FC = () => {
     };
 
     useEffect(() => {
+        if (isAuthLoading) return;
         if (!currentUser || !isSuperAdmin) {
             navigate('/');
             return;
         }
         loadData();
-    }, [currentUser, isSuperAdmin, navigate, activeTab]);
+    }, [currentUser, isSuperAdmin, navigate, activeTab, isAuthLoading]);
+
+    if (isAuthLoading) {
+        return <div className="flex items-center justify-center min-h-screen bg-gray-50"><Loader2 className="animate-spin text-brand-600" size={48} /></div>;
+    }
 
     const handleExecuteDelete = async () => {
         if (!confirmDelete) return;

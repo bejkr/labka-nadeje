@@ -54,6 +54,7 @@ export const CITY_COORDS: Record<string, [number, number]> = {
     'Veľký Krtíš': [48.2106, 19.3503],
     'Čáry': [48.6653, 17.0789],
     'Rakúsy': [49.1881, 20.3877],
+    'Veľké Kapušany': [48.5500, 22.0800],
 };
 
 export const getCoordinates = (location: string): [number, number] | null => {

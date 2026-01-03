@@ -340,6 +340,45 @@ export const api = {
         return mapPetFromDB(data);
     },
 
+    async createBulkPets(pets: Partial<Pet>[]) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("Nie ste prihlásený.");
+
+        const dbPets = pets.map(pet => ({
+            shelter_id: user.id,
+            name: pet.name || 'Bez mena',
+            type: pet.type || PetType.OTHER,
+            breed: pet.breed || 'Neznáme',
+            age: Number(pet.age || 0),
+            gender: pet.gender || Gender.MALE,
+            size: pet.size || Size.MEDIUM,
+            location: pet.location || '',
+            image_url: pet.imageUrl || '',
+            description: pet.description || '',
+            adoption_fee: Number(pet.adoptionFee || 0),
+            adoption_status: pet.adoptionStatus || 'Available',
+            is_visible: pet.isVisible !== false,
+            needs_foster: !!pet.needsFoster,
+            tags: pet.tags || [],
+            posted_date: new Date().toISOString(),
+            views: 0,
+            details: {
+                health: pet.health || {},
+                social: pet.social || {},
+                training: pet.training || {},
+                requirements: pet.requirements || {},
+                gallery: pet.gallery || [],
+                videoUrl: pet.videoUrl || '',
+                importantNotes: pet.importantNotes || '',
+                updates: []
+            }
+        }));
+
+        const { data, error } = await supabase.from('pets').insert(dbPets).select();
+        if (error) throw error;
+        return data.map(mapPetFromDB);
+    },
+
     async updatePet(pet: Pet) {
         const dbPet = {
             name: pet.name, type: pet.type, breed: pet.breed, age: Number(pet.age), gender: pet.gender, size: pet.size, location: pet.location, image_url: pet.imageUrl, description: pet.description, adoption_fee: Number(pet.adoptionFee || 0), adoption_status: pet.adoptionStatus, is_visible: pet.isVisible, needs_foster: pet.needsFoster, tags: pet.tags || [],
