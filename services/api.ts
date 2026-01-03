@@ -412,11 +412,15 @@ export const api = {
         if (error) throw error;
     },
 
-    async incrementPetViews(petId: string) {
+    async incrementPetViews(petId: string): Promise<number | null> {
         try {
-            const { data } = await supabase.from('pets').select('views').eq('id', petId).single();
-            if (data) await supabase.from('pets').update({ views: (data.views || 0) + 1 }).eq('id', petId);
-        } catch (e) { }
+            const { data, error } = await supabase.rpc('increment_pet_views', { p_id: petId });
+            if (error) throw error;
+            return data;
+        } catch (e: any) {
+            console.error('Error incrementing pet views:', e);
+            return null;
+        }
     },
 
     async getPublicShelter(id: string): Promise<Shelter | null> {
@@ -473,15 +477,15 @@ export const api = {
         } catch (e) { return []; }
     },
 
-    async incrementShelterViews(shelterId: string) {
+    async incrementShelterViews(shelterId: string): Promise<number | null> {
         try {
-            const { data } = await supabase.from('profiles').select('shelter_data').eq('id', shelterId).single();
-            if (data && data.shelter_data) {
-                const stats = data.shelter_data.stats || { adoptions: 0, currentAnimals: 0, views: 0 };
-                const newStats = { ...stats, views: (stats.views || 0) + 1 };
-                await supabase.from('profiles').update({ shelter_data: { ...data.shelter_data, stats: newStats } }).eq('id', shelterId);
-            }
-        } catch (e) { }
+            const { data, error } = await supabase.rpc('increment_shelter_views', { s_id: shelterId });
+            if (error) throw error;
+            return data;
+        } catch (e) {
+            console.error('Error incrementing shelter views:', e);
+            return null;
+        }
     },
 
     async getPetsByShelter(shelterId: string): Promise<Pet[]> {

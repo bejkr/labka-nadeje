@@ -199,7 +199,9 @@ const PetDetailPage: React.FC = () => {
     }, [pet?.description, pet?.health, i18n.language, pet?.importantNotes]);
 
     useEffect(() => {
-        if (pet?.id) api.incrementPetViews(pet.id);
+        if (pet?.id) {
+            api.incrementPetViews(pet.id);
+        }
     }, [pet?.id]);
 
     useEffect(() => {
