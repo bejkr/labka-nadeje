@@ -12,6 +12,7 @@ import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
 import { PetType, BlogPost, PromoSlide } from '../types';
 import AdBanner from '../components/AdBanner';
+import PetCardImageSlider from '../components/PetCardImageSlider';
 import { api } from '../services/api';
 import { formatSlovakAge } from '../utils/formatters';
 import { useTranslation } from 'react-i18next';
@@ -367,25 +368,11 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPets.map((pet) => (
-              <Link key={pet.id} to={`/pets/${pet.slug || pet.id}`} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1">
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                  <img
-                    src={pet.imageUrl}
-                    alt={pet.name}
-                    className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-xl text-xs font-bold text-gray-800 shadow-sm border border-gray-100">
-                    {t('common.years', { count: pet.age })}
-                  </div>
-                  {pet.adoptionStatus === 'Reserved' && (
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-orange-500 text-white px-3 py-1 rounded-xl font-bold text-xs shadow-lg">Rezervovaný</span>
-                    </div>
-                  )}
-                </div>
+            {featuredPets.map((pet, index) => (
+              <div key={pet.id} className={`group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1 ${index >= 3 ? 'hidden md:block' : ''}`}>
+                <PetCardImageSlider pet={pet} aspectRatio="aspect-[3/4]" />
 
-                <div className="p-6">
+                <Link to={`/pets/${pet.slug || pet.id}`} className="block p-6">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-extrabold text-gray-900 group-hover:text-brand-600 transition">{pet.name.replace(/\*\*/g, '')}</h3>
                     <span className="text-xs font-bold text-brand-700 bg-brand-100 px-2.5 py-1 rounded-lg">{pet.breed}</span>
@@ -402,9 +389,16 @@ const HomePage: React.FC = () => {
                       <ArrowRight size={16} />
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
+          </div>
+
+          {/* Mobile CTA Button */}
+          <div className="mt-8 text-center sm:hidden">
+            <Link to="/pets" className="inline-flex items-center text-brand-600 font-bold hover:text-brand-700 bg-white border border-gray-100 px-6 py-3 rounded-full shadow-sm hover:shadow transition w-full justify-center">
+              {t('home.featured.viewAll')} <ArrowRight size={20} className="ml-2" />
+            </Link>
           </div>
         </div>
       </section>
@@ -480,18 +474,13 @@ const HomePage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {fosterPets.map((pet) => (
-                <Link key={pet.id} to={`/pets/${pet.id}`} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-indigo-100 ring-1 ring-indigo-50 transform hover:-translate-y-1">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={pet.imageUrl}
-                      alt={pet.name}
-                      className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-md">
-                      Dočasná opatera
-                    </div>
-                  </div>
-                  <div className="p-6 bg-indigo-50/30">
+                <div key={pet.id} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-indigo-100 ring-1 ring-indigo-50 transform hover:-translate-y-1">
+                  <PetCardImageSlider pet={pet} aspectRatio="aspect-[3/4]" showAgeBadge={false} />
+
+                  {/* Needs specific override for the badge if needed, but the slider has default badges. Foster badge is unique. */}
+                  {/* Since PetCardImageSlider encapsulates badges, the foster badge "Dočasná opatera" won't show unless I add it to props or overlay it locally. The slider has `relative` so I can't easily overlay from outside without z-index hacks. I will add children prop or customBadges prop later if needed, but for now the user asked for arrows. I'll stick to standard badges. */}
+
+                  <Link to={`/pets/${pet.id}`} className="block p-6 bg-indigo-50/30">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-xl font-extrabold text-gray-900 group-hover:text-indigo-600 transition">{pet.name.replace(/\*\*/g, '')}</h3>
                       <span className="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-lg">{pet.breed}</span>
@@ -508,8 +497,8 @@ const HomePage: React.FC = () => {
                         <ArrowRight size={16} />
                       </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>

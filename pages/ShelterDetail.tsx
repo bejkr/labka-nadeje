@@ -225,7 +225,7 @@ const ShelterDetailPage: React.FC = () => {
                                             const isFav = isFavorite(pet.id);
                                             return (
                                                 <Link key={pet.id} to={`/pets/${pet.id}`} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col h-full transform hover:-translate-y-2">
-                                                    <div className="relative h-64 overflow-hidden bg-gray-100">
+                                                    <div className="relative h-96 overflow-hidden bg-gray-100">
                                                         <img
                                                             src={pet.imageUrl}
                                                             alt={pet.name}

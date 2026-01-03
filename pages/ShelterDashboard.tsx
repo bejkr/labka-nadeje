@@ -18,6 +18,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import PetFormModal from '../components/PetFormModal';
 import PetImportModal from '../components/PetImportModal';
+import SocialShareModal from '../components/SocialShareModal';
 import ChatWindow from '../components/ChatWindow';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { formatSlovakAge } from '../utils/formatters';
@@ -188,6 +189,7 @@ const OverviewSection = ({ onNavigate, pets, inquiries, shelter, seenInquiryIds 
 const PetsSection = ({ onAdd, onImport, onEdit, pets, onDelete }: { onAdd: () => void, onImport: () => void, onEdit: (p: Pet) => void, pets: Pet[], onDelete: (id: string) => Promise<void> }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [petToDelete, setPetToDelete] = useState<Pet | null>(null);
+    const [shareModalPet, setShareModalPet] = useState<Pet | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const { showToast } = useApp();
 
@@ -220,12 +222,14 @@ const PetsSection = ({ onAdd, onImport, onEdit, pets, onDelete }: { onAdd: () =>
                     <h2 className="text-2xl font-bold text-gray-900">Správa zvierat</h2>
                     <p className="text-gray-500 text-sm">Spravujte profily vašich zverencov.</p>
                 </div>
-                <button onClick={onAdd} className="bg-brand-600 text-white px-5 py-2.5 rounded-xl hover:bg-brand-700 transition flex items-center gap-2 font-bold shadow-lg shadow-brand-200">
-                    <Plus size={20} /> Pridať zviera
-                </button>
-                <button onClick={onImport} className="bg-white text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl hover:bg-gray-50 transition flex items-center gap-2 font-bold ml-2">
-                    <Upload size={20} /> Import CSV
-                </button>
+                <div className="flex items-center gap-2">
+                    <button onClick={onAdd} className="bg-brand-600 text-white px-5 py-2.5 rounded-xl hover:bg-brand-700 transition flex items-center gap-2 font-bold shadow-lg shadow-brand-200">
+                        <Plus size={20} /> Pridať zviera
+                    </button>
+                    <button onClick={onImport} className="bg-white text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl hover:bg-gray-50 transition flex items-center gap-2 font-bold">
+                        <Upload size={20} /> Import CSV
+                    </button>
+                </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -288,6 +292,13 @@ const PetsSection = ({ onAdd, onImport, onEdit, pets, onDelete }: { onAdd: () =>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
                                             <div
+                                                onClick={() => setShareModalPet(pet)}
+                                                className="text-gray-400 hover:text-brand-600 p-2 hover:bg-brand-50 rounded-lg transition cursor-pointer"
+                                                title="Zdieľať profil"
+                                            >
+                                                <Send size={18} />
+                                            </div>
+                                            <div
                                                 onClick={() => onEdit(pet)}
                                                 className="text-gray-400 hover:text-brand-600 p-2 hover:bg-brand-50 rounded-lg transition cursor-pointer"
                                                 title="Upraviť profil"
@@ -319,6 +330,17 @@ const PetsSection = ({ onAdd, onImport, onEdit, pets, onDelete }: { onAdd: () =>
                 message={`Naozaj chcete natrvalo vymazať profil ${petToDelete?.name}?`}
                 confirmText="Vymazať profil"
             />
+
+            {shareModalPet && (
+                <SocialShareModal
+                    isOpen={!!shareModalPet}
+                    onClose={() => setShareModalPet(null)}
+                    petName={shareModalPet.name}
+                    imageUrl={shareModalPet.imageUrl}
+                    description={shareModalPet.description}
+                    hashtags={['#labkanadeje', `#${shareModalPet.type === PetType.DOG ? 'pes' : 'macka'}`, '#adopcia', `#${shareModalPet.breed.replace(/\s+/g, '')}`]}
+                />
+            )}
         </div>
     );
 };
