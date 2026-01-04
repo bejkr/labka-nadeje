@@ -38,7 +38,15 @@ Deno.serve(async (req) => {
   // Construct Meta Tags
   const title = `${pet.name} hľadá domov | LabkaNádeje`
   const desc = `Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description ? pet.description.substring(0, 150) : ''}...`
-  const imageUrl = pet.image_url || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1'
+  let imageUrl = pet.image_url || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1'
+
+  // Ensure absolute URL
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    // Assuming 'pets' bucket if relative path
+    imageUrl = `${supabaseUrl}/storage/v1/object/public/pets/${imageUrl}`
+  }
+
+  // FIX: Added /#/ for correct HashRouter redirection
   const targetUrl = `https://labkanadeje.sk/#/pets/${petId}` // Fixed for HashRouter
 
   // HTML Response
