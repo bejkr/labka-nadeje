@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
   const title = `${pet.name} hľadá domov | LabkaNádeje`
   const desc = `Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description ? pet.description.substring(0, 150) : ''}...`
   const imageUrl = pet.image_url || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1'
-  const targetUrl = `https://labkanadeje.sk/pets/${petId}` // Fallback to main site
+  const targetUrl = `https://labkanadeje.sk/#/pets/${petId}` // Fixed for HashRouter
 
   // HTML Response
   const html = `
