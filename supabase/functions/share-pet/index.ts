@@ -2,47 +2,47 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 Deno.serve(async (req) => {
-    // Handle CORS
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
-    }
+  // Handle CORS
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
 
-    const { searchParams } = new URL(req.url)
-    const petId = searchParams.get('id')
+  const { searchParams } = new URL(req.url)
+  const petId = searchParams.get('id')
 
-    if (!petId) {
-        return new Response('Missing pet ID', { status: 400 })
-    }
+  if (!petId) {
+    return new Response('Missing pet ID', { status: 400 })
+  }
 
-    // Init client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  // Init client
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-    // Fetch pet
-    const { data: pet, error } = await supabase
-        .from('pets')
-        .select('name, breed, age, description, image_url')
-        .eq('id', petId)
-        .single()
+  // Fetch pet
+  const { data: pet, error } = await supabase
+    .from('pets')
+    .select('name, breed, age, description, image_url')
+    .eq('id', petId)
+    .single()
 
-    if (error || !pet) {
-        return new Response('Pet not found', { status: 404 })
-    }
+  if (error || !pet) {
+    return new Response('Pet not found', { status: 404 })
+  }
 
-    // Construct Meta Tags
-    const title = `${pet.name} hľadá domov | LabkaNádeje`
-    const desc = `Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description ? pet.description.substring(0, 150) : ''}...`
-    const imageUrl = pet.image_url
-    const targetUrl = `https://labkanadeje.sk/pets/${petId}` // Fallback to main site
+  // Construct Meta Tags
+  const title = `${pet.name} hľadá domov | LabkaNádeje`
+  const desc = `Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description ? pet.description.substring(0, 150) : ''}...`
+  const imageUrl = pet.image_url || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1'
+  const targetUrl = `https://labkanadeje.sk/pets/${petId}` // Fallback to main site
 
-    // HTML Response
-    const html = `
+  // HTML Response
+  const html = `
     <!DOCTYPE html>
     <html lang="sk">
     <head>
@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
     </html>
   `
 
-    return new Response(html, {
-        headers: { ...corsHeaders, 'Content-Type': 'text/html' },
-    })
+  return new Response(html, {
+    headers: { ...corsHeaders, 'Content-Type': 'text/html' },
+  })
 })
