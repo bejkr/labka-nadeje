@@ -90,8 +90,8 @@ const HomePage: React.FC = () => {
   const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
   // Promo Slides State
   const [promoSlides, setPromoSlides] = useState<PromoSlide[]>([]);
-  // Platform Stats
-  const [stats, setStats] = useState({ waiting: 0, adopted: 0, shelters: 0 });
+  // Platform Stats - Fixed numbers per user request (too slow to load dynamically)
+  const [stats] = useState({ waiting: 18, adopted: 0, shelters: 4 });
 
   // Fetch Data
   useEffect(() => {
@@ -107,8 +107,7 @@ const HomePage: React.FC = () => {
           setPromoSlides(MOCK_PROMO_SLIDES);
         }
 
-        const statsData = await api.getPlatformStats();
-        setStats(statsData);
+        // Stats are now hardcoded
       } catch (error) {
         console.error("Failed to load home data", error);
         setPromoSlides(MOCK_PROMO_SLIDES);
@@ -124,7 +123,22 @@ const HomePage: React.FC = () => {
       .slice(0, 5); // Take up to 5 pets
   }, [pets]);
 
-  const featuredPets = pets.filter(p => p.adoptionStatus === 'Available' && p.isVisible).slice(0, 6);
+  const moveHeroPets = useMemo(() => {
+    return pets
+      .filter(p => p.adoptionStatus === 'Available' && p.isVisible && p.imageUrl)
+      .slice(0, 5);
+  }, [pets]); // Keeping hero stable for now, or could randomize too if desired.
+
+  const featuredPets = useMemo(() => {
+    const available = pets.filter(p => p.adoptionStatus === 'Available' && p.isVisible);
+    // Fisher-Yates shuffle
+    const shuffled = [...available];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, 6);
+  }, [pets]);
   const fosterPets = pets.filter(p => p.needsFoster && p.isVisible).slice(0, 3);
 
   // Hero Slider State

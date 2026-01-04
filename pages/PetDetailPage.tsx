@@ -1094,6 +1094,7 @@ const PetDetailPage: React.FC = () => {
                 imageUrl={pet.imageUrl}
                 description={pet.description}
                 hashtags={['#labkanadeje', `#${pet.type === PetType.DOG ? 'pes' : 'macka'}`, '#adopcia', `#${pet.breed.replace(/\s+/g, '')}`]}
+                url={`https://qcwoyklifcekulkhrqmz.supabase.co/functions/v1/share-pet?id=${pet.id}`}
             />
 
             {
