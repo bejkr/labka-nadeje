@@ -339,7 +339,7 @@ const PetsSection = ({ onAdd, onImport, onEdit, pets, onDelete }: { onAdd: () =>
                     imageUrl={shareModalPet.imageUrl}
                     description={shareModalPet.description}
                     hashtags={['#labkanadeje', `#${shareModalPet.type === PetType.DOG ? 'pes' : 'macka'}`, '#adopcia', `#${shareModalPet.breed.replace(/\s+/g, '')}`]}
-                    url={`https://qcwoyklifcekulkhrqmz.supabase.co/functions/v1/share-pet?id=${shareModalPet.id}`}
+                    url={`https://labkanadeje.sk/share/pet/${shareModalPet.id}`}
                 />
             )}
         </div>

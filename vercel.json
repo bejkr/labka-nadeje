@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/share/pet/:id",
+            "destination": "https://qcwoyklifcekulkhrqmz.supabase.co/functions/v1/share-pet?id=:id"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
