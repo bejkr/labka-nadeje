@@ -1,4 +1,4 @@
-
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   try {
     // Handle CORS
     if (req.method === 'OPTIONS') {
@@ -19,21 +19,30 @@ Deno.serve(async (req) => {
     if (!petId) return new Response('DEBUG: Missing pet ID parameter (?id=...)', { status: 400 })
 
     // Init client
-    // Init client with SERVICE ROLE to bypass RLS (since pets might be protected)
+    // Init client with ANON KEY (Pets should be public)
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
 
-    if (!supabaseUrl) return new Response('DEBUG: Missing SUPABASE_URL', { status: 500 })
-    if (!supabaseServiceKey) return new Response('DEBUG: Missing SUPABASE_SERVICE_ROLE_KEY', { status: 500 })
+    if (!supabaseUrl) return new Response('DEBUG: Missing SUPABASE_URL env var', { status: 500 })
+    if (!supabaseAnonKey) return new Response('DEBUG: Missing SUPABASE_ANON_KEY env var', { status: 500 })
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+    // Check if UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(petId);
 
     // Fetch pet
-    const { data: pet, error } = await supabase
+    let query = supabase
       .from('pets')
       .select('name, breed, age, description, image_url')
-      .eq('id', petId)
-      .single()
+
+    if (isUuid) {
+      query = query.eq('id', petId)
+    } else {
+      query = query.eq('slug', petId)
+    }
+
+    const { data: pet, error } = await query.single()
 
     if (error) return new Response(`DEBUG: DB Error - ${error.message}`, { status: 500 })
     if (!pet) return new Response('DEBUG: Pet not found in DB', { status: 404 })
@@ -51,6 +60,7 @@ Deno.serve(async (req) => {
     }
 
     // FIX: Use query param for redirect to avoid hash stripping in FB/IG
+    // We pass the ORIGIN ID/SLUG back to the redirect param
     const targetUrl = `https://labkanadeje.sk/?pet_redirect=${petId}`
 
     // HTML Response
@@ -84,6 +94,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'text/html' },
     })
   } catch (err: any) {
-    return new Response(`DEBUG: Crash - ${err.message}`, { status: 500 })
+    // RETURN THE ACTUAL ERROR
+    return new Response(`DEBUG: Crash - ${err.message}\nStack: ${err.stack}`, { status: 500 })
   }
 })
