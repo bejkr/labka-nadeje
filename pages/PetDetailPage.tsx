@@ -601,6 +601,16 @@ const PetDetailPage: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Share Modal */}
+                <SocialShareModal
+                    isOpen={isShareModalOpen}
+                    onClose={() => setIsShareModalOpen(false)}
+                    petName={pet.name}
+                    imageUrl={pet.imageUrl}
+                    description={pet.description}
+                    url={`https://qcwoyklifcekulkhrqmz.supabase.co/functions/v1/share-pet?id=${pet.id}`}
+                />
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-20">
                     <div className="lg:col-span-2 space-y-8">
                         <div className={`grid gap-6 ${hasVideo ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
