@@ -64,8 +64,7 @@ serve(async (req) => {
     const targetUrl = `https://labkanadeje.sk/?pet_redirect=${petId}`
 
     // HTML Response
-    const html = `
-      <!DOCTYPE html>
+    const html = `<!DOCTYPE html>
       <html lang="sk">
       <head>
         <meta charset="UTF-8">
@@ -128,7 +127,7 @@ serve(async (req) => {
     `
 
     return new Response(html, {
-      headers: { ...corsHeaders, 'Content-Type': 'text/html' },
+      headers: { ...corsHeaders, 'Content-Type': 'text/html; charset=utf-8' },
     })
   } catch (err: any) {
     // RETURN THE ACTUAL ERROR
