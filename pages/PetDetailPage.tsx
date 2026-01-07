@@ -61,7 +61,7 @@ const PetDetailPage: React.FC = () => {
     const [isAnalyzingMatch, setIsAnalyzingMatch] = useState(false);
 
     // Share Logic
-    const [linkCopied, setLinkCopied] = useState(false);
+
 
     // Translation Logic
     const [translatedDescription, setTranslatedDescription] = useState<string | null>(null);
@@ -329,12 +329,7 @@ const PetDetailPage: React.FC = () => {
 
     // Payment handler moved to modal component
 
-    const handleCopyLink = () => {
-        navigator.clipboard.writeText(window.location.href);
-        setLinkCopied(true);
-        setTimeout(() => setLinkCopied(false), 2000);
-        showToast("Odkaz bol skopírovaný.", "success");
-    };
+
 
     const StatusBadge = ({ status }: { status: string | undefined }) => {
         // If status is "Neznáme" (DB string) or undefined, treat as unknown
@@ -929,70 +924,7 @@ const PetDetailPage: React.FC = () => {
                 )
             }
 
-            {/* --- SHARE MODAL --- */}
-            {
-                isShareModalOpen && (
-                    <div className="fixed inset-0 z-[110] overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div className="bg-white rounded-[2.5rem] w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                            <div className="p-8">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div>
-                                        <h3 className="text-2xl font-black text-gray-900 tracking-tight">Zdieľať profil</h3>
-                                        <p className="text-sm text-gray-500 font-medium">Pomôžte {pet.name} nájsť domov.</p>
-                                    </div>
-                                    <button onClick={() => setIsShareModalOpen(false)} className="p-2 bg-gray-50 rounded-full text-gray-400 hover:text-gray-900 transition">
-                                        <X size={20} />
-                                    </button>
-                                </div>
 
-                                <div className="space-y-3">
-                                    <button
-                                        onClick={handleCopyLink}
-                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-200 transition group"
-                                    >
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-400 group-hover:text-brand-600 shadow-sm transition">
-                                            {linkCopied ? <Check size={20} className="text-green-500" /> : <LinkIcon size={20} />}
-                                        </div>
-                                        <span className="font-bold text-gray-700 text-sm">{linkCopied ? 'Skopírované!' : 'Kopírovať odkaz'}</span>
-                                    </button>
-
-                                    <a
-                                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                                        target="_blank" rel="noopener noreferrer"
-                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-blue-200 transition group"
-                                    >
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm transition">
-                                            <Facebook size={20} />
-                                        </div>
-                                        <span className="font-bold text-gray-700 text-sm">Zdieľať na Facebooku</span>
-                                    </a>
-
-                                    <a
-                                        href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Pozrite si tohto kamoša na adopciu: ${pet.name}`)}`}
-                                        target="_blank" rel="noopener noreferrer"
-                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-900 transition group"
-                                    >
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-gray-900 shadow-sm transition">
-                                            <Twitter size={20} />
-                                        </div>
-                                        <span className="font-bold text-gray-700 text-sm">Zdieľať na Twitteri / X</span>
-                                    </a>
-
-                                    <a
-                                        href={`mailto:?subject=${encodeURIComponent(`Adopcia: ${pet.name}`)}&body=${encodeURIComponent(`Ahoj, pozri si toto zvieratko na adopciu: ${window.location.href}`)}`}
-                                        className="w-full flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-brand-200 transition group"
-                                    >
-                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-600 shadow-sm transition">
-                                            <Mail size={20} />
-                                        </div>
-                                        <span className="font-bold text-gray-700 text-sm">Poslať e-mailom</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
 
             {/* --- REDESIGNED ADOPTION APPLICATION MODAL --- */}
             {
