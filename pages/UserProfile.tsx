@@ -15,10 +15,11 @@ import {
     Send, Footprints, Quote, CreditCard, Bookmark, Calendar, Utensils, HeartHandshake, ArrowRight,
     TrendingUp, Sparkle, PlusCircle, Bell, BellOff
 } from 'lucide-react';
-import { User, PetType, Size, Gender, HousingType, WorkMode, ExperienceLevel, UserPreferences, AdoptionInquiry, Shelter, Pet } from '../types';
+import { User, PetType, Size, Gender, HousingType, WorkMode, ExperienceLevel, UserPreferences, AdoptionInquiry, Shelter, Pet, PetAlert } from '../types';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ChatWindow from '../components/ChatWindow';
 import CertificateModal from '../components/CertificateModal';
+import PetAlertForm from '../components/PetAlertForm';
 import { api } from '../services/api';
 
 
@@ -49,9 +50,13 @@ const UserProfilePage: React.FC = () => {
     const { inquiries, updateInquiryStatus, markInquiryAsRead, seenInquiryIds, showToast } = useApp();
     const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'virtual-adoptions' | 'settings' | 'favorites'>('about');
+    const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'virtual-adoptions' | 'settings' | 'favorites' | 'alerts'>('about');
     const [selectedInquiry, setSelectedInquiry] = useState<AdoptionInquiry | null>(null);
     const [relatedShelter, setRelatedShelter] = useState<Shelter | null>(null);
+
+    // Alert State
+    const [alerts, setAlerts] = useState<PetAlert[]>([]);
+    const [isAlertFormOpen, setIsAlertFormOpen] = useState(false);
 
     const [isEditingBio, setIsEditingBio] = useState(false);
     const [isEditingHousehold, setIsEditingHousehold] = useState(false);
@@ -93,6 +98,32 @@ const UserProfilePage: React.FC = () => {
             navigate('/auth');
         }
     }, [currentUser, userRole, navigate]);
+
+    useEffect(() => {
+        if (currentUser) {
+            fetchAlerts();
+        }
+    }, [currentUser]);
+
+    const fetchAlerts = async () => {
+        try {
+            const data = await api.getPetAlerts();
+            setAlerts(data);
+        } catch (error) {
+            console.error("Failed to fetch alerts", error);
+        }
+    };
+
+    const handleDeleteAlert = async (id: string) => {
+        if (!confirm('Naozaj chcete vymazať toto upozornenie?')) return;
+        try {
+            await api.deletePetAlert(id);
+            await fetchAlerts();
+            showToast('Upozornenie vymazané', 'success');
+        } catch (e) {
+            showToast('Chyba pri mazaní', 'error');
+        }
+    };
 
     const myApplications = useMemo(() => {
         if (!user?.id) return [];
@@ -291,6 +322,7 @@ const UserProfilePage: React.FC = () => {
                             { id: 'about', label: 'Môj Profil', icon: UserIcon },
                             { id: 'favorites', label: 'Uložené', icon: Heart },
                             { id: 'activity', label: 'Žiadosti', icon: MessageCircle },
+                            { id: 'alerts', label: 'Upozornenia', icon: Bell },
                             { id: 'virtual-adoptions', label: 'Virtuálne adopcie', icon: Sparkles },
                             { id: 'settings', label: 'Nastavenia', icon: Settings }
                         ].map(tab => (
@@ -986,6 +1018,66 @@ const UserProfilePage: React.FC = () => {
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'alerts' && (
+                            <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+                                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-3 bg-yellow-50 text-yellow-600 rounded-2xl"><Bell size={24} /></div>
+                                            <div>
+                                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">Upozornenia</h2>
+                                                <p className="text-sm text-gray-500 font-medium">Dostávajte e-maily o nových zvieratkách.</p>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => setIsAlertFormOpen(true)} className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-brand-600 transition shadow-lg shadow-gray-200 hover:shadow-brand-200">
+                                            <PlusCircle size={16} /> Pridať upozornenie
+                                        </button>
+                                    </div>
+
+                                    {alerts.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                                            {alerts.map(alert => (
+                                                <div key={alert.id} className="group bg-gray-50 p-6 rounded-[2rem] border border-gray-100 hover:bg-white hover:shadow-xl hover:shadow-brand-100/50 hover:border-brand-100 transition-all duration-300 relative">
+                                                    <div className="flex justify-between items-start mb-4">
+                                                        <div className="p-3 bg-white rounded-2xl text-brand-600 shadow-sm group-hover:bg-brand-50 transition-colors">
+                                                            <Bell size={20} />
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleDeleteAlert(alert.id)}
+                                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
+
+                                                    <h3 className="text-lg font-black text-gray-900 mb-2">{alert.name}</h3>
+
+                                                    <div className="flex flex-wrap gap-2 mb-2">
+                                                        {alert.filters.types && alert.filters.types.map(t => <span key={t} className="px-3 py-1 bg-white text-gray-600 rounded-lg text-xs font-bold border border-gray-100 shadow-sm">{t}</span>)}
+                                                        {alert.filters.locations && alert.filters.locations.map(l => <span key={l} className="px-3 py-1 bg-white text-gray-600 rounded-lg text-xs font-bold border border-gray-100 shadow-sm"><MapPin size={10} className="inline mr-1" />{l}</span>)}
+                                                        {alert.filters.breeds && alert.filters.breeds.map(b => <span key={b} className="px-3 py-1 bg-white text-gray-600 rounded-lg text-xs font-bold border border-gray-100 shadow-sm">{b}</span>)}
+                                                    </div>
+
+                                                    <div className="mt-4 pt-4 border-t border-gray-200/50 flex items-center gap-2 text-xs font-bold text-gray-400">
+                                                        <Clock size={12} /> Vytvorené {new Date(alert.createdAt).toLocaleDateString('sk-SK')}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="bg-gradient-to-br from-yellow-50/50 to-orange-50/50 p-12 rounded-[2.5rem] text-center border-2 border-dashed border-yellow-100/50">
+                                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-yellow-400 mx-auto mb-6 shadow-sm">
+                                                <BellOff size={32} />
+                                            </div>
+                                            <h3 className="font-black text-2xl text-gray-900 mb-2">Žiadne aktívne upozornenia</h3>
+                                            <p className="text-gray-500 font-medium mb-8 max-w-md mx-auto">Vytvorte si upozornenie a my vás budeme informovať, keď pribudne zvieratko podľa vašich predstáv.</p>
+                                        </div>
+                                    )}
+                                </div>
+                                {isAlertFormOpen && <PetAlertForm onClose={() => setIsAlertFormOpen(false)} onSuccess={() => { setIsAlertFormOpen(false); fetchAlerts(); showToast('Upozornenie vytvorené', 'success'); }} />}
                             </div>
                         )}
 

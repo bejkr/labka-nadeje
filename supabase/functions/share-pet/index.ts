@@ -50,8 +50,8 @@ Deno.serve(async (req) => {
       imageUrl = `${supabaseUrl}/storage/v1/object/public/pets/${imageUrl}`
     }
 
-    // FIX: Added /#/ for correct HashRouter redirection
-    const targetUrl = `https://labkanadeje.sk/#/pets/${petId}` // Fixed for HashRouter
+    // FIX: Use query param for redirect to avoid hash stripping in FB/IG
+    const targetUrl = `https://labkanadeje.sk/?pet_redirect=${petId}`
 
     // HTML Response
     const html = `

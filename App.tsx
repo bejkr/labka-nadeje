@@ -388,6 +388,23 @@ const AuthListener: React.FC = () => {
     }
   }, [isRecoveringPassword, navigate]);
 
+};
+
+const RedirectListener: React.FC = () => {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Check for query params on the main URL (before the hash)
+    // This handles redirects like https://labkanadeje.sk/?pet_redirect=123
+    const params = new URLSearchParams(window.location.search);
+    const petId = params.get('pet_redirect');
+
+    if (petId) {
+      // Navigate to the pet detail page inside the HashRouter
+      navigate(`/pets/${petId}`);
+    }
+  }, [navigate]);
+
   return null;
 };
 
@@ -397,6 +414,7 @@ const App: React.FC = () => {
       <ScrollToTop />
       <div className="flex flex-col min-h-screen font-sans">
         <AuthListener />
+        <RedirectListener />
         <Navbar />
         <main className="flex-grow">
           <Routes>

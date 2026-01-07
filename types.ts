@@ -257,3 +257,17 @@ export interface ChatMessage {
 
 export type ToastType = 'success' | 'error' | 'info';
 export interface ToastMessage { id: string; message: string; type: ToastType; }
+
+export interface PetAlert {
+  id: string;
+  userId: string;
+  name: string;
+  filters: {
+    types?: PetType[];
+    breeds?: string[];
+    locations?: string[];
+    ageRange?: string[];
+    genders?: Gender[];
+  };
+  createdAt: string;
+}

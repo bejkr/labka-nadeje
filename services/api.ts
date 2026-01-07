@@ -1,6 +1,6 @@
 
 import { supabase } from './supabaseClient';
-import { Pet, User, Shelter, AdoptionInquiry, VirtualAdoption, PetType, Gender, Size, Volunteer, ShelterSupply, BlogPost, InquiryMessage, PromoSlide } from '../types';
+import { Pet, User, Shelter, AdoptionInquiry, VirtualAdoption, PetType, Gender, Size, Volunteer, ShelterSupply, BlogPost, InquiryMessage, PromoSlide, PetAlert } from '../types';
 
 // Cache for the current user profile to avoid redundant fetches
 let cachedProfile: User | Shelter | null = null;
@@ -690,5 +690,36 @@ export const api = {
         } catch (e) {
             return cachedStats || { waiting: 0, adopted: 0, shelters: 0 };
         }
+    },
+
+    async createPetAlert(alert: Partial<PetAlert>) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error("Musíte byť prihlásený");
+        const { error } = await supabase.from('pet_alerts').insert({
+            user_id: session.user.id,
+            name: alert.name,
+            filters: alert.filters
+        });
+        if (error) throw error;
+    },
+
+    async getPetAlerts(): Promise<PetAlert[]> {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return [];
+
+        const { data, error } = await supabase.from('pet_alerts').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        return data.map((row: any) => ({
+            id: row.id,
+            userId: row.user_id,
+            name: row.name,
+            filters: row.filters,
+            createdAt: row.created_at
+        }));
+    },
+
+    async deletePetAlert(id: string) {
+        const { error } = await supabase.from('pet_alerts').delete().eq('id', id);
+        if (error) throw error;
     }
 };
