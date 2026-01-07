@@ -400,8 +400,13 @@ const RedirectListener: React.FC = () => {
     const petId = params.get('pet_redirect');
 
     if (petId) {
+      console.log("Redirecting to pet:", petId);
       // Navigate to the pet detail page inside the HashRouter
       navigate(`/pets/${petId}`);
+
+      // Clean up the URL (remove query param)
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.hash;
+      window.history.replaceState({ path: newUrl }, "", newUrl);
     }
   }, [navigate]);
 
