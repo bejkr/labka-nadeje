@@ -69,6 +69,7 @@ serve(async (req) => {
       <html lang="sk">
       <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${title}</title>
         <meta property="og:title" content="${title}" />
         <meta property="og:description" content="${desc}" />
@@ -77,15 +78,51 @@ serve(async (req) => {
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image">
         
-        <script>window.location.href = "${targetUrl}";</script>
+        <!-- FLUSH REDIRECT -->
+        <meta http-equiv="refresh" content="0;url=${targetUrl}" />
+        <script>window.location.replace("${targetUrl}");</script>
+
+        <style>
+          body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            color: #333;
+          }
+          .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #f3f4f6;
+            border-bottom-color: #F97316; /* Brand orange color or similar */
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+            margin-bottom: 20px;
+          }
+          @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          p { margin-top: 10px; color: #666; }
+          a { color: #F97316; text-decoration: none; font-weight: bold; }
+          .hidden-preview { display: none; }
+        </style>
       </head>
       <body>
-        <h1>${title}</h1>
-        <p>${desc}</p>
-        <img src="${imageUrl}" alt="${pet.name}" style="max-width: 500px;" />
-        <p>Redirecting to <a href="${targetUrl}">${targetUrl}</a></p>
-        <hr/>
-        <p><small>Debug Info: Image: ${imageUrl}</small></p>
+        <div class="loader"></div>
+        <p>Presmerovávam na LabkaNádeje...</p>
+        <p><small>Ak vás nepresmeruje automaticky, <a href="${targetUrl}">kliknite sem</a>.</small></p>
+        
+        <!-- Hidden content for crawlers/previews if script fails to strip it, though usually meta tags are enough -->
+        <div class="hidden-preview">
+          <h1>${title}</h1>
+          <p>${desc}</p>
+          <img src="${imageUrl}" alt="${pet.name}" />
+        </div>
       </body>
       </html>
     `
