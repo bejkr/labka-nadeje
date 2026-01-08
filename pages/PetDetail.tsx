@@ -262,7 +262,7 @@ const PetDetailPage: React.FC = () => {
                     </div>
                 )}
             </div>
-            <Link to={`/shelters/${pet.shelterId}`} className="block bg-white rounded-3xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition group">
+            <Link to={`/shelters/${shelter?.slug || pet.shelterId}`} className="block bg-white rounded-3xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition group">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="w-14 h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center p-1 shadow-sm overflow-hidden">
                         {shelter?.logoUrl ? <img src={shelter.logoUrl} alt="" className="w-full h-full object-contain" /> : <Building2 size={24} className="text-gray-300" />}

@@ -77,7 +77,9 @@ const mapProfileFromDB = (row: any): User | Shelter => {
             logoUrl: row.shelter_data?.logoUrl || '',
             socials: row.shelter_data?.socials || {},
             stats: row.shelter_data?.stats || { adoptions: 0, currentAnimals: 0, views: 0 },
-            organizationType: row.shelter_data?.organizationType || 'shelter'
+            organizationType: row.shelter_data?.organizationType || 'shelter',
+            documents: row.shelter_data?.documents || [],
+            slug: row.slug
         } as Shelter;
     }
     return {
@@ -423,9 +425,20 @@ export const api = {
         }
     },
 
-    async getPublicShelter(id: string): Promise<Shelter | null> {
+    async getPublicShelter(idOrSlug: string): Promise<Shelter | null> {
         try {
-            const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
+            // Check if it's a UUID
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+
+            let data;
+            if (isUuid) {
+                const response = await supabase.from('profiles').select('*').eq('id', idOrSlug).single();
+                data = response.data;
+            } else {
+                const response = await supabase.from('profiles').select('*').eq('slug', idOrSlug).single();
+                data = response.data;
+            }
+
             if (data) {
                 const profile = mapProfileFromDB(data);
                 if (profile.role === 'shelter') return profile as Shelter;
@@ -721,5 +734,50 @@ export const api = {
     async deletePetAlert(id: string) {
         const { error } = await supabase.from('pet_alerts').delete().eq('id', id);
         if (error) throw error;
+    },
+
+    async uploadShelterDocument(path: string, file: File) {
+        const { data, error } = await supabase.storage
+            .from('shelter-documents')
+            .upload(path, file, {
+                cacheControl: '3600',
+                upsert: true
+            });
+        return { data, error };
+    },
+
+    getShelterDocumentUrl(path: string) {
+        const { data } = supabase.storage
+            .from('shelter-documents')
+            .getPublicUrl(path);
+        return data.publicUrl;
+    },
+
+    async updateShelterDocuments(shelterId: string, documents: any[]) {
+        const { data: current } = await supabase
+            .from('profiles')
+            .select('shelter_data')
+            .eq('id', shelterId)
+            .single();
+
+        const currentData = current?.shelter_data || {};
+
+        const { data: updated, error } = await supabase
+            .from('profiles')
+            .update({
+                shelter_data: {
+                    ...currentData,
+                    documents: documents
+                }
+            })
+            .eq('id', shelterId)
+            .select();
+
+        if (error) throw error;
+        if (!updated || updated.length === 0) {
+            console.error("Update returned no rows. RLS blocking update?");
+            throw new Error("Chyba: Profil sa nepodarilo aktualizovať (RLS).");
+        }
+        cachedProfile = null;
     }
 };

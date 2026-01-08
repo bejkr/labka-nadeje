@@ -8,7 +8,7 @@ import {
     BarChart as ChartIcon, Search, Trash2, CheckCircle, XCircle,
     Upload, X, Sparkles, Pencil, Eye, EyeOff, LogOut, Users,
     Calendar, MapPin, Mail, Phone, ArrowUpRight, Filter, Building2, Camera, Save, Clock, CreditCard, Loader2,
-    Facebook, Instagram, Globe, TrendingUp, MousePointerClick, Menu, Link as LinkIcon, Truck, AlertTriangle, ArrowLeft, Quote, User, Check, AlertCircle, Home, Briefcase, Award, PieChart as PieChartIcon, TrendingDown, DollarSign, Heart, Baby, ShieldCheck, ExternalLink, ShoppingCart, UserPlus, UserCheck, Camera as CameraIcon, Bell, BellOff, Zap, Send
+    Facebook, Instagram, Globe, TrendingUp, MousePointerClick, Menu, Link as LinkIcon, Truck, AlertTriangle, ArrowLeft, Quote, User, Check, AlertCircle, Home, Briefcase, Award, PieChart as PieChartIcon, TrendingDown, DollarSign, Heart, Baby, ShieldCheck, ExternalLink, ShoppingCart, UserPlus, UserCheck, Camera as CameraIcon, Bell, BellOff, Zap, Send, FileText
 } from 'lucide-react';
 import { Pet, PetType, AdoptionInquiry, Volunteer, ShelterSupply, Gender, Size, Shelter } from '../types';
 import { usePets } from '../contexts/PetContext';
@@ -1347,6 +1347,175 @@ const VolunteersSection = ({ shelterId }: { shelterId: string }) => {
     );
 };
 
+const DocumentsSection = ({ shelterId, documents: initialDocs = [], onUpdate }: { shelterId: string, documents?: any[], onUpdate: (docs: any[]) => void }) => {
+    const [docs, setDocs] = useState<any[]>(initialDocs);
+    const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const { showToast } = useApp();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { currentUser } = useAuth();
+
+    useEffect(() => {
+        const fetchDocs = async () => {
+            if (!shelterId) return;
+            // Fetch fresh profile to get documents
+            const data = await api.getPublicShelter(shelterId);
+            if (data && data.documents) {
+                setDocs(data.documents);
+            }
+        };
+        fetchDocs();
+    }, [shelterId]);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Limit size to 10MB
+        if (file.size > 10 * 1024 * 1024) {
+            showToast("Súbor je príliš veľký (max 10MB)", "error");
+            return;
+        }
+
+        setUploading(true);
+        try {
+            // 1. Upload to Storage
+            // Path: {user_id}/{timestamp}_{filename}
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}.${fileExt}`;
+            const filePath = `${currentUser?.id}/${fileName}`;
+
+            const { error: uploadError } = await api.uploadShelterDocument(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            // 2. Get Public URL
+            const publicUrl = api.getShelterDocumentUrl(filePath);
+
+            // 3. Update Shelter Profile with new document metadata
+            const newDoc = {
+                id: crypto.randomUUID(),
+                name: file.name,
+                url: publicUrl,
+                size: file.size,
+                type: file.type,
+                uploadedAt: new Date().toISOString()
+            };
+
+            const updatedDocs = [newDoc, ...docs];
+
+            // Call API to update the profile JSON column
+            await api.updateShelterDocuments(shelterId, updatedDocs);
+
+            setDocs(updatedDocs);
+            onUpdate(updatedDocs);
+            showToast("Dokument bol úspešne nahraný", "success");
+
+            if (fileInputRef.current) fileInputRef.current.value = '';
+
+        } catch (error: any) {
+            console.error(error);
+            showToast("Chyba pri nahrávaní: " + error.message, "error");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleDelete = async (docId: string) => {
+        if (!confirm("Naozaj chcete vymazať tento dokument?")) return;
+
+        const docToDelete = docs.find(d => d.id === docId);
+        if (!docToDelete) return;
+
+        try {
+            // Note: We don't delete from storage automatically here to keep it simple safely, 
+            // but we remove it from the list. 
+            // Ideally we should delete from storage too if we parse the path back.
+
+            // Ideally we should delete from storage too if we parse the path back.
+
+            const updatedDocs = docs.filter(d => d.id !== docId);
+            await api.updateShelterDocuments(shelterId, updatedDocs);
+            setDocs(updatedDocs);
+            onUpdate(updatedDocs);
+            showToast("Dokument odstránený", "info");
+        } catch (e) {
+            showToast("Chyba pri mazaní.", "error");
+        }
+    };
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-300 max-w-5xl pb-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        <FileText className="text-brand-600" />
+                        Dokumenty <span className="text-sm font-normal text-gray-400">({docs.length})</span>
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                        Nahrajte zmluvy, letáky alebo iné dokumenty, ktoré budú verejne dostupné na vašom profile.
+                    </p>
+                </div>
+                <div className="flex gap-2">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        className="hidden"
+                        accept=".pdf,.doc,.docx,.jpg,.png"
+                    />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        className="bg-brand-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-700 transition shadow-sm flex items-center gap-2"
+                    >
+                        {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+                        Nahrať dokument
+                    </button>
+                </div>
+            </div>
+
+            {loading ? (
+                <div className="text-center py-10 text-gray-400"><Loader2 className="animate-spin mx-auto mb-2" /> Načítavam...</div>
+            ) : docs.length === 0 ? (
+                <div className="bg-white rounded-3xl p-16 text-center border border-gray-100 shadow-sm border-dashed">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                        <FileText size={32} />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Žiadne dokumenty</h3>
+                    <p className="text-gray-500 text-xs mt-1">Zatiaľ ste nenahrali žiadne verejné dokumenty.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {docs.map((doc: any) => (
+                        <div key={doc.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:border-brand-200 transition">
+                            <div className="flex items-center gap-3 overflow-hidden">
+                                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 flex-shrink-0">
+                                    <FileText size={20} />
+                                </div>
+                                <div className="min-w-0">
+                                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="font-bold text-gray-900 text-sm truncate block hover:text-brand-600 hover:underline">
+                                        {doc.name}
+                                    </a>
+                                    <span className="text-xs text-gray-400">
+                                        {(doc.size / 1024).toFixed(0)} KB • {new Date(doc.uploadedAt).toLocaleDateString('sk-SK')}
+                                    </span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => handleDelete(doc.id)}
+                                className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 const SuppliesSection = ({ shelterId }: { shelterId: string }) => {
     const [supplies, setSupplies] = useState<ShelterSupply[]>([]);
     const [loading, setLoading] = useState(false);
@@ -1551,7 +1720,7 @@ const ShelterDashboard: React.FC = () => {
     const { currentUser, userRole, logout, isLoading } = useAuth();
     const navigate = useNavigate();
 
-    const [activeTab, setActiveTab] = useState<'overview' | 'pets' | 'inquiries' | 'updates' | 'profile' | 'volunteers' | 'supplies' | 'analytics'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'pets' | 'inquiries' | 'updates' | 'profile' | 'volunteers' | 'supplies' | 'analytics' | 'documents'>('overview');
     const [showModal, setShowModal] = useState(false);
     const [showImportModal, setShowImportModal] = useState(false);
     const [editingPet, setEditingPet] = useState<Pet | null>(null);
@@ -1627,9 +1796,22 @@ const ShelterDashboard: React.FC = () => {
                     <SidebarItem id="inquiries" icon={MessageSquare} label="Dopyty" badgeCount={unreadCount} />
                     <SidebarItem id="updates" icon={Zap} label="Správa noviniek" />
                     <SidebarItem id="supplies" icon={Gift} label="Materiálna pomoc" />
+                    <SidebarItem id="documents" icon={FileText} label="Dokumenty" />
                     <SidebarItem id="volunteers" icon={Users} label="Dobrovoľníci" />
                     <SidebarItem id="analytics" icon={ChartIcon} label="Analytika" />
                     <SidebarItem id="profile" icon={Building} label="Profil" />
+
+                    <a
+                        href={`#/shelters/${currentShelter.slug || currentShelter.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-500 hover:bg-gray-50 rounded-xl transition duration-200"
+                    >
+                        <ExternalLink size={20} className="text-gray-400" />
+                        <span className="flex-1 text-left">Otvoriť verejný profil</span>
+                    </a>
+
+                    <div className="border-t border-gray-100 my-2"></div>
                     <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition">
                         <LogOut size={20} /> Odhlásiť sa
                     </button>
@@ -1644,6 +1826,7 @@ const ShelterDashboard: React.FC = () => {
                     {activeTab === 'profile' && <ShelterProfileForm shelter={currentShelter} />}
                     {activeTab === 'volunteers' && <VolunteersSection shelterId={currentShelter.id} />}
                     {activeTab === 'supplies' && <SuppliesSection shelterId={currentShelter.id} />}
+                    {activeTab === 'documents' && <DocumentsSection shelterId={currentShelter.id} documents={currentShelter.documents} onUpdate={() => window.location.reload()} />}
                     {activeTab === 'analytics' && <AnalyticsSection pets={myPets} inquiries={myInquiries} shelter={currentShelter} virtualParents={vpCount} />}
                 </div>
             </main>

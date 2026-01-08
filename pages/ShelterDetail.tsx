@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import {
     Building2, MapPin, Mail, Phone, Clock, CreditCard,
     CheckCircle, Dog, Gift, LayoutGrid, Heart, Globe,
-    Facebook, Instagram, ExternalLink, Copy, Check, ShoppingCart, Info, AlertCircle, ChevronRight, PawPrint
+    Facebook, Instagram, ExternalLink, Copy, Check, ShoppingCart, Info, AlertCircle, ChevronRight, PawPrint, FileText
 } from 'lucide-react';
 import { api } from '../services/api';
 import { Shelter, Pet, ShelterSupply } from '../types';
@@ -25,7 +25,22 @@ const ShelterDetailPage: React.FC = () => {
     const [pets, setPets] = useState<Pet[]>([]);
     const [supplies, setSupplies] = useState<ShelterSupply[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'pets' | 'about' | 'help'>('pets');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialTab = (searchParams.get('tab') as 'pets' | 'about' | 'help' | 'documents') || 'pets';
+    const [activeTab, setActiveTabState] = useState<'pets' | 'about' | 'help' | 'documents'>(initialTab);
+
+    // Sync state with URL
+    useEffect(() => {
+        const tab = searchParams.get('tab') as 'pets' | 'about' | 'help' | 'documents';
+        if (tab && ['pets', 'about', 'help', 'documents'].includes(tab)) {
+            setActiveTabState(tab);
+        }
+    }, [searchParams]);
+
+    const setActiveTab = (tab: 'pets' | 'about' | 'help' | 'documents') => {
+        setActiveTabState(tab);
+        setSearchParams({ tab });
+    };
     const [copied, setCopied] = useState(false);
     const [addressCopied, setAddressCopied] = useState(false);
 
@@ -33,16 +48,27 @@ const ShelterDetailPage: React.FC = () => {
         const fetchData = async () => {
             if (!id) return;
             try {
-                // Increment views
-                api.incrementShelterViews(id);
-
+                // First fetch the shelter to resolve ID (in case 'id' param is a slug)
                 const shelterData = await api.getPublicShelter(id);
-                const petsData = await api.getPetsByShelter(id);
-                const suppliesData = await api.getSupplies(id);
 
-                setShelter(shelterData);
-                setPets(petsData.filter(p => p.isVisible));
-                setSupplies(suppliesData);
+                if (shelterData) {
+                    setShelter(shelterData);
+
+                    // Now perform actions that require the real UUID
+                    const realId = shelterData.id;
+
+                    // Increment views
+                    api.incrementShelterViews(realId);
+
+                    // Fetch related data using the UUID
+                    const [petsData, suppliesData] = await Promise.all([
+                        api.getPetsByShelter(realId),
+                        api.getSupplies(realId)
+                    ]);
+
+                    setPets(petsData.filter(p => p.isVisible));
+                    setSupplies(suppliesData);
+                }
             } catch (e) {
                 console.error("Error fetching shelter data:", e);
             } finally {
@@ -203,18 +229,69 @@ const ShelterDetailPage: React.FC = () => {
                             >
                                 <Building2 size={18} /> {t('shelterDetail.tabs.about')}
                             </button>
-                            {!isShelterUser && (
+
+                            {shelter.documents && shelter.documents.length > 0 && (
                                 <button
-                                    onClick={() => setActiveTab('help')}
-                                    className={`px-6 py-5 text-[11px] font-black border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'help'
+                                    onClick={() => setActiveTab('documents')}
+                                    className={`px-6 py-5 text-[11px] font-black border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'documents'
                                         ? 'border-brand-600 text-brand-600'
                                         : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
                                         }`}
                                 >
-                                    <Gift size={18} /> {t('shelterDetail.tabs.help')}
+                                    <FileText size={18} /> {t('shelterDetail.tabs.documents', 'Dokumenty')}
                                 </button>
                             )}
+
+                            <button
+                                onClick={() => setActiveTab('help')}
+                                className={`px-6 py-5 text-[11px] font-black border-b-4 transition flex items-center gap-2 whitespace-nowrap ${activeTab === 'help'
+                                    ? 'border-brand-600 text-brand-600'
+                                    : 'border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200'
+                                    }`}
+                            >
+                                <Gift size={18} /> {t('shelterDetail.tabs.help')}
+                            </button>
                         </div>
+
+                        {/* --- TAB CONTENT: DOCUMENTS --- */}
+                        {activeTab === 'documents' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="bg-white rounded-[2.5rem] p-8 md:p-10 border border-gray-100 shadow-xl space-y-8">
+                                    <div className="max-w-3xl">
+                                        <h2 className="text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center">
+                                                <FileText size={24} />
+                                            </div>
+                                            Verejné dokumenty
+                                        </h2>
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            {shelter.documents?.map((doc: any) => (
+                                                <a
+                                                    key={doc.id}
+                                                    href={doc.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-brand-200 hover:shadow-lg transition group"
+                                                >
+                                                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-gray-400 shadow-sm group-hover:text-brand-600">
+                                                        <FileText size={20} />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="font-bold text-gray-900 truncate group-hover:text-brand-600 transition">{doc.name}</h3>
+                                                        <p className="text-xs text-gray-400">
+                                                            {(doc.size / 1024).toFixed(0)} KB • {new Date(doc.uploadedAt).toLocaleDateString('sk-SK')}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-2 text-gray-300 group-hover:text-brand-600">
+                                                        <ExternalLink size={20} />
+                                                    </div>
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {/* --- TAB CONTENT: PETS --- */}
                         {activeTab === 'pets' && (
@@ -329,7 +406,7 @@ const ShelterDetailPage: React.FC = () => {
                         )}
 
                         {/* --- TAB CONTENT: HELP --- */}
-                        {activeTab === 'help' && !isShelterUser && (
+                        {activeTab === 'help' && (
                             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
                                 {/* Donation "Credit Card" Design */}

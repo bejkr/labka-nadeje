@@ -91,6 +91,15 @@ export interface PetUpdate {
 
 export type OrganizationType = 'shelter' | 'civic_association' | 'quarantine_station' | 'volunteer';
 
+export interface ShelterDocument {
+  id: string;
+  name: string;
+  url: string;
+  size: number;
+  type: string;
+  uploadedAt: string;
+}
+
 export interface Shelter {
   id: string;
   role: 'shelter';
@@ -117,6 +126,8 @@ export interface Shelter {
     currentAnimals: number;
     views: number;
   };
+  documents?: ShelterDocument[];
+  slug?: string;
 }
 
 export interface UserPreferences {

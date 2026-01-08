@@ -103,7 +103,7 @@ const ShelterListPage: React.FC = () => {
                 <div style="text-align: center; font-family: sans-serif; min-width: 140px; padding: 5px;">
                     <div style="font-weight: 800; color: #111827; margin-bottom: 2px; font-size: 14px;">${shelter.name}</div>
                     <div style="font-size: 11px; color: #6b7280; margin-bottom: 10px;">${shelter.location}</div>
-                    <a href="#/shelters/${shelter.id}" style="display: block; padding: 8px 12px; background-color: #ea580c; color: white; font-size: 11px; font-weight: 700; border-radius: 8px; text-decoration: none;">Zobraziť profil</a>
+                    <a href="#/shelters/${shelter.slug || shelter.id}" style="display: block; padding: 8px 12px; background-color: #ea580c; color: white; font-size: 11px; font-weight: 700; border-radius: 8px; text-decoration: none;">Zobraziť profil</a>
                 </div>
             `;
                 marker.bindPopup(popupContent).addTo(markersLayer);
@@ -184,7 +184,7 @@ const ShelterListPage: React.FC = () => {
                         {filteredShelters.map(shelter => (
                             <Link
                                 key={shelter.id}
-                                to={`/shelters/${shelter.id}`}
+                                to={`/shelters/${shelter.slug || shelter.id}`}
                                 className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:border-brand-200 transition-all duration-500 flex flex-col overflow-hidden transform hover:-translate-y-2"
                             >
                                 {/* Card Header - No overflow hidden here to let logo pop out */}
