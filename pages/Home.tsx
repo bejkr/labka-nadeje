@@ -384,7 +384,7 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredPets.map((pet, index) => (
               <div key={pet.id} className={`group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1 ${index >= 3 ? 'hidden md:block' : ''}`}>
-                <PetCardImageSlider pet={pet} aspectRatio="aspect-[3/4]" />
+                <PetCardImageSlider pet={pet} aspectRatio="aspect-square" />
 
                 <Link to={`/pets/${pet.slug || pet.id}`} className="block p-6">
                   <div className="flex justify-between items-start mb-2">
@@ -489,7 +489,7 @@ const HomePage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {fosterPets.map((pet) => (
                 <div key={pet.id} className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-indigo-100 ring-1 ring-indigo-50 transform hover:-translate-y-1">
-                  <PetCardImageSlider pet={pet} aspectRatio="aspect-[3/4]" showAgeBadge={false} />
+                  <PetCardImageSlider pet={pet} aspectRatio="aspect-square" showAgeBadge={false} />
 
                   {/* Needs specific override for the badge if needed, but the slider has default badges. Foster badge is unique. */}
                   {/* Since PetCardImageSlider encapsulates badges, the foster badge "Dočasná opatera" won't show unless I add it to props or overlay it locally. The slider has `relative` so I can't easily overlay from outside without z-index hacks. I will add children prop or customBadges prop later if needed, but for now the user asked for arrows. I'll stick to standard badges. */}

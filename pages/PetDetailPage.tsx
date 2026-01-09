@@ -402,7 +402,7 @@ const PetDetailPage: React.FC = () => {
             : <span className="text-pink-500">♀ {t('petDetail.genderLabel.female')}</span>;
     };
 
-    const sidebarContent = (
+    const sidebarTop = (
         <div className="space-y-6">
             <div className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 border border-gray-100 p-6">
                 <div className="flex flex-col items-center text-center mb-6">
@@ -510,6 +510,11 @@ const PetDetailPage: React.FC = () => {
                     </div>
                 )}
             </div>
+        </div>
+    );
+
+    const sidebarBottom = (
+        <div className="space-y-6">
             <Link to={`/shelters/${shelter?.slug || pet.shelterId}`} className="block bg-white rounded-3xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition group">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="w-14 h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center p-1 shadow-sm overflow-hidden">
@@ -560,6 +565,13 @@ const PetDetailPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+        </div>
+    );
+
+    const sidebarContent = (
+        <div className="space-y-6">
+            {sidebarTop}
+            {sidebarBottom}
         </div>
     );
 
@@ -635,7 +647,7 @@ const PetDetailPage: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="block lg:hidden">{sidebarContent}</div>
+                        <div className="block lg:hidden">{sidebarTop}</div>
 
                         <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
                             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -650,6 +662,8 @@ const PetDetailPage: React.FC = () => {
                                         <p className="text-amber-800 text-sm leading-relaxed">{translatedHealth?.importantNotes || pet.importantNotes}</p>
                                     </div>
                                 </div>
+
+
                             )}
                             {isTranslatingDescription ? (
                                 <div className="space-y-4 animate-pulse">
@@ -671,6 +685,7 @@ const PetDetailPage: React.FC = () => {
                                 </div>
                             )}
                         </div>
+                        <div className="block lg:hidden">{sidebarBottom}</div>
 
                         {/* WALL OF FAME - Only visible if there are virtual parents */}
                         {virtualParents.length > 0 && (
