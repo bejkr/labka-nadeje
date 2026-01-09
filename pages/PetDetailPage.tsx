@@ -157,10 +157,11 @@ const PetDetailPage: React.FC = () => {
         if (!pet) return;
 
         const translate = async () => {
-            if (i18n.language === 'sk') {
+            // Check for any variant of Slovak (sk, sk-SK) to prevent unnecessary AI translation
+            if (i18n.language?.startsWith('sk')) {
                 setTranslatedDescription(null);
                 setTranslatedHealth(null);
-                setIsTranslatingDescription(false); // Validly ensure false
+                setIsTranslatingDescription(false);
                 return;
             }
 
@@ -599,19 +600,27 @@ const PetDetailPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-20">
                     <div className="lg:col-span-2 space-y-8">
                         <div className={`grid gap-6 ${hasVideo ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
-                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 relative flex flex-col h-full ${hasVideo ? 'min-h-[400px]' : 'min-h-[850px]'}`}>
-                                <div className="relative flex-1 rounded-2xl overflow-hidden bg-gray-100 group mb-4">
-                                    <img src={uniquePhotos[activePhotoIndex]} alt="" className="w-full h-full object-cover cursor-zoom-in absolute inset-0" onClick={() => setLightboxIndex(activePhotoIndex)} />
+                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 ${hasVideo ? '' : ''}`}>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {uniquePhotos.map((img, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`relative rounded-2xl overflow-hidden cursor-zoom-in group shadow-sm ${
+                                                // STRICT RULE: If more than 1 photo, EVERYTHING is a square. NO columns spanning.
+                                                // If exactly 1 photo, it spans 2 cols and is wide (4/3).
+                                                uniquePhotos.length === 1 ? 'col-span-2 aspect-[4/3]' : 'aspect-square'
+                                                }`}
+                                            onClick={() => setLightboxIndex(idx)}
+                                        >
+                                            <img
+                                                src={img}
+                                                alt=""
+                                                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
+                                        </div>
+                                    ))}
                                 </div>
-                                {uniquePhotos.length > 1 && (
-                                    <div className="flex gap-3 overflow-x-auto pb-1 custom-scrollbar mt-auto h-16 flex-shrink-0">
-                                        {uniquePhotos.map((img, idx) => (
-                                            <button key={idx} onClick={() => setActivePhotoIndex(idx)} className={`relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${activePhotoIndex === idx ? 'border-brand-600' : 'border-transparent opacity-70'}`}>
-                                                <img src={img} className="w-full h-full object-cover" alt="" />
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
                             {hasVideo && pet.videoUrl && (
                                 <div className="flex flex-col h-full justify-start">
