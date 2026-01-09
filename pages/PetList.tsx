@@ -33,6 +33,16 @@ const PetListPage: React.FC = () => {
     }
   }, [searchParams]);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const isShelter = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
 
   const availableTags = useMemo(() => {
@@ -109,8 +119,10 @@ const PetListPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-sm p-4 md:p-6 mb-8 border border-gray-100 sticky top-20 z-30 backdrop-blur-xl bg-white/95 transition-all duration-300">
-          <div className="flex items-center justify-between mb-2 md:mb-4 pb-2 border-b border-gray-100">
+        <div className={`bg-white rounded-3xl shadow-sm border border-gray-100 sticky top-20 z-30 backdrop-blur-xl bg-white/95 transition-all duration-300 ${isScrolled ? 'py-3 px-4 shadow-lg ring-1 ring-black/5' : 'p-4 md:p-6 mb-8'
+          }`}>
+          <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'md:hidden mb-0 pb-0 border-0' : 'mb-2 md:mb-4 pb-2 border-b border-gray-100'
+            }`}>
             <div className="flex items-center gap-2 text-gray-700 font-bold">
               <Filter className="text-brand-600" size={20} />
               <span className="text-sm">Filtrovať</span>

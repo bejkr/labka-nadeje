@@ -1040,9 +1040,55 @@ const PetDetailPage: React.FC = () => {
 
             {
                 lightboxIndex !== null && (
-                    <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4" onClick={() => setLightboxIndex(null)}>
-                        <button className="absolute top-4 right-4 text-white p-2" onClick={() => setLightboxIndex(null)}><X size={36} /></button>
-                        <img src={uniquePhotos[lightboxIndex]} className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} alt="" />
+                    <div
+                        className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
+                        onClick={() => setLightboxIndex(null)}
+                        onTouchStart={(e) => {
+                            const touch = e.touches[0];
+                            // Store simple start X position on the DOM element dataset or component state? 
+                            // Component state is cleaner but let's just use a simple let variable outside capture since this is a functional component re-render? No.
+                            // Better to rely on React state or ref. Let's strictly add refs if needed, but for a ReplaceFileContent limitation, I'll use a hacky `e.currentTarget.dataset.startX = touch.clientX`.
+                            e.currentTarget.dataset.startX = String(touch.clientX);
+                        }}
+                        onTouchEnd={(e) => {
+                            const startX = parseFloat(e.currentTarget.dataset.startX || '0');
+                            const endX = e.changedTouches[0].clientX;
+                            if (startX - endX > 50) handleNextImage(); // Swipe Left -> Next
+                            if (endX - startX > 50) handlePrevImage(); // Swipe Right -> Prev
+                        }}
+                    >
+                        <button className="absolute top-4 right-4 text-white/70 hover:text-white transition p-2 z-50 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md" onClick={() => setLightboxIndex(null)}><X size={32} /></button>
+
+                        {uniquePhotos.length > 1 && (
+                            <>
+                                <button
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white transition rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md z-50 md:p-4"
+                                    onClick={handlePrevImage}
+                                >
+                                    <ChevronLeft size={36} />
+                                </button>
+                                <button
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white transition rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md z-50 md:p-4"
+                                    onClick={handleNextImage}
+                                >
+                                    <ChevronRight size={36} />
+                                </button>
+                            </>
+                        )}
+
+                        <img
+                            src={uniquePhotos[lightboxIndex]}
+                            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300 select-none"
+                            onClick={(e) => e.stopPropagation()}
+                            alt=""
+                            draggable={false}
+                        />
+
+                        {uniquePhotos.length > 1 && (
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 backdrop-blur-md rounded-full text-white text-xs font-bold pointer-events-none">
+                                {lightboxIndex + 1} / {uniquePhotos.length}
+                            </div>
+                        )}
                     </div>
                 )
             }
