@@ -21,7 +21,7 @@ i18n
             escapeValue: false, // not needed for react as it escapes by default
         },
         detection: {
-            order: ['localStorage', 'navigator'],
+            order: ['localStorage'], // REMOVED 'navigator' to force default SK on first visit
             caches: ['localStorage'],
         },
     });
