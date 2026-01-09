@@ -24,6 +24,7 @@ interface AuthContextType {
   cancelAdoption: (petId: string) => void;
   toggleFavorite: (petId: string) => void;
   isFavorite: (petId: string) => boolean;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -217,11 +218,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return isRegularUser(currentUser) ? currentUser.favorites.includes(petId) : false;
   };
 
+  // Expose refresh capability for components (e.g., after updating documents)
+  const refreshUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    await syncProfile(session);
+  };
+
   return (
     <AuthContext.Provider value={{
       currentUser, userRole, isRecoveringPassword, isLoading,
       login, logout, resetPassword, updatePassword, registerUser, registerShelter, updateUserProfile,
-      adoptVirtually, updateAdoptionAmount, cancelAdoption, toggleFavorite, isFavorite
+      adoptVirtually, updateAdoptionAmount, cancelAdoption, toggleFavorite, isFavorite, refreshUser
     }}>
       {children}
     </AuthContext.Provider>

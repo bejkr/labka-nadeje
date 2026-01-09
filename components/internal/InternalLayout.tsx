@@ -12,10 +12,6 @@ const InternalLayout: React.FC = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const { logout, currentUser } = useAuth();
     const navigate = useNavigate();
-    // We assume the URL is intern.labkanadeje.sk/{shelter-slug}/...
-    // So we might grab the shelter slug from params if we are using React Router path ":shelterSlug/*"
-    // But if we are on a subdomain, maybe we don't need the slug in the URL if the user is logged in? 
-    // The user requirement said: intern.labkanadeje.sk/{shelter-slug}
     const { shelterSlug } = useParams();
 
     const handleLogout = async () => {
@@ -38,7 +34,6 @@ const InternalLayout: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans flex text-gray-900">
-            {/* Sidebar */}
             <aside
                 className={`
           fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 transition-all duration-300 ease-in-out
@@ -46,13 +41,18 @@ const InternalLayout: React.FC = () => {
           hidden md:flex flex-col
         `}
             >
-                <div className="h-16 flex items-center justify-center border-b border-gray-100 px-4">
+                <div className="h-20 flex flex-col items-center justify-center border-b border-gray-100 px-4 py-4">
                     {isSidebarOpen ? (
-                        <div className="flex items-center gap-2">
-                            <span className="font-black text-brand-600 tracking-tight text-xl">INTERN</span>
+                        <div className="flex flex-col items-center gap-1">
+                            <div className="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600 font-bold overflow-hidden">
+                                {(currentUser as any)?.logoUrl ? <img src={(currentUser as any).logoUrl} className="w-full h-full object-cover" /> : (currentUser?.name.substring(0, 2).toUpperCase())}
+                            </div>
+                            <span className="font-bold text-gray-900 text-sm text-center leading-tight line-clamp-2">{currentUser?.name}</span>
                         </div>
                     ) : (
-                        <span className="font-black text-brand-600 text-xl">IN</span>
+                        <div className="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600 font-bold text-sm">
+                            {(currentUser as any)?.logoUrl ? <img src={(currentUser as any).logoUrl} className="w-full h-full object-cover rounded-lg" /> : (currentUser?.name.substring(0, 2).toUpperCase())}
+                        </div>
                     )}
                 </div>
 
@@ -62,11 +62,11 @@ const InternalLayout: React.FC = () => {
                             key={item.path}
                             to={item.path}
                             className={({ isActive }) => `
-                                flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative
-                                ${isActive
+                flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative
+                ${isActive
                                     ? 'bg-brand-50 text-brand-700 font-bold shadow-sm'
                                     : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium'}
-                            `}
+              `}
                             end={item.path === `/${shelterSlug}`}
                         >
                             {({ isActive }) => (
@@ -95,9 +95,7 @@ const InternalLayout: React.FC = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
             <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
-                {/* Header */}
                 <header className="h-16 bg-white border-b border-gray-200 sticky top-0 z-40 px-8 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-4">
                         <button
@@ -130,7 +128,6 @@ const InternalLayout: React.FC = () => {
                     </div>
                 </header>
 
-                {/* Page Content */}
                 <main className="flex-1 p-8 overflow-y-auto">
                     <Outlet />
                 </main>

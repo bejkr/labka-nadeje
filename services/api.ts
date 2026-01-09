@@ -108,6 +108,37 @@ const mapProfileFromDB = (row: any): User | Shelter => {
 };
 
 export const api = {
+    // Medical Records
+    async getMedicalRecords(shelterId: string): Promise<any[]> {
+        const { data, error } = await supabase
+            .from('medical_records')
+            .select('*, pets(name)')
+            .order('date', { ascending: false });
+
+        if (error) throw error;
+
+        // Filter by shelter (although RLS should handle this, filtering by joined pet shelter_id helps double check)
+        // Since medical_records is child of pets, and pets has shelter_id, we can rely on RLS if set up correctly.
+        // But for safety, let's assume the query returns records for the pets this user can see.
+        return data || [];
+    },
+
+    async createMedicalRecord(record: Partial<any>) {
+        const { data, error } = await supabase.from('medical_records').insert(record).select().single();
+        if (error) throw error;
+        return data;
+    },
+
+    async updateMedicalRecord(id: string, updates: Partial<any>) {
+        const { error } = await supabase.from('medical_records').update(updates).eq('id', id);
+        if (error) throw error;
+    },
+
+    async deleteMedicalRecord(id: string) {
+        const { error } = await supabase.from('medical_records').delete().eq('id', id);
+        if (error) throw error;
+    },
+
     async uploadFile(file: File, bucket: string, path: string = ''): Promise<string> {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;

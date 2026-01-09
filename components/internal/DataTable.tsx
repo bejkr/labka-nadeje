@@ -47,7 +47,6 @@ export function DataTable<T extends { id: string | number }>({ data, columns, se
 
     const filteredData = useMemo(() => {
         if (!searchTerm) return sortedData;
-        // simple search implementation - can be overridden by onSearch prop if needed for server-side
         return sortedData.filter(item =>
             Object.values(item as any).some(val =>
                 String(val).toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,7 +56,6 @@ export function DataTable<T extends { id: string | number }>({ data, columns, se
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
-            {/* Toolbar */}
             <div className="p-4 border-b border-gray-100 flex items-center justify-between gap-4">
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
@@ -79,7 +77,6 @@ export function DataTable<T extends { id: string | number }>({ data, columns, se
                 </div>
             </div>
 
-            {/* Table */}
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-gray-50/50 text-gray-500 font-medium">
@@ -114,13 +111,6 @@ export function DataTable<T extends { id: string | number }>({ data, columns, se
                                 ))}
                             </tr>
                         ))}
-                        {filteredData.length === 0 && (
-                            <tr>
-                                <td colSpan={columns.length} className="px-6 py-12 text-center text-gray-400 italic">
-                                    Žiadne dáta na zobrazenie.
-                                </td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
             </div>
