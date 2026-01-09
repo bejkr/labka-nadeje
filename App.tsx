@@ -9,6 +9,7 @@ import Logo from './components/Logo';
 import { Analytics } from '@vercel/analytics/react';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from './components/LanguageSelector';
+import { Clarity } from './components/Clarity';
 
 // Pages imports
 import HomePage from './pages/Home';
@@ -388,6 +389,7 @@ const AuthListener: React.FC = () => {
     }
   }, [isRecoveringPassword, navigate]);
 
+  return null;
 };
 
 const RedirectListener: React.FC = () => {
@@ -413,38 +415,84 @@ const RedirectListener: React.FC = () => {
   return null;
 };
 
+import InternalMedical from './pages/internal/InternalMedical';
+import InternalAdoptions from './pages/internal/InternalAdoptions';
+import AdoptionDetail from './pages/internal/AdoptionDetail';
+import InternalDocuments from './pages/internal/InternalDocuments';
+import InternalSettings from './pages/internal/InternalSettings';
+import InternalRootRedirect from './components/internal/InternalRootRedirect';
+import InternalLayout from './components/internal/InternalLayout';
+import InternalDashboard from './pages/internal/InternalDashboard';
+import InternalPetList from './pages/internal/InternalPetList';
+import InternalPetDetail from './pages/internal/InternalPetDetail';
+
+// Public Routes Component (Existing App Logic)
+const PublicRoutes = () => {
+  return (
+    <div className="flex flex-col min-h-screen font-sans">
+      <AuthListener />
+      <RedirectListener />
+      <Navbar />
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/pets" element={<PetListPage />} />
+          <Route path="/pets/:id" element={<PetDetailPage />} />
+          <Route path="/shelter" element={<ShelterDashboard />} />
+          <Route path="/shelters" element={<ShelterListPage />} />
+          <Route path="/shelters/:id" element={<ShelterDetailPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogDetailPage />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/profile" element={<UserProfilePage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfUse />} />
+        </Routes>
+      </main>
+      <Footer />
+      <AdoptionAssistant />
+      <GDPRConsent />
+    </div>
+  );
+};
+
+// Internal Routes Component (New System)
+const InternalRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<InternalRootRedirect />} />
+      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/:shelterSlug" element={<InternalLayout />}>
+        <Route index element={<InternalDashboard />} />
+        <Route path="pets" element={<InternalPetList />} />
+        <Route path="pets/:id" element={<InternalPetDetail />} />
+        <Route path="medical" element={<InternalMedical />} />
+        <Route path="adoptions" element={<InternalAdoptions />} />
+        <Route path="adoptions/:id" element={<AdoptionDetail />} />
+        <Route path="documents" element={<InternalDocuments />} />
+
+        {/* Placeholder routes until implemented */}
+        <Route path="settings" element={<InternalSettings />} />
+      </Route>
+      {/* Fallback for root or bad paths on internal subdomain */}
+      <Route path="*" element={<div className="p-8 text-center text-gray-500">Vyberte útulok alebo sa prihláste.</div>} />
+    </Routes>
+  );
+};
+
 const App: React.FC = () => {
+  // Simple subdomain check
+  const isInternal = window.location.hostname.startsWith('intern.');
+
   return (
     <Router>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen font-sans">
-        <AuthListener />
-        <RedirectListener />
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/pets" element={<PetListPage />} />
-            <Route path="/pets/:id" element={<PetDetailPage />} />
-            <Route path="/shelter" element={<ShelterDashboard />} />
-            <Route path="/shelters" element={<ShelterListPage />} />
-            <Route path="/shelters/:id" element={<ShelterDetailPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:id" element={<BlogDetailPage />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/profile" element={<UserProfilePage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfUse />} />
-          </Routes>
-        </main>
-        <Footer />
-        <AdoptionAssistant />
-        <GDPRConsent />
-        <Analytics />
-      </div>
+      {isInternal ? <InternalRoutes /> : <PublicRoutes />}
+      <Analytics />
+      <Clarity />
     </Router>
   );
 };

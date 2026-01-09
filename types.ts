@@ -77,6 +77,13 @@ export interface Pet {
   views: number;
   slug?: string;
   updates?: PetUpdate[];
+  // Internal System Fields
+  internalId?: string;
+  chipNumber?: string;
+  passportNumber?: string;
+  intakeDate?: string;
+  intakeCircumstances?: string;
+  internalNotes?: string;
 }
 
 export interface PetUpdate {
@@ -281,4 +288,18 @@ export interface PetAlert {
     genders?: Gender[];
   };
   createdAt: string;
+}
+
+export interface MedicalRecord {
+  id: string;
+  petId: string;
+  date: string;
+  type: 'vaccination' | 'surgery' | 'checkup' | 'medication' | 'other';
+  title: string;
+  description?: string;
+  vetName?: string;
+  clinicName?: string;
+  weight?: number;
+  nextDueDate?: string;
+  cost?: number;
 }
