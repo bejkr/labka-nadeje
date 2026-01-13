@@ -66,6 +66,35 @@ const MOCK_PROMO_SLIDES: PromoSlide[] = [
     iconType: "health"
   }
 ];
+const MOCK_BLOG_POSTS: BlogPost[] = [
+  {
+    id: '1',
+    title: '10 tipov pre prvého psíka',
+    summary: 'Príchod nového člena rodiny je vzrušujúci, ale aj náročný. Pripravili sme pre vás zoznam vecí, na ktoré by ste nemali zabudnúť.',
+    content: [],
+    imageUrl: 'https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: new Date().toISOString(),
+    author: 'Tím Labka'
+  },
+  {
+    id: '2',
+    title: 'Prečo adoptovať staršieho psa?',
+    summary: 'Šteniatka sú roztomilé, ale starší psíkovia majú svoje nezameniteľné čaro. Sú pokojnejší, vďačnejší a často už majú hygienické návyky.',
+    content: [],
+    imageUrl: 'https://images.unsplash.com/photo-1534361960057-19889db9621e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: new Date(Date.now() - 86400000 * 2).toISOString(),
+    author: 'Jana z útulku'
+  },
+  {
+    id: '3',
+    title: 'Ako kŕmiť pre zdravú srsť',
+    summary: 'Strava má obrovský vplyv na zdravie a vzhľad vášho miláčika. Pozreli sme sa na to, ktoré vitamíny a minerály sú kľúčové.',
+    content: [],
+    imageUrl: 'https://images.unsplash.com/photo-1589924691195-41432c84c161?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: new Date(Date.now() - 86400000 * 5).toISOString(),
+    author: 'MVDr. Novák'
+  }
+];
 
 const ICON_MAP = {
   shopping: ShoppingBag,
@@ -92,14 +121,18 @@ const HomePage: React.FC = () => {
   // Promo Slides State
   const [promoSlides, setPromoSlides] = useState<PromoSlide[]>([]);
   // Platform Stats - Fixed numbers per user request (too slow to load dynamically)
-  const [stats] = useState({ waiting: 18, adopted: 0, shelters: 4 });
+  const [stats] = useState({ waiting: 18, adopted: '10+', shelters: 4 });
 
   // Fetch Data
   useEffect(() => {
     const fetchData = async () => {
       try {
         const posts = await api.getBlogPosts(3);
-        setRecentPosts(posts);
+        if (posts.length > 0) {
+          setRecentPosts(posts);
+        } else {
+          setRecentPosts(MOCK_BLOG_POSTS);
+        }
 
         const slides = await api.getPromoSlides();
         if (slides.length > 0) {
@@ -112,6 +145,7 @@ const HomePage: React.FC = () => {
       } catch (error) {
         console.error("Failed to load home data", error);
         setPromoSlides(MOCK_PROMO_SLIDES);
+        setRecentPosts(MOCK_BLOG_POSTS);
       }
     };
     fetchData();
@@ -165,6 +199,21 @@ const HomePage: React.FC = () => {
     }
   };
 
+  // Safe Image Optimization Helper
+  const getOptimizedImageUrl = (url: string, width: number = 800) => {
+    if (!url) return '';
+    if (url.includes('images.unsplash.com')) {
+      // If it already has params, we want to replace/append carefully.
+      // Easiest strategy for Unsplash: strip existing params and add our own, 
+      // OR parse it. But stripping is safer to enforce size.
+      // However, some IDs need the params? No, Unsplash source usually works with just the path.
+      // Let's try to append cleanly.
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}auto=format&fit=crop&w=${width}&q=80&format=webp`;
+    }
+    return url;
+  };
+
 
   return (
     <div className="overflow-x-hidden">
@@ -183,7 +232,7 @@ const HomePage: React.FC = () => {
             {/* Left Column: Text & CTA */}
             <div className="text-center lg:text-left animate-in slide-in-from-bottom-10 duration-700">
 
-              <h1 className="text-5xl lg:text-8xl font-black text-gray-900 tracking-tighter mb-8 leading-[1.1]">
+              <h1 className="text-4xl lg:text-7xl font-black text-gray-900 tracking-tighter mb-8 leading-[1.1]">
                 {t('home.heroTitleStart')} <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-orange-500 to-amber-500">
                   {t('home.heroTitleEnd')}
                   <svg className="absolute w-full h-4 -bottom-2 left-0 text-brand-200/50 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -276,7 +325,7 @@ const HomePage: React.FC = () => {
                           }`}
                       >
                         <img
-                          src={pet.imageUrl}
+                          src={getOptimizedImageUrl(pet.imageUrl, 800)}
                           alt={pet.name}
                           className="w-full h-full object-cover rounded-[3rem] shadow-2xl rotate-3 border-4 border-white hover:rotate-0 transition-transform duration-500"
                         />
@@ -548,7 +597,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* SMART MATCH PROMO SECTION */}
+      {/* LABKA MATCH PROMO SECTION */}
       <section className="py-24 bg-gray-900 relative overflow-hidden">
         {/* Background Glows */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl overflow-hidden pointer-events-none">
@@ -566,7 +615,7 @@ const HomePage: React.FC = () => {
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
                 Neviete si vybrať? <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Nechajte to na Smart Match</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Nechajte to na Labka Match</span>
               </h2>
               <p className="text-xl text-gray-400 mb-8 leading-relaxed max-w-2xl">
                 Odpovedzte na 7 jednoduchých otázok o vašom životnom štýle a naša umelá inteligencia vám nájde parťáka, ktorý k vám sadne ako uliaty.
@@ -575,7 +624,7 @@ const HomePage: React.FC = () => {
                 to="/match"
                 className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 transition-all shadow-lg hover:shadow-brand-500/25 transform hover:-translate-y-1"
               >
-                Spustiť Smart Match <ArrowRight className="ml-2" size={20} />
+                Spustiť Labka Match <ArrowRight className="ml-2" size={20} />
               </Link>
             </div>
 
@@ -635,7 +684,7 @@ const HomePage: React.FC = () => {
                 <Link key={post.id} to={`/blog/${post.id}`} className="flex flex-col bg-white overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-transparent group h-full">
                   <div className="flex-shrink-0 h-52 overflow-hidden relative">
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition z-10"></div>
-                    <img className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700" loading="lazy" src={`${post.imageUrl}&format=webp&w=500&q=70`} alt={post.title} />
+                    <img className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700" loading="lazy" src={getOptimizedImageUrl(post.imageUrl, 600)} alt={post.title} />
                   </div>
                   <div className="flex-1 p-8 flex flex-col justify-between">
                     <div className="flex-1">
@@ -697,7 +746,7 @@ const HomePage: React.FC = () => {
             <div className="bg-orange-50 rounded-[2.5rem] p-8 text-center hover:-translate-y-2 transition duration-300">
               <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 shadow-md border-4 border-white">
                 <img
-                  src="https://images.unsplash.com/photo-1527362950785-f487a7c1fe48?auto=format&fit=crop&w=300&q=80&format=webp"
+                  src={getOptimizedImageUrl("https://images.unsplash.com/photo-1527362950785-f487a7c1fe48", 300)}
                   alt="Dva životy"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -710,7 +759,7 @@ const HomePage: React.FC = () => {
             <div className="bg-blue-50 rounded-[2.5rem] p-8 text-center hover:-translate-y-2 transition duration-300">
               <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 shadow-md border-4 border-white">
                 <img
-                  src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?auto=format&fit=crop&w=300&q=80&format=webp"
+                  src={getOptimizedImageUrl("https://images.unsplash.com/photo-1510771463146-e89e6e86560e", 300)}
                   alt="Sloboda"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -723,7 +772,7 @@ const HomePage: React.FC = () => {
             <div className="bg-purple-50 rounded-[2.5rem] p-8 text-center hover:-translate-y-2 transition duration-300">
               <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 shadow-md border-4 border-white">
                 <img
-                  src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=300&q=80&format=webp"
+                  src={getOptimizedImageUrl("https://images.unsplash.com/photo-1518717758536-85ae29035b6d", 300)}
                   alt="Láska"
                   loading="lazy"
                   className="w-full h-full object-cover"
@@ -762,7 +811,7 @@ const HomePage: React.FC = () => {
                   <div className={`relative overflow-hidden ${isSingle ? 'h-64 md:h-96 md:w-1/2' : 'h-64'}`}>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                     <img
-                      src={`${slide.imageUrl}&format=webp&q=70`}
+                      src={getOptimizedImageUrl(slide.imageUrl, 800)}
                       alt={slide.title}
                       loading="lazy"
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"

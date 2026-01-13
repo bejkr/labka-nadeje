@@ -25,7 +25,7 @@ const Navbar: React.FC = () => {
 
     const navLinks = [
         { name: t('nav.home'), path: '/', icon: Home },
-        { name: 'Smart Match', path: '/match', icon: Sparkles },
+        { name: 'Labka Match', path: '/match', icon: Sparkles },
         { name: t('nav.pets'), path: '/pets', icon: Search },
         { name: t('nav.shelters'), path: '/shelters', icon: Map },
         { name: t('nav.blog'), path: '/blog', icon: BookOpen },
