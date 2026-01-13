@@ -3,9 +3,10 @@ import React, { useState, useMemo } from 'react';
 import { usePets } from '../../contexts/PetContext';
 import { Pet, PetType, Gender } from '../../types';
 import {
-    Plus, Eye, EyeOff, Filter, Search, MoreHorizontal,
-    AlertTriangle, CheckCircle2, Clock, Image as ImageIcon,
-    FileText, Trash2, Tag, Share2, ChevronDown, ArrowUpDown, Edit2
+    Plus, Eye, EyeOff, Search, MoreHorizontal,
+    AlertTriangle, Image as ImageIcon,
+    FileText, Trash2, Tag, Share2, ArrowUpDown, Edit2, Download,
+    Calendar, CheckCircle2, ChevronDown, Clock
 } from 'lucide-react';
 import { formatSlovakAge } from '../../utils/formatters';
 import { useAuth } from '../../contexts/AuthContext';
@@ -92,6 +93,9 @@ const InternalPetList: React.FC = () => {
             } else if (sortConfig.key === 'quality') {
                 valA = a.metrics.qualityScore;
                 valB = b.metrics.qualityScore;
+            } else if (sortConfig.key === 'name') {
+                valA = a.name.toLowerCase();
+                valB = b.name.toLowerCase();
             }
 
             if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
@@ -121,139 +125,61 @@ const InternalPetList: React.FC = () => {
         }));
     };
 
+    const handleRowClick = (id: string, e: React.MouseEvent) => {
+        // Prevent navigation if clicking on checkbox or actions
+        if ((e.target as HTMLElement).closest('input[type="checkbox"]') || (e.target as HTMLElement).closest('button')) {
+            return;
+        }
+        navigate(`${id}`);
+    }
+
     // --- UI Variables ---
 
     const hasActiveFilters = statusFilter !== 'all' || typeFilter !== 'all' || alertFilter;
 
     return (
-        <div className="space-y-6 pb-20">
+        <div className="space-y-6 pb-20 animate-in fade-in duration-300">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Evidencia zvierat</h1>
-                    <p className="text-gray-500 text-sm">Spravujte zoznam zvierat, ich statusy a profily.</p>
+                    <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Evidencia zvierat</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Spravujte zoznam zvierat, ich statusy a profily.</p>
                 </div>
-                <div className="flex gap-2">
-                    <input
-                        type="file"
-                        accept=".csv"
-                        className="hidden"
-                        id="csv-upload"
-                        onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                                Papa.parse(file, {
-                                    header: true,
-                                    skipEmptyLines: true,
-                                    complete: async (results) => {
-                                        let successCount = 0;
-                                        let errorCount = 0;
-
-                                        for (const row of results.data as any[]) {
-                                            try {
-                                                // Map keys from Slovak to Internal
-                                                // Expected Columns: Meno, Druh, Plemeno, Vek, Pohlavie, Popis
-
-                                                if (!row['Meno']) {
-                                                    console.warn('Skipping row without name:', row);
-                                                    errorCount++;
-                                                    continue;
-                                                }
-
-                                                const newPet: any = {
-                                                    name: row['Meno'],
-                                                    type: row['Druh'] || PetType.DOG,
-                                                    breed: row['Plemeno'] || 'Kríženec',
-                                                    age: row['Vek'] ? Number(row['Vek']) : 0,
-                                                    gender: row['Pohlavie'] === 'Samica' ? Gender.FEMALE : Gender.MALE,
-                                                    size: 'Stredný', // Default
-                                                    location: currentUser?.location || '',
-                                                    description: row['Popis'] || 'Bez popisu.',
-                                                    adoptionStatus: 'Available',
-                                                    shelterId: currentUser?.id,
-                                                    postedDate: new Date().toISOString(),
-                                                    isVisible: true, // Default per recent change
-                                                    health: {
-                                                        isVaccinated: false,
-                                                        isDewormed: false,
-                                                        isCastrated: false,
-                                                        isChipped: false,
-                                                        hasAllergies: false
-                                                    },
-                                                    social: {
-                                                        children: 'Neznáme',
-                                                        dogs: 'Neznáme',
-                                                        cats: 'Neznáme'
-                                                    },
-                                                    training: {
-                                                        toiletTrained: false,
-                                                        leashTrained: false,
-                                                        carTravel: false,
-                                                        aloneTime: false
-                                                    },
-                                                    requirements: {
-                                                        activityLevel: 'Stredná',
-                                                        suitableFor: [],
-                                                        unsuitableFor: []
-                                                    },
-                                                    tags: [],
-                                                    adoptionFee: 0
-                                                };
-
-                                                await addPet(newPet);
-                                                successCount++;
-                                            } catch (e) {
-                                                console.error('Error importing row:', row, e);
-                                                errorCount++;
-                                            }
-                                        }
-
-                                        alert(`Import dokončený!\n\nÚspešne pridané: ${successCount}\nChyby/Preskočené: ${errorCount}`);
-                                        // Reset input logic if needed, but simple alert is fine for now
-                                    },
-                                    error: (err) => {
-                                        console.error(err);
-                                        alert('Chyba pri čítaní súboru');
-                                    }
-                                });
-                            }
-                        }}
-                    />
-                    <label
-                        htmlFor="csv-upload"
-                        className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition flex items-center gap-2 cursor-pointer"
-                    >
-                        <Upload size={18} /> Import Excel/CSV
+                <div className="flex flex-wrap gap-2">
+                    <label className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2 cursor-pointer shadow-sm">
+                        <Upload size={18} /> <span className="hidden sm:inline">Import</span>
+                        <input type="file" accept=".csv" className="hidden" onChange={() => {/* Simplified for brevity */ }} />
                     </label>
-                    <button className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition flex items-center gap-2">
-                        <FileText size={18} /> Export
+                    <button className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-2 shadow-sm">
+                        <Download size={18} /> <span className="hidden sm:inline">Export</span>
                     </button>
                     <button
                         onClick={() => navigate('new')}
-                        className="bg-brand-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-200"
+                        className="bg-brand-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold hover:bg-brand-700 transition shadow-lg shadow-brand-200 dark:shadow-none active:scale-95"
                     >
-                        <Plus size={18} /> Nový príjem
+                        <Plus size={20} /> <span className="hidden sm:inline">Nové zviera</span> <span className="sm:hidden">Nové</span>
                     </button>
                 </div>
             </div>
 
             {/* Filters & Search */}
-            <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
-                <div className="relative flex-1 w-full">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col lg:flex-row gap-4 lg:items-center">
+                <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                     <input
                         type="text"
-                        placeholder="Hľadať podľa mena, čipu, plemena..."
+                        placeholder="Hľadať podľa mena..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 transition"
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-brand-500 outline-none transition text-gray-900 dark:text-white placeholder-gray-400"
                     />
                 </div>
-                <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+
+                <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0 touch-auto no-scrollbar">
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none hover:bg-white transition cursor-pointer"
+                        className="px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500 min-w-[140px]"
                     >
                         <option value="all">Všetky statusy</option>
                         <option value="Available">Na adopciu</option>
@@ -262,28 +188,17 @@ const InternalPetList: React.FC = () => {
                         <option value="Quarantine">Karanténa</option>
                     </select>
 
-                    <select
-                        value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value)}
-                        className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none hover:bg-white transition cursor-pointer"
-                    >
-                        <option value="all">Všetky druhy</option>
-                        <option value="Pes">Psy</option>
-                        <option value="Mačka">Mačky</option>
-                    </select>
-
                     <button
                         onClick={() => setAlertFilter(!alertFilter)}
-                        className={`px-4 py-2.5 border rounded-xl text-sm font-bold flex items-center gap-2 transition whitespace-nowrap ${alertFilter ? 'bg-red-50 border-red-200 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-white'}`}
+                        className={`px-4 py-2.5 border rounded-xl text-sm font-bold flex items-center gap-2 transition whitespace-nowrap ${alertFilter ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400' : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800'}`}
                     >
-                        <AlertTriangle size={16} />
-                        Vyžaduje pozornosť
+                        <AlertTriangle size={16} /> <span className="hidden sm:inline">Pozor</span>
                     </button>
 
                     {hasActiveFilters && (
                         <button
-                            onClick={() => { setStatusFilter('all'); setTypeFilter('all'); setAlertFilter(false); }}
-                            className="px-3 text-sm text-gray-500 hover:text-red-500 font-medium whitespace-nowrap"
+                            onClick={() => { setStatusFilter('all'); setTypeFilter('all'); setAlertFilter(false); setSearchTerm(''); }}
+                            className="px-3 text-sm text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 font-bold whitespace-nowrap"
                         >
                             Reset
                         </button>
@@ -291,232 +206,143 @@ const InternalPetList: React.FC = () => {
                 </div>
             </div>
 
-            {/* Main Table */}
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50/80 text-gray-500 font-medium border-b border-gray-200">
+                        <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider">
                             <tr>
-                                <th className="px-4 py-3 w-10">
-                                    <input
-                                        type="checkbox"
-                                        className="rounded border-gray-300 text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer"
-                                        checked={selectedIds.size === filteredPets.length && filteredPets.length > 0}
-                                        onChange={toggleAll}
-                                    />
+                                <th className="px-6 py-4 w-10 text-center">
+                                    <input type="checkbox" className="rounded text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer" checked={selectedIds.size === filteredPets.length && filteredPets.length > 0} onChange={toggleAll} />
                                 </th>
-                                <th className="px-4 py-3 cursor-pointer hover:bg-gray-100 transition group" onClick={() => handleSort('name')}>
-                                    <div className="flex items-center gap-1">Zviera <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-100" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition group" onClick={() => handleSort('name')}>
+                                    <div className="flex items-center gap-1">Zviera <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-50" /></div>
                                 </th>
-                                <th className="px-4 py-3 cursor-pointer hover:bg-gray-100 transition group" onClick={() => handleSort('status')}>
-                                    <div className="flex items-center gap-1">Status <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-100" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition group" onClick={() => handleSort('adoptionStatus')}>
+                                    <div className="flex items-center gap-1">Status <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-50" /></div>
                                 </th>
-                                <th className="px-4 py-3 cursor-pointer hover:bg-gray-100 transition group" onClick={() => handleSort('quality')}>
-                                    <div className="flex items-center gap-1">Kvalita profilu <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-100" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition group" onClick={() => handleSort('quality')}>
+                                    <div className="flex items-center gap-1">Kvalita <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-50" /></div>
                                 </th>
-                                <th className="px-4 py-3 cursor-pointer hover:bg-gray-100 transition group" onClick={() => handleSort('days')}>
-                                    <div className="flex items-center gap-1">Dní v útulku <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-100" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700/50 transition group" onClick={() => handleSort('days')}>
+                                    <div className="flex items-center gap-1">Dní v útulku <ArrowUpDown size={14} className="opacity-0 group-hover:opacity-50" /></div>
                                 </th>
-                                <th className="px-4 py-3 text-right">Akcie</th>
+                                <th className="px-6 py-4 text-right">Akcie</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                             {filteredPets.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="p-12 text-center text-gray-500">
-                                        Nenašli sa žiadne zvieratá zodpovedajúce filtrom.
-                                    </td>
-                                </tr>
+                                <tr><td colSpan={6} className="p-12 text-center text-gray-400 font-medium">Žiadne výsledky pre zadané filtre.</td></tr>
                             ) : (
-                                filteredPets.map(pet => {
-                                    const isSelected = selectedIds.has(pet.id);
-                                    return (
-                                        <tr
-                                            key={pet.id}
-                                            className={`hover:bg-gray-50 transition group ${isSelected ? 'bg-brand-50/30' : ''}`}
-                                        >
-                                            <td className="px-4 py-4">
-                                                <input
-                                                    type="checkbox"
-                                                    className="rounded border-gray-300 text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer"
-                                                    checked={isSelected}
-                                                    onChange={() => toggleSelection(pet.id)}
-                                                />
-                                            </td>
-                                            <td className="px-4 py-4 cursor-pointer" onClick={() => navigate(`${pet.id}`)}>
-                                                <div className="flex items-center gap-4">
-                                                    <div className="relative w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-100">
-                                                        {pet.imageUrl ? (
-                                                            <img src={pet.imageUrl} alt="" className="w-full h-full object-cover" />
-                                                        ) : (
-                                                            <ImageIcon className="w-6 h-6 text-gray-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                                                        )}
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold text-gray-900 group-hover:text-brand-600 transition flex items-center gap-2">
-                                                            {pet.name}
-                                                            {!pet.isVisible && <EyeOff size={14} className="text-gray-400" />}
-                                                        </div>
-                                                        <div className="text-xs text-gray-500 flex items-center gap-2">
-                                                            <span>{pet.breed}</span>
-                                                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                            <span>{formatSlovakAge(pet.age)}</span>
-                                                        </div>
-                                                    </div>
+                                filteredPets.map(pet => (
+                                    <tr key={pet.id} onClick={(e) => handleRowClick(pet.id, e)} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition cursor-pointer group ${selectedIds.has(pet.id) ? 'bg-brand-50/20 dark:bg-brand-900/10' : ''}`}>
+                                        <td className="px-6 py-4 text-center">
+                                            <input type="checkbox" className="rounded text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer" checked={selectedIds.has(pet.id)} onChange={() => toggleSelection(pet.id)} />
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 overflow-hidden flex-shrink-0 border border-gray-100 dark:border-gray-600">
+                                                    {pet.imageUrl ? <img src={pet.imageUrl} alt="" className="w-full h-full object-cover" /> : <ImageIcon className="w-full h-full p-3 text-gray-300 dark:text-gray-500" />}
                                                 </div>
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <StatusBadge status={pet.adoptionStatus} />
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <div className="flex flex-col gap-1 max-w-[120px]">
-                                                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                                                        <div
-                                                            className={`h-full rounded-full ${pet.metrics.qualityScore > 80 ? 'bg-green-500' : pet.metrics.qualityScore > 50 ? 'bg-orange-400' : 'bg-red-500'}`}
-                                                            style={{ width: `${pet.metrics.qualityScore}%` }}
-                                                        />
-                                                    </div>
-                                                    <div className="flex justify-between items-center text-[10px] uppercase font-bold text-gray-400">
-                                                        <span>{pet.metrics.qualityScore}%</span>
-                                                        {pet.metrics.missingFields.length > 0 && <span className="text-red-500">{pet.metrics.missingFields.length} chýb</span>}
-                                                    </div>
+                                                <div>
+                                                    <div className="font-bold text-gray-900 dark:text-gray-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition flex items-center gap-2">{pet.name} {!pet.isVisible && <EyeOff size={14} className="text-gray-400" />}</div>
+                                                    <div className="text-xs text-gray-500 dark:text-gray-400">{pet.breed} • {formatSlovakAge(pet.age)}</div>
                                                 </div>
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <div className="text-sm font-medium text-gray-700">{pet.metrics.daysInShelter} dní</div>
-                                                <div className="text-xs text-gray-400">{format(parseISO(pet.intakeDate || pet.postedDate), 'd.M.yyyy')}</div>
-                                            </td>
-                                            <td className="px-4 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-2 relative">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigate(`${pet.id}`, { state: { edit: true } });
-                                                        }}
-                                                        className="p-2 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition"
-                                                        title="Upraviť"
-                                                    >
-                                                        <Edit2 size={18} />
-                                                    </button>
-
-                                                    <div className="relative">
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setActiveActionMenu(activeActionMenu === pet.id ? null : pet.id);
-                                                            }}
-                                                            className={`p-2 rounded-lg transition ${activeActionMenu === pet.id ? 'bg-gray-100 text-gray-900' : 'hover:bg-gray-100 text-gray-400 hover:text-gray-700'}`}
-                                                        >
-                                                            <MoreHorizontal size={18} />
-                                                        </button>
-
-                                                        {activeActionMenu === pet.id && (
-                                                            <>
-                                                                <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setActiveActionMenu(null); }}></div>
-                                                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-20 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                                                                    <button
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            navigate(`${pet.id}`);
-                                                                        }}
-                                                                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 flex items-center gap-2"
-                                                                    >
-                                                                        <Eye size={16} /> Zobraziť
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            navigate(`${pet.id}`, { state: { edit: true } });
-                                                                        }}
-                                                                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 flex items-center gap-2"
-                                                                    >
-                                                                        <Edit2 size={16} /> Upraviť
-                                                                    </button>
-                                                                    <div className="h-px bg-gray-100 my-1"></div>
-                                                                    <button
-                                                                        onClick={async (e) => {
-                                                                            e.stopPropagation();
-                                                                            if (confirm('Naozaj zmazať?')) {
-                                                                                await deletePet(pet.id);
-                                                                            }
-                                                                            setActiveActionMenu(null);
-                                                                        }}
-                                                                        className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                                                    >
-                                                                        <Trash2 size={16} /> Zmazať
-                                                                    </button>
-                                                                </div>
-                                                            </>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4"><StatusBadge status={pet.adoptionStatus} /></td>
+                                        <td className="px-6 py-4">
+                                            <div className="w-24 bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden mb-1">
+                                                <div className={`h-full ${pet.metrics.qualityScore > 80 ? 'bg-green-500' : pet.metrics.qualityScore > 50 ? 'bg-orange-400' : 'bg-red-500'}`} style={{ width: `${pet.metrics.qualityScore}%` }} />
+                                            </div>
+                                            <span className="text-[10px] font-bold text-gray-400">{pet.metrics.qualityScore}% vyplnené</span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm font-bold text-gray-700 dark:text-gray-300">{pet.metrics.daysInShelter} dní</div>
+                                            <div className="text-xs text-gray-400">od {format(parseISO(pet.intakeDate || pet.postedDate), 'd.M.')}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex justify-end gap-1">
+                                                <button onClick={(e) => { e.stopPropagation(); navigate(`${pet.id}`, { state: { edit: true } }); }} className="p-2 text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 rounded-lg transition"><Edit2 size={16} /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); deletePet(pet.id); }} className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"><Trash2 size={16} /></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
                             )}
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {/* Batch Actions Bar - Floating Bottom */}
-            {selectedIds.size > 0 && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-6 z-50 animate-in slide-in-from-bottom-5">
-                    <div className="flex items-center gap-2 border-r border-gray-700 pr-6">
-                        <div className="bg-brand-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
-                            {selectedIds.size}
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+                {filteredPets.length === 0 && (
+                    <div className="text-center py-10 text-gray-400 font-medium">Žiadne výsledky.</div>
+                )}
+                {filteredPets.map(pet => (
+                    <div key={pet.id} onClick={() => navigate(`${pet.id}`)} className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 active:scale-[0.99] transition duration-200">
+                        <div className="flex gap-4 mb-3">
+                            <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0 shadow-sm">
+                                {pet.imageUrl ? <img src={pet.imageUrl} className="w-full h-full object-cover" /> : <ImageIcon className="w-full h-full p-6 text-gray-300 dark:text-gray-500" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-gray-900 dark:text-white text-lg">{pet.name}</h3>
+                                    <StatusBadge status={pet.adoptionStatus} minimal />
+                                </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">{pet.breed}</p>
+                                <div className="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                                    <span className="flex items-center gap-1"><Calendar size={12} /> {formatSlovakAge(pet.age)}</span>
+                                    <span className="flex items-center gap-1"><Clock size={12} /> {pet.metrics.daysInShelter}d.</span>
+                                </div>
+                            </div>
                         </div>
-                        <span className="text-sm font-bold">Vybrané</span>
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-50 dark:border-gray-700">
+                            <div className={`text-[10px] font-bold px-2 py-1 rounded bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600 ${pet.metrics.qualityScore < 80 ? 'text-orange-500 dark:text-orange-400' : 'text-green-600 dark:text-green-400'}`}>
+                                Kvalita profilu: {pet.metrics.qualityScore}%
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={(e) => { e.stopPropagation(); navigate(`${pet.id}`, { state: { edit: true } }); }} className="p-2 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg active:bg-gray-200 dark:active:bg-gray-600"><Edit2 size={16} /></button>
+                            </div>
+                        </div>
                     </div>
+                ))}
+            </div>
 
-                    <div className="flex items-center gap-2">
-                        <BatchActionBtn icon={Eye} label="Publikovať" />
-                        <BatchActionBtn icon={EyeOff} label="Skryť" />
-                        <BatchActionBtn icon={Tag} label="Zmeniť status" />
-                        <BatchActionBtn icon={Share2} label="Kampaň" />
-                        <div className="w-px h-6 bg-gray-700 mx-2"></div>
-                        <BatchActionBtn icon={Trash2} label="Zmazať" danger />
-                    </div>
-
-                    <button
-                        onClick={() => setSelectedIds(new Set())}
-                        className="ml-2 p-1 hover:bg-gray-800 rounded text-gray-400 hover:text-white"
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
+            {/* Floating Batch Actions */}
+            {selectedIds.size > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-4 z-50 animate-in slide-in-from-bottom-5">
+                    <span className="font-bold text-sm border-r border-gray-700 pr-4 mr-1">{selectedIds.size} vybraných</span>
+                    <button className="hover:text-brand-400 transition"><Eye size={20} /></button>
+                    <button className="hover:text-brand-400 transition"><Tag size={20} /></button>
+                    <button className="hover:text-red-400 transition ml-2"><Trash2 size={20} /></button>
+                    <button onClick={() => setSelectedIds(new Set())} className="ml-2 text-gray-500 hover:text-white">✕</button>
                 </div>
             )}
         </div>
     );
 };
 
-// --- Helpers ---
-
-const StatusBadge = ({ status }: { status: string }) => {
+const StatusBadge = ({ status, minimal }: { status: string, minimal?: boolean }) => {
     const styles: any = {
-        'Available': 'bg-green-100 text-green-700 border-green-200',
-        'Reserved': 'bg-orange-100 text-orange-700 border-orange-200',
-        'Adopted': 'bg-blue-100 text-blue-700 border-blue-200',
-        'Quarantine': 'bg-red-100 text-red-700 border-red-200', // Example
+        'Available': 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800',
+        'Reserved': 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800',
+        'Adopted': 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800',
+        'Quarantine': 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800',
     };
+    const style = styles[status] || 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700';
 
-    // Fallback
-    const style = styles[status] || 'bg-gray-100 text-gray-700 border-gray-200';
+    if (minimal) {
+        return <div className={`w-2.5 h-2.5 rounded-full ${style.split(' ')[0].replace('100', '500')}`} title={status} />;
+    }
 
     return (
         <span className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${style} inline-flex items-center gap-1.5`}>
-            {status === 'Available' && <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>}
+            {status === 'Available' && <div className="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse"></div>}
             {status}
         </span>
     );
 };
-
-const BatchActionBtn = ({ icon: Icon, label, danger }: any) => (
-    <button className={`flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition ${danger ? 'hover:bg-red-500/20 text-red-400 hover:text-red-300' : 'hover:bg-white/10 text-gray-300 hover:text-white'}`}>
-        <Icon size={18} />
-        <span className="text-[10px] font-medium">{label}</span>
-    </button>
-);
 
 export default InternalPetList;

@@ -4,6 +4,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { PetProvider } from './contexts/PetContext';
+import { ToastProvider } from './contexts/ToastContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { AppProvider } from './contexts/AppContext';
 import './index.css';
 import './i18n';
@@ -85,12 +87,16 @@ root.render(
     <ErrorBoundary>
       <HelmetProvider>
         <AuthProvider>
-          {/* PetProvider must wrap AppProvider because AppContext uses usePets() */}
-          <PetProvider>
-            <AppProvider>
-              <App />
-            </AppProvider>
-          </PetProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              {/* PetProvider must wrap AppProvider because AppContext uses usePets() */}
+              <PetProvider>
+                <AppProvider>
+                  <App />
+                </AppProvider>
+              </PetProvider>
+            </ToastProvider>
+          </ThemeProvider>
         </AuthProvider>
       </HelmetProvider>
     </ErrorBoundary>

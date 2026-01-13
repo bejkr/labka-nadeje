@@ -60,7 +60,7 @@ const mapProfileFromDB = (row: any): User | Shelter => {
     const notificationsEnabled = row.email_notifications_enabled !== false;
 
     if (row.role === 'shelter') {
-        return {
+        const shelterProfile = {
             id: row.id,
             role: 'shelter',
             name: row.name || 'Neznámy útulok',
@@ -76,11 +76,14 @@ const mapProfileFromDB = (row: any): User | Shelter => {
             shippingAddress: row.shelter_data?.shippingAddress || '',
             logoUrl: row.shelter_data?.logoUrl || '',
             socials: row.shelter_data?.socials || {},
+            socialsAuth: row.shelter_data?.socialsAuth,
             stats: row.shelter_data?.stats || { adoptions: 0, currentAnimals: 0, views: 0 },
             organizationType: row.shelter_data?.organizationType || 'shelter',
             documents: row.shelter_data?.documents || [],
             slug: row.slug
         } as Shelter;
+        // console.log('[API Trace] Mapped Shelter:', shelterProfile.id, 'SocialsAuth:', shelterProfile.socialsAuth);
+        return shelterProfile;
     }
     return {
         id: row.id,
@@ -118,10 +121,11 @@ export const api = {
         if (error) throw error;
 
         // Filter by shelter (although RLS should handle this, filtering by joined pet shelter_id helps double check)
-        // Since medical_records is child of pets, and pets has shelter_id, we can rely on RLS if set up correctly.
         // But for safety, let's assume the query returns records for the pets this user can see.
         return data || [];
     },
+
+
 
     async createMedicalRecord(record: Partial<any>) {
         const { data, error } = await supabase.from('medical_records').insert(record).select().single();
@@ -206,6 +210,7 @@ export const api = {
         if (role === 'shelter') {
             const { data: current } = await supabase.from('profiles').select('shelter_data').eq('id', id).single();
             const existingData = current?.shelter_data || {};
+            // console.log('[API Trace] Saving Shelter Update:', rest);
             profileUpdates.shelter_data = { ...existingData, ...rest };
         } else {
             const { bio, ...userRest } = rest;
@@ -329,7 +334,7 @@ export const api = {
         } catch (e) { return []; }
     },
 
-    async createPet(pet: Pet, shelterIdOverride?: string) {
+    async createPet(pet: Pet, shelterIdOverride?: string, autoPostToSocials?: boolean) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Nie ste prihlásený.");
         // Verify admin status if overriding
@@ -370,6 +375,17 @@ export const api = {
         };
         const { data, error } = await supabase.from('pets').insert(dbPet).select().single();
         if (error) throw error;
+
+        if (autoPostToSocials) {
+            console.log(`[API] Triggering share-to-socials for pet ${data.id}...`);
+            supabase.functions.invoke('share-to-socials', {
+                body: { pet_id: data.id }
+            }).then(({ data, error }) => {
+                if (error) console.error('[API] Share failed:', error);
+                else console.log('[API] Share result:', data);
+            });
+        }
+
         return mapPetFromDB(data);
     },
 
@@ -419,6 +435,14 @@ export const api = {
         };
         const { error } = await supabase.from('pets').update(dbPet).eq('id', pet.id);
         if (error) throw error;
+    },
+
+    async sharePet(petId: string) {
+        const { data, error } = await supabase.functions.invoke('share-to-socials', {
+            body: { pet_id: petId }
+        });
+        if (error) throw error;
+        return data;
     },
 
     async updatePetStatus(petId: string, status: string) {
@@ -594,10 +618,13 @@ export const api = {
         `)
             .order('created_at', { ascending: false });
 
-        if (error) return [];
+        if (!data || data.length === 0) return [];
+
+        const inquiryIds = data.map(i => i.id);
 
         const { data: unreadMsgData } = await supabase.from('inquiry_messages')
             .select('inquiry_id')
+            .in('inquiry_id', inquiryIds)
             .eq('is_read', false)
             .neq('sender_id', currentUserId);
 
@@ -810,5 +837,10 @@ export const api = {
             throw new Error("Chyba: Profil sa nepodarilo aktualizovať (RLS).");
         }
         cachedProfile = null;
+    },
+
+    async deleteAccount() {
+        const { error } = await supabase.rpc('delete_own_account');
+        if (error) throw error;
     }
 };

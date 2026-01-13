@@ -45,7 +45,7 @@ const PreferenceChip: React.FC<{ label: string, active: boolean, onClick?: () =>
 
 
 const UserProfilePage: React.FC = () => {
-    const { currentUser, userRole, logout, toggleFavorite, updateUserProfile, resetPassword, isFavorite } = useAuth();
+    const { currentUser, userRole, logout, toggleFavorite, updateUserProfile, resetPassword, isFavorite, deleteAccount } = useAuth();
     const { pets } = usePets();
     const { inquiries, updateInquiryStatus, markInquiryAsRead, seenInquiryIds, showToast } = useApp();
     const navigate = useNavigate();
@@ -63,9 +63,11 @@ const UserProfilePage: React.FC = () => {
     const [isEditingPreferences, setIsEditingPreferences] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const [isEditingContact, setIsEditingContact] = useState(false);
+    const [contactData, setContactData] = useState({ phone: '', location: '' });
 
     const [bioInput, setBioInput] = useState('');
-    const [availability, setAvailability] = useState('');
+
 
     const [householdData, setHouseholdData] = useState({
         housingType: 'Byt' as HousingType,
@@ -188,7 +190,6 @@ const UserProfilePage: React.FC = () => {
     useEffect(() => {
         if (!user) return;
         setBioInput(user.bio || '');
-        setAvailability(user.availability || '');
         if (user.household) {
             setHouseholdData({
                 housingType: user.household.housingType || 'Byt',
@@ -198,6 +199,7 @@ const UserProfilePage: React.FC = () => {
                 experienceLevel: user.household.experienceLevel || 'Začiatočník'
             });
         }
+        setContactData({ phone: user.phone || '', location: user.location || '' });
         if (user.preferences) {
             setPrefData({
                 types: user.preferences.types || [PetType.DOG],
@@ -233,7 +235,11 @@ const UserProfilePage: React.FC = () => {
         return { label: 'Na začiatku', color: 'text-gray-600', sub: 'Vyplňte profil pre dôveru útulkov.' };
     }, [completionPercent]);
 
-    const handleSaveBio = async () => { setIsSaving(true); await updateUserProfile({ bio: bioInput, availability }); setIsEditingBio(false); setIsSaving(false); showToast("Osobné informácie uložené.", "success"); };
+    const handleSaveBio = async () => {
+        setIsSaving(true); await updateUserProfile({ bio: bioInput });
+        setIsEditingBio(false);
+        showToast("Bio aktualizované", "success");
+    };
     const handleSaveHousehold = async () => { setIsSaving(true); await updateUserProfile({ household: householdData }); setIsEditingHousehold(false); setIsSaving(false); showToast("Informácie o domácnosti uložené.", "success"); };
     const handleSavePreferences = async () => { setIsSaving(true); await updateUserProfile({ preferences: prefData }); setIsEditingPreferences(false); setIsSaving(false); showToast("Preferencie zvieratka uložené.", "success"); };
 
@@ -396,18 +402,77 @@ const UserProfilePage: React.FC = () => {
                             </div>
 
                             <div className="w-full bg-gray-50/50 rounded-3xl p-5 border border-gray-100 space-y-3 relative z-10 text-left">
+                                <div className="absolute top-3 right-3">
+                                    <button
+                                        onClick={() => {
+                                            if (isEditingContact) {
+                                                // Cancel
+                                                setIsEditingContact(false);
+                                                setContactData({ phone: user.phone || '', location: user.location || '' });
+                                            } else {
+                                                setIsEditingContact(true);
+                                            }
+                                        }}
+                                        className="p-1.5 text-gray-400 hover:text-brand-600 hover:bg-white rounded-lg transition-all"
+                                    >
+                                        {isEditingContact ? <X size={14} /> : <Edit2 size={14} />}
+                                    </button>
+                                </div>
                                 <div className="flex items-center gap-3 group/item">
                                     <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><Mail size={14} /></div>
                                     <span className="text-xs font-bold text-gray-500 truncate">{user.email}</span>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><Phone size={14} /></div>
-                                    <span className="text-xs font-bold text-gray-500">{user.phone || 'Neuvedené'}</span>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><MapPin size={14} /></div>
-                                    <span className="text-xs font-bold text-gray-500">{user.location || 'Slovensko'}</span>
-                                </div>
+
+                                {isEditingContact ? (
+                                    <div className="space-y-2 pt-2 animate-in fade-in slide-in-from-top-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><Phone size={14} /></div>
+                                            <input
+                                                value={contactData.phone}
+                                                onChange={e => setContactData({ ...contactData, phone: e.target.value })}
+                                                className="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-bold outline-none focus:border-brand-500"
+                                                placeholder="+421..."
+                                            />
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><MapPin size={14} /></div>
+                                            <input
+                                                value={contactData.location}
+                                                onChange={e => setContactData({ ...contactData, location: e.target.value })}
+                                                className="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs font-bold outline-none focus:border-brand-500"
+                                                placeholder="Mesto..."
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={async () => {
+                                                setIsSaving(true);
+                                                try {
+                                                    await updateUserProfile({ phone: contactData.phone, location: contactData.location });
+                                                    setIsEditingContact(false);
+                                                    showToast("Kontaktné údaje uložené", "success");
+                                                } catch (e) {
+                                                    showToast("Chyba pri ukladaní", "error");
+                                                } finally {
+                                                    setIsSaving(false);
+                                                }
+                                            }}
+                                            className="w-full mt-2 py-2 bg-black text-white rounded-xl text-[10px] font-black hover:bg-brand-600 transition-colors"
+                                        >
+                                            {isSaving ? 'Ukladám...' : 'Uložiť zmeny'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><Phone size={14} /></div>
+                                            <span className="text-xs font-bold text-gray-500">{user.phone || 'Neuvedené'}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-gray-400 border border-gray-100 shadow-sm"><MapPin size={14} /></div>
+                                            <span className="text-xs font-bold text-gray-500">{user.location || 'Slovensko'}</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -471,16 +536,7 @@ const UserProfilePage: React.FC = () => {
                                                 className="w-full bg-gray-50 border-2 border-gray-100 rounded-[2rem] p-6 min-h-[180px] focus:bg-white focus:border-brand-500 outline-none text-lg font-medium text-gray-700 transition-all resize-none leading-relaxed"
                                                 placeholder="Napíšte nám niečo o sebe, svojej skúsenosti so zvieratami a prečo hľadáte nového člena rodiny..."
                                             />
-                                            <div className="flex flex-col md:flex-row gap-4">
-                                                <div className="relative flex-1">
-                                                    <Clock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                                    <input
-                                                        value={availability}
-                                                        onChange={e => setAvailability(e.target.value)}
-                                                        className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-sm font-bold focus:bg-white focus:border-brand-500 outline-none transition-all"
-                                                        placeholder="Napr. Víkendy, Práca z domu, Večery..."
-                                                    />
-                                                </div>
+                                            <div className="flex justify-end mt-6">
                                                 <button onClick={handleSaveBio} className="px-10 py-4 bg-gray-900 text-white rounded-2xl font-black text-sm hover:bg-brand-600 transition-all shadow-xl hover:shadow-brand-200 active:scale-95">
                                                     Uložiť zmeny
                                                 </button>
@@ -496,13 +552,7 @@ const UserProfilePage: React.FC = () => {
                                                 )}
                                             </div>
 
-                                            {user.availability && (
-                                                <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-blue-50/50 text-blue-700 rounded-2xl border border-blue-100/50">
-                                                    <span className="text-[11px] font-black uppercase tracking-wider text-blue-400">Dostupnosť</span>
-                                                    <div className="w-1 h-4 bg-blue-200 rounded-full"></div>
-                                                    <span className="font-bold text-sm">{user.availability}</span>
-                                                </div>
-                                            )}
+
                                         </div>
                                     )}
                                 </div>
@@ -1146,7 +1196,14 @@ const UserProfilePage: React.FC = () => {
                 userName={user.name}
             />
 
-            <ConfirmationModal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} onConfirm={() => { setShowDeleteConfirm(false); logout(); }} title="Naozaj nás chcete opustiť?" message="Stratíte prístup k histórii." confirmText="Áno, zmazať účet" variant="danger" />
+            <ConfirmationModal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} onConfirm={async () => {
+                try {
+                    await deleteAccount();
+                    setShowDeleteConfirm(false);
+                } catch (e) {
+                    alert('Chyba pri mazaní účtu.');
+                }
+            }} title="Naozaj nás chcete opustiť?" message="Stratíte prístup k histórii." confirmText="Áno, zmazať účet" variant="danger" />
         </div>
     );
 };

@@ -16,6 +16,7 @@ import PetCardImageSlider from '../components/PetCardImageSlider';
 import { api } from '../services/api';
 import { formatSlovakAge } from '../utils/formatters';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/SEO';
 
 // Visual styles configuration to maintain the aesthetic design
 const SLIDE_STYLES = [
@@ -164,8 +165,10 @@ const HomePage: React.FC = () => {
     }
   };
 
+
   return (
     <div className="overflow-x-hidden">
+      <SEO />
       {/* Modern Hero Section */}
       <section className="relative bg-gradient-to-br from-brand-50 via-white to-brand-50 pt-16 pb-32 overflow-hidden">
         {/* Abstract Background Blobs */}
@@ -180,32 +183,33 @@ const HomePage: React.FC = () => {
             {/* Left Column: Text & CTA */}
             <div className="text-center lg:text-left animate-in slide-in-from-bottom-10 duration-700">
 
-              <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 leading-[1.1]">
-                {t('home.heroTitleStart')} <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-600">
+              <h1 className="text-5xl lg:text-8xl font-black text-gray-900 tracking-tighter mb-8 leading-[1.1]">
+                {t('home.heroTitleStart')} <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-orange-500 to-amber-500">
                   {t('home.heroTitleEnd')}
-                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-brand-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
-                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                  <svg className="absolute w-full h-4 -bottom-2 left-0 text-brand-200/50 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 15 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
                   </svg>
                 </span>
               </h1>
 
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-500 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
                 {t('home.heroSubtitle')}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
+              <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start mb-14">
                 <Link
                   to="/pets"
-                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-brand-600 hover:bg-brand-700 transition shadow-xl shadow-brand-200 transform hover:-translate-y-1"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 transition-all shadow-[0_10px_40px_-10px_rgba(234,88,12,0.5)] hover:shadow-[0_20px_40px_-10px_rgba(234,88,12,0.6)] transform hover:-translate-y-1"
                 >
-                  <SearchIcon size={20} className="mr-2" />
+                  <SearchIcon size={22} className="mr-2 group-hover:scale-110 transition-transform" />
                   {t('home.heroButton')}
+                  <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
                 {!isShelter && (
                   <Link
                     to="/auth"
                     state={{ role: 'shelter' }}
-                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-gray-700 bg-white border border-gray-100 hover:bg-gray-50 transition shadow-sm hover:shadow-md"
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-lg shadow-gray-200/50 hover:shadow-xl hover:-translate-y-1"
                   >
                     {t('nav.forShelters')}
                   </Link>

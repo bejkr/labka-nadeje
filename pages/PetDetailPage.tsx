@@ -577,6 +577,43 @@ const PetDetailPage: React.FC = () => {
 
 
 
+    const schemaData = useMemo(() => {
+        if (!pet) return null;
+        return {
+            "@context": "https://schema.org",
+            "@type": "Product", // or "Pet" if using custom schema
+            "name": pet.name,
+            "image": pet.imageUrl,
+            "description": pet.description,
+            "sku": pet.id,
+            "brand": {
+                "@type": "Brand",
+                "name": shelter?.name || "LabkaNádeje"
+            },
+            "offers": {
+                "@type": "Offer",
+                "url": window.location.href,
+                "priceCurrency": "EUR",
+                "price": pet.adoptionFee || 0,
+                "availability": pet.adoptionStatus === 'Available' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                "condition": "https://schema.org/UsedCondition"
+            }
+        };
+    }, [pet, shelter, window.location.href]);
+
+    useEffect(() => {
+        if (!schemaData) return;
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schemaData);
+        document.head.appendChild(script);
+
+        return () => {
+            document.head.removeChild(script);
+        };
+    }, [schemaData]);
+
     return (
         <div className="bg-gray-50 min-h-screen pb-20 pt-6">
             <Helmet>

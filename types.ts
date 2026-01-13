@@ -77,6 +77,7 @@ export interface Pet {
   views: number;
   slug?: string;
   updates?: PetUpdate[];
+  medicalRecords?: MedicalRecord[];
   // Internal System Fields
   internalId?: string;
   chipNumber?: string;
@@ -127,6 +128,10 @@ export interface Shelter {
     facebook?: string;
     instagram?: string;
     website?: string;
+  };
+  socialsAuth?: {
+    facebook?: { linked: boolean; pageName?: string; pageId?: string };
+    instagram?: { linked: boolean; username?: string };
   };
   stats: {
     adoptions: number;

@@ -15,9 +15,10 @@ interface DataTableProps<T> {
     searchPlaceholder?: string;
     onSearch?: (term: string) => void;
     onRowClick?: (row: T) => void;
+    hideSearch?: boolean;
 }
 
-export function DataTable<T extends { id: string | number }>({ data, columns, searchPlaceholder, onSearch, onRowClick }: DataTableProps<T>) {
+export function DataTable<T extends { id: string | number }>({ data, columns, searchPlaceholder, onSearch, onRowClick, hideSearch }: DataTableProps<T>) {
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -56,26 +57,28 @@ export function DataTable<T extends { id: string | number }>({ data, columns, se
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between gap-4">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                    <input
-                        type="text"
-                        placeholder={searchPlaceholder || "Hľadať..."}
-                        className="pl-9 pr-4 py-2 w-full border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                        value={searchTerm}
-                        onChange={(e) => {
-                            setSearchTerm(e.target.value);
-                            if (onSearch) onSearch(e.target.value);
-                        }}
-                    />
+            {!hideSearch && (
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                        <input
+                            type="text"
+                            placeholder={searchPlaceholder || "Hľadať..."}
+                            className="pl-9 pr-4 py-2 w-full border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                if (onSearch) onSearch(e.target.value);
+                            }}
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+                            <Filter size={16} /> Filter
+                        </button>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
-                        <Filter size={16} /> Filter
-                    </button>
-                </div>
-            </div>
+            )}
 
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">

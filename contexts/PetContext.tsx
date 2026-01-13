@@ -7,7 +7,7 @@ interface PetContextType {
   pets: Pet[];
   loading: boolean;
   updatePet: (updatedPet: Pet) => Promise<void>;
-  addPet: (newPet: Pet) => Promise<void>;
+  addPet: (newPet: Pet, autoPostToSocials?: boolean) => Promise<void>;
   deletePet: (petId: string) => Promise<void>;
   getPet: (id: string) => Pet | undefined;
   refreshPets: () => Promise<void>;
@@ -55,9 +55,9 @@ export const PetProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const addPet = async (newPet: Pet) => {
+  const addPet = async (newPet: Pet, autoPostToSocials?: boolean) => {
     try {
-      await api.createPet(newPet);
+      await api.createPet(newPet, undefined, autoPostToSocials);
       await loadPets();
     } catch (e) {
       console.error("Add pet failed", e);

@@ -25,6 +25,7 @@ interface AuthContextType {
   toggleFavorite: (petId: string) => void;
   isFavorite: (petId: string) => boolean;
   refreshUser: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -224,11 +225,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await syncProfile(session);
   };
 
+  const deleteAccount = async () => {
+    await api.deleteAccount();
+    await logout();
+  };
+
   return (
     <AuthContext.Provider value={{
       currentUser, userRole, isRecoveringPassword, isLoading,
       login, logout, resetPassword, updatePassword, registerUser, registerShelter, updateUserProfile,
-      adoptVirtually, updateAdoptionAmount, cancelAdoption, toggleFavorite, isFavorite, refreshUser
+      adoptVirtually, updateAdoptionAmount, cancelAdoption, toggleFavorite, isFavorite, refreshUser, deleteAccount
     }}>
       {children}
     </AuthContext.Provider>
