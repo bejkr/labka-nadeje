@@ -6,7 +6,7 @@ import {
   ShieldCheck, Star, Home as HomeIcon, Cat, Dog, Sparkles,
   ShoppingBag, Stethoscope, ExternalLink, MapPin, Facebook,
   Instagram, Search as SearchIcon, Zap, Utensils, Shield, Megaphone,
-  Award, FileCheck, MessageCircle
+  Award, FileCheck, MessageCircle, Users
 } from 'lucide-react';
 import { usePets } from '../contexts/PetContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -207,11 +207,12 @@ const HomePage: React.FC = () => {
                 </Link>
                 {!isShelter && (
                   <Link
-                    to="/auth"
-                    state={{ role: 'shelter' }}
-                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-lg shadow-gray-200/50 hover:shadow-xl hover:-translate-y-1"
+                    to="/match"
+                    className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-brand-900 bg-white border-2 border-brand-100 hover:bg-brand-50 hover:border-brand-200 transition-all shadow-lg shadow-brand-100/50 hover:shadow-xl hover:-translate-y-1 gap-2"
                   >
-                    {t('nav.forShelters')}
+                    <Sparkles size={20} className="text-brand-600" />
+                    <span>Labka Match</span>
+                    <span className="hidden lg:inline bg-brand-100 text-brand-700 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide ml-1">Kvíz</span>
                   </Link>
                 )}
                 {isShelter && (
@@ -547,6 +548,73 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* SMART MATCH PROMO SECTION */}
+      <section className="py-24 bg-gray-900 relative overflow-hidden">
+        {/* Background Glows */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-500/20 rounded-full blur-[100px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px] animate-pulse delay-700"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12 rounded-[3rem] bg-white/5 border border-white/10 p-8 md:p-16 backdrop-blur-sm">
+
+            <div className="flex-1 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-bold uppercase tracking-wider mb-6 border border-brand-500/30">
+                <Sparkles size={14} />
+                Novinka
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                Neviete si vybrať? <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Nechajte to na Smart Match</span>
+              </h2>
+              <p className="text-xl text-gray-400 mb-8 leading-relaxed max-w-2xl">
+                Odpovedzte na 7 jednoduchých otázok o vašom životnom štýle a naša umelá inteligencia vám nájde parťáka, ktorý k vám sadne ako uliaty.
+              </p>
+              <Link
+                to="/match"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 transition-all shadow-lg hover:shadow-brand-500/25 transform hover:-translate-y-1"
+              >
+                Spustiť Smart Match <ArrowRight className="ml-2" size={20} />
+              </Link>
+            </div>
+
+            <div className="w-full md:w-1/3 relative">
+              <div className="aspect-square bg-gradient-to-tr from-brand-500 to-purple-600 rounded-full blur-3xl opacity-20 absolute inset-0 animate-pulse"></div>
+              <div className="relative bg-white/10 backdrop-blur-md rounded-[2.5rem] p-8 border border-white/20 shadow-2xl transform rotate-3 hover:rotate-0 transition-all duration-500">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 text-white">
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                      <HomeIcon size={20} />
+                    </div>
+                    <div className="h-2 w-32 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div className="flex items-center gap-4 text-white">
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                      <Users size={20} />
+                    </div>
+                    <div className="h-2 w-24 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div className="flex items-center gap-4 text-white">
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                      <Dog size={20} />
+                    </div>
+                    <div className="h-2 w-40 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div className="pt-4 mt-4 border-t border-white/10">
+                    <div className="flex items-center justify-between">
+                      <div className="h-8 w-24 bg-brand-500 rounded-lg"></div>
+                      <div className="h-8 w-8 bg-purple-500 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Blog Teaser Section - ORANGE MODE */}
       <section className="py-24 bg-brand-600 text-white relative overflow-hidden">
         {/* Abstract shapes for texture */}
@@ -567,7 +635,7 @@ const HomePage: React.FC = () => {
                 <Link key={post.id} to={`/blog/${post.id}`} className="flex flex-col bg-white overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 border border-transparent group h-full">
                   <div className="flex-shrink-0 h-52 overflow-hidden relative">
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition z-10"></div>
-                    <img className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700" src={post.imageUrl} alt={post.title} />
+                    <img className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700" loading="lazy" src={`${post.imageUrl}&format=webp&w=500&q=70`} alt={post.title} />
                   </div>
                   <div className="flex-1 p-8 flex flex-col justify-between">
                     <div className="flex-1">
@@ -615,6 +683,59 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+
+
+      {/* WHY TO ADOPT SECTION */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">Prečo dať šancu útulkáčovi?</h2>
+            <p className="text-xl text-gray-500 max-w-2xl mx-auto">Adopcia nie je len o získaní domáceho miláčika. Je to rozhodnutie, ktoré mení životy.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-orange-50 rounded-[2.5rem] p-8 text-center hover:-translate-y-2 transition duration-300">
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 shadow-md border-4 border-white">
+                <img
+                  src="https://images.unsplash.com/photo-1527362950785-f487a7c1fe48?auto=format&fit=crop&w=300&q=80&format=webp"
+                  alt="Dva životy"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">Zachránite dva životy</h3>
+              <p className="text-gray-600 leading-relaxed">Adopciou jedného zvieratka uvoľníte miesto v útulku pre ďalšie, ktoré potrebuje pomoc. Stávate sa hrdinom pre dvoch.</p>
+            </div>
+
+            <div className="bg-blue-50 rounded-[2.5rem] p-8 text-center hover:-translate-y-2 transition duration-300">
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 shadow-md border-4 border-white">
+                <img
+                  src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?auto=format&fit=crop&w=300&q=80&format=webp"
+                  alt="Sloboda"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">Bojujete proti množiarňam</h3>
+              <p className="text-gray-600 leading-relaxed">Adopciou nepodporujete neetický chov a množiarne. Dávate hlas tým, ktorí ho nemajú.</p>
+            </div>
+
+            <div className="bg-purple-50 rounded-[2.5rem] p-8 text-center hover:-translate-y-2 transition duration-300">
+              <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 shadow-md border-4 border-white">
+                <img
+                  src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=300&q=80&format=webp"
+                  alt="Láska"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4">Láska bez podmienok</h3>
+              <p className="text-gray-600 leading-relaxed">Útulkáči vedia byť neuveriteľne vďační. Získate verného parťáka, ktorý vás bude ľúbiť celým srdcom.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* --- PARTNERS & OFFERS SECTION (GRID) --- */}
       <section className="py-24 bg-white border-t border-gray-100 relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-40 -mt-40 w-96 h-96 bg-brand-50 rounded-full blur-3xl opacity-50 mix-blend-multiply"></div>
@@ -641,8 +762,9 @@ const HomePage: React.FC = () => {
                   <div className={`relative overflow-hidden ${isSingle ? 'h-64 md:h-96 md:w-1/2' : 'h-64'}`}>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                     <img
-                      src={slide.imageUrl}
+                      src={`${slide.imageUrl}&format=webp&q=70`}
                       alt={slide.title}
+                      loading="lazy"
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute top-6 left-6 z-20">
@@ -762,8 +884,9 @@ const HomePage: React.FC = () => {
 
                     <div className="relative h-64 rounded-3xl overflow-hidden mb-6">
                       <img
-                        src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80$0"
+                        src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80&format=webp"
                         alt="Caked dog"
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-xl text-[10px] font-black shadow-lg">

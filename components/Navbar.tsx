@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Map, BookOpen, Heart, ShieldAlert, Building2, User as UserIcon, LogIn, Menu, X } from 'lucide-react';
+import { Home, Search, Map, BookOpen, Heart, ShieldAlert, Building2, User as UserIcon, LogIn, Menu, X, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
@@ -25,6 +25,7 @@ const Navbar: React.FC = () => {
 
     const navLinks = [
         { name: t('nav.home'), path: '/', icon: Home },
+        { name: 'Smart Match', path: '/match', icon: Sparkles },
         { name: t('nav.pets'), path: '/pets', icon: Search },
         { name: t('nav.shelters'), path: '/shelters', icon: Map },
         { name: t('nav.blog'), path: '/blog', icon: BookOpen },

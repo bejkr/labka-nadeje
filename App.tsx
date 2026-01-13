@@ -32,6 +32,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import AdoptionAssistant from './components/AdoptionAssistant';
 import GDPRConsent from './components/GDPRConsent';
 import ScrollToTop from './components/ScrollToTop';
+import SmartMatch from './pages/SmartMatch';
 
 
 
@@ -110,6 +111,7 @@ const PublicRoutes = () => {
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfUse />} />
+          <Route path="/match" element={<SmartMatch />} />
         </Routes>
       </main>
       <Footer />
