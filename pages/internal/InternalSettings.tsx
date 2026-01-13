@@ -101,6 +101,7 @@ const InternalSettings: React.FC = () => {
 
                 // Get User's Pages (to find the shelter page)
                 window.FB.api('/me/accounts', function (pagesResponse: any) {
+                    console.log('[FB Debug] Pages Response:', pagesResponse);
                     if (pagesResponse && pagesResponse.data && pagesResponse.data.length > 0) {
                         // For now, auto-select the first page or let's try to find one that matches
                         // In a real generic app, we'd show a modal to let them pick the page.
@@ -133,7 +134,7 @@ const InternalSettings: React.FC = () => {
                 console.log('User cancelled login or did not fully authorize.');
                 error("Chyba", "Prihlásenie zrušené.");
             }
-        }, { scope: 'public_profile,email,pages_manage_posts,pages_read_engagement' });
+        }, { scope: 'public_profile,email,pages_manage_posts,pages_read_engagement,pages_show_list' });
     };
 
     const handleDisconnect = async (platform: 'facebook' | 'instagram') => {
