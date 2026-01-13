@@ -96,8 +96,12 @@ const UserProfilePage: React.FC = () => {
     const user = useMemo(() => currentUser as User, [currentUser]);
 
     useEffect(() => {
-        if (!currentUser || userRole !== 'user') {
+        if (!currentUser) {
             navigate('/auth');
+        } else if (userRole === 'shelter') {
+            // Redirect shelters back to their dashboard if they accidentally land here
+            // This prevents the "logout loop"
+            navigate('/shelter');
         }
     }, [currentUser, userRole, navigate]);
 

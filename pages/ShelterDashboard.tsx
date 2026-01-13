@@ -21,9 +21,10 @@ import AnalyticsSummary from '../components/dashboard/AnalyticsSummary';
 import PetManager from '../components/dashboard/PetManager';
 import InquiryManager from '../components/dashboard/InquiryManager';
 import UpdatesManager from '../components/dashboard/UpdatesManager';
+import InternalSettings from './internal/InternalSettings';
 
 // Define Dashboard Tabs
-type TabType = 'overview' | 'pets' | 'inquiries' | 'updates';
+type TabType = 'overview' | 'pets' | 'inquiries' | 'updates' | 'settings';
 
 const ShelterDashboard: React.FC = () => {
     const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -163,7 +164,6 @@ const ShelterDashboard: React.FC = () => {
                         </div>
                         <div>
                             <div className="font-black text-xl tracking-tight text-gray-900">Labka<span className="text-brand-600">Admin</span></div>
-                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Interný systém</div>
                         </div>
                     </div>
 
@@ -219,10 +219,14 @@ const ShelterDashboard: React.FC = () => {
                     <div className="pt-8 mt-4 border-t border-gray-100">
                         <div className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nastavenia</div>
                         <button
-                            onClick={() => navigate('/profile')}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition font-medium text-sm"
+                            onClick={() => { setActiveTab('settings'); setIsSidebarOpen(false); }}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium text-sm
+                                ${activeTab === 'settings'
+                                    ? 'bg-brand-600 text-white shadow-lg shadow-brand-200'
+                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}
+                            `}
                         >
-                            <Building size={20} className="text-gray-400" /> Profil útulku
+                            <Building size={20} className={activeTab === 'settings' ? 'text-white' : 'text-gray-400'} /> Profil útulku
                         </button>
                         <button
                             onClick={handleLogout}
@@ -280,6 +284,10 @@ const ShelterDashboard: React.FC = () => {
                         {activeTab === 'updates' && (
                             <UpdatesManager pets={shelterPets} />
                         )}
+
+                        {activeTab === 'settings' && (
+                            <InternalSettings />
+                        )}
                     </div>
                 </div>
             </main>
@@ -288,8 +296,8 @@ const ShelterDashboard: React.FC = () => {
             <PetFormModal
                 isOpen={isFormOpen}
                 onClose={handleCloseForm}
-                initialData={editingPet}
-                onSuccess={handleFormSuccess}
+                pet={editingPet}
+                onSave={handleFormSuccess}
             />
 
             <PetImportModal

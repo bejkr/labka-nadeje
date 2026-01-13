@@ -246,6 +246,44 @@ const PetDetailPage: React.FC = () => {
     }, [lightboxIndex, handlePrevImage, handleNextImage]);
 
 
+    const schemaData = useMemo(() => {
+        if (!pet) return null;
+        return {
+            "@context": "https://schema.org",
+            "@type": "Product", // or "Pet" if using custom schema
+            "name": pet.name,
+            "image": pet.imageUrl,
+            "description": pet.description,
+            "sku": pet.id,
+            "brand": {
+                "@type": "Brand",
+                "name": shelter?.name || "LabkaNádeje"
+            },
+            "offers": {
+                "@type": "Offer",
+                "url": window.location.href,
+                "priceCurrency": "EUR",
+                "price": pet.adoptionFee || 0,
+                "availability": pet.adoptionStatus === 'Available' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                "condition": "https://schema.org/UsedCondition"
+            }
+        };
+    }, [pet, shelter, window.location.href]);
+
+    useEffect(() => {
+        if (!schemaData) return;
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schemaData);
+        document.head.appendChild(script);
+
+        return () => {
+            document.head.removeChild(script);
+        };
+    }, [schemaData]);
+
+
     if (!pet || !canView) {
         return <div className="p-20 text-center text-gray-500 font-medium">{t('petDetail.notFound')} <br /><Link to="/pets" className="text-brand-600 underline mt-4 inline-block">{t('petDetail.backToList')}</Link></div>;
     }
@@ -577,42 +615,7 @@ const PetDetailPage: React.FC = () => {
 
 
 
-    const schemaData = useMemo(() => {
-        if (!pet) return null;
-        return {
-            "@context": "https://schema.org",
-            "@type": "Product", // or "Pet" if using custom schema
-            "name": pet.name,
-            "image": pet.imageUrl,
-            "description": pet.description,
-            "sku": pet.id,
-            "brand": {
-                "@type": "Brand",
-                "name": shelter?.name || "LabkaNádeje"
-            },
-            "offers": {
-                "@type": "Offer",
-                "url": window.location.href,
-                "priceCurrency": "EUR",
-                "price": pet.adoptionFee || 0,
-                "availability": pet.adoptionStatus === 'Available' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-                "condition": "https://schema.org/UsedCondition"
-            }
-        };
-    }, [pet, shelter, window.location.href]);
 
-    useEffect(() => {
-        if (!schemaData) return;
-
-        const script = document.createElement('script');
-        script.type = 'application/ld+json';
-        script.text = JSON.stringify(schemaData);
-        document.head.appendChild(script);
-
-        return () => {
-            document.head.removeChild(script);
-        };
-    }, [schemaData]);
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20 pt-6">
@@ -1087,7 +1090,7 @@ const PetDetailPage: React.FC = () => {
                 imageUrl={pet.imageUrl}
                 description={pet.description}
                 hashtags={['#labkanadeje', `#${pet.type === PetType.DOG ? 'pes' : 'macka'}`, '#adopcia', `#${pet.breed.replace(/\s+/g, '')}`]}
-                url={`https://qcwoyklifcekulkhrqmz.supabase.co/functions/v1/share-pet?id=${pet.id}`}
+                url={window.location.href}
             />
 
             {

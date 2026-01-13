@@ -99,6 +99,11 @@ const InternalSettings: React.FC = () => {
                     console.log('Good to see you, ' + response.name + '.');
                 });
 
+                // Check actual permissions granted
+                window.FB.api('/me/permissions', function (permResponse: any) {
+                    console.log('[FB Debug] Granted Permissions:', permResponse);
+                });
+
                 // Get User's Pages (to find the shelter page)
                 window.FB.api('/me/accounts', function (pagesResponse: any) {
                     console.log('[FB Debug] Pages Response:', pagesResponse);
