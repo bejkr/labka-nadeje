@@ -84,3 +84,36 @@
 .animate-bounce-slow {
   animation: bounce-slow 3s infinite;
 }
+
+/* Global Button Active State */
+@layer utilities {
+  .btn-active-scale:active {
+    transform: scale(0.98);
+  }
+  
+  /* Applying to all buttons by default might be too aggressive, 
+     but requested "Global Button Active States". 
+     Let's add it to base with a safe selector or just utility.
+     For now, let's use a base rule for common button classes. */
+}
+
+@layer base {
+  button:not(:disabled) {
+    @apply transition-transform duration-200 active:scale-[0.98];
+  }
+
+  /* Enhanced Input Focus */
+  input:focus, textarea:focus, select:focus {
+    @apply ring-4 ring-brand-500/20 border-brand-500 outline-none transition-all duration-300;
+  }
+}
+
+/* Page Transition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-transition {
+  animation: fadeIn 0.4s ease-out forwards;
+}

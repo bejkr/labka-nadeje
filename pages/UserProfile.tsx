@@ -320,7 +320,13 @@ const UserProfilePage: React.FC = () => {
                             </p>
                         </div>
                         <div className="flex gap-4">
-                            <button onClick={logout} className="px-6 py-3 bg-white border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+                            <button
+                                onClick={async () => {
+                                    await logout();
+                                    navigate('/auth');
+                                }}
+                                className="px-6 py-3 bg-white border border-gray-200 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50 rounded-2xl font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+                            >
                                 <LogOut size={18} /> Odhlásiť
                             </button>
                         </div>

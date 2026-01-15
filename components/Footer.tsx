@@ -11,6 +11,7 @@ const Footer: React.FC = () => {
     const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleNewsletterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -22,6 +23,7 @@ const Footer: React.FC = () => {
         setLoading(true);
         try {
             await api.subscribeToNewsletter(email);
+            setIsSuccess(true);
             showToast("Ďakujeme! Boli ste úspešne prihlásený na odber.", "success");
             setEmail('');
         } catch (error: any) {
@@ -71,23 +73,32 @@ const Footer: React.FC = () => {
                     <div>
                         <h3 className="text-lg font-semibold mb-4 text-brand-400">{t('footer.news')}</h3>
                         <p className="text-gray-400 text-sm mb-4">{t('footer.subscribeText')}</p>
-                        <form onSubmit={handleNewsletterSubmit} className="flex shadow-sm">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder={t('footer.emailPlaceholder')}
-                                className="px-4 py-2 bg-white text-gray-900 rounded-l-xl text-sm w-full focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                disabled={loading}
-                            />
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="bg-brand-600 px-5 py-2 rounded-r-xl hover:bg-brand-700 text-sm font-bold transition flex items-center justify-center min-w-[60px]"
-                            >
-                                {loading ? <Loader2 size={16} className="animate-spin" /> : 'OK'}
-                            </button>
-                        </form>
+                        {isSuccess ? (
+                            <div className="flex items-center gap-2 p-3 bg-green-900/30 border border-green-800 rounded-xl text-green-400 animate-in fade-in slide-in-from-bottom-2">
+                                <div className="p-1 bg-green-500/20 rounded-full">
+                                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                                </div>
+                                <span className="font-bold text-sm">Prihlásené na odber!</span>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleNewsletterSubmit} className="flex shadow-sm">
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder={t('footer.emailPlaceholder')}
+                                    className="px-4 py-2 bg-white text-gray-900 rounded-l-xl text-sm w-full focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all border-r-0"
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="bg-brand-600 px-5 py-2 rounded-r-xl hover:bg-brand-700 text-sm font-bold transition flex items-center justify-center min-w-[60px] text-white disabled:opacity-70 disabled:cursor-not-allowed active:scale-95"
+                                >
+                                    {loading ? <Loader2 size={16} className="animate-spin" /> : 'OK'}
+                                </button>
+                            </form>
+                        )}
                     </div>
                 </div>
 

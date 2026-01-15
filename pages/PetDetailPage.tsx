@@ -656,6 +656,11 @@ const PetDetailPage: React.FC = () => {
                 title={pet.name}
                 description={`Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description ? pet.description.substring(0, 150) : ''}...`}
                 image={pet.imageUrl}
+                petDetails={{
+                    name: pet.name,
+                    breed: pet.breed,
+                    shelterName: shelter?.name
+                }}
             />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
@@ -671,8 +676,8 @@ const PetDetailPage: React.FC = () => {
                             {t('common.share')}
                         </button>
                         {!isShelterUser && (
-                            <button onClick={handleFavoriteToggle} className={`p-2.5 rounded-full shadow-sm border transition ${isFavorite(pet.id) ? 'bg-red-50 text-red-500 border-red-100' : 'bg-white text-gray-400 border-gray-200 hover:text-red-500'}`}>
-                                <Heart size={20} className={isFavorite(pet.id) ? 'fill-current' : ''} />
+                            <button onClick={handleFavoriteToggle} className={`p-2.5 rounded-full shadow-sm border transition-all duration-300 active:scale-75 hover:scale-110 ${isFavorite(pet.id) ? 'bg-red-50 text-red-500 border-red-100 shadow-red-200/50' : 'bg-white text-gray-400 border-gray-200 hover:text-red-500 hover:bg-white'}`}>
+                                <Heart size={20} className={`transition-transform duration-300 ${isFavorite(pet.id) ? 'fill-current scale-110' : 'scale-100'}`} />
                             </button>
                         )}
                     </div>
@@ -695,9 +700,10 @@ const PetDetailPage: React.FC = () => {
                                 {/* Main Image (No Crop) */}
                                 <div className="absolute inset-0 flex items-center justify-center p-2">
                                     <img
+                                        key={uniquePhotos[activePhotoIndex]}
                                         src={uniquePhotos[activePhotoIndex]}
                                         alt={pet.name}
-                                        className="w-full h-full object-contain relative z-10 drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.02]"
+                                        className="w-full h-full object-contain relative z-10 drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.02] animate-in fade-in duration-500"
                                     />
                                 </div>
 

@@ -147,6 +147,53 @@ const PetListPage: React.FC = () => {
           </p>
         </div>
 
+        {/* Quick Filters */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+          <button
+            onClick={() => setFilterType(filterType === PetType.DOG ? 'all' : PetType.DOG)}
+            className={`px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all transform hover:-translate-y-1 shadow-sm ${filterType === PetType.DOG
+              ? 'bg-brand-600 text-white shadow-brand-200'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600'
+              }`}
+          >
+            <Dog size={18} />
+            Psy
+          </button>
+
+          <button
+            onClick={() => setFilterType(filterType === PetType.CAT ? 'all' : PetType.CAT)}
+            className={`px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all transform hover:-translate-y-1 shadow-sm ${filterType === PetType.CAT
+              ? 'bg-brand-600 text-white shadow-brand-200'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600'
+              }`}
+          >
+            <Cat size={18} />
+            Mačky
+          </button>
+
+          <button
+            onClick={() => setFilterAge(filterAge === 'baby' ? 'all' : 'baby')}
+            className={`px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all transform hover:-translate-y-1 shadow-sm ${filterAge === 'baby'
+              ? 'bg-brand-600 text-white shadow-brand-200'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600'
+              }`}
+          >
+            <SparklesIcon size={18} />
+            Šteniatka / Mačiatka
+          </button>
+
+          <button
+            onClick={() => setFilterSize(filterSize === Size.SMALL ? 'all' : Size.SMALL)}
+            className={`px-5 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all transform hover:-translate-y-1 shadow-sm ${filterSize === Size.SMALL
+              ? 'bg-brand-600 text-white shadow-brand-200'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600'
+              }`}
+          >
+            <Ruler size={18} />
+            Malého vzrastu
+          </button>
+        </div>
+
         <div className={`bg-white rounded-3xl shadow-sm border border-gray-100 sticky top-20 z-30 backdrop-blur-xl bg-white/95 transition-all duration-300 ${isScrolled ? 'py-3 px-4 shadow-lg ring-1 ring-black/5' : 'p-4 md:p-6 mb-8'
           }`}>
           <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'md:hidden mb-0 pb-0 border-0' : 'mb-2 md:mb-4 pb-2 border-b border-gray-100'
@@ -311,12 +358,13 @@ const PetListPage: React.FC = () => {
                   {!isShelter && (
                     <button
                       onClick={(e) => handleFavoriteClick(e, pet.id)}
-                      className={`absolute top-4 left-4 p-2 rounded-xl transition-all shadow-md backdrop-blur-sm border ${isFav
-                        ? 'bg-red-50 text-red-500 border-red-200'
-                        : 'bg-white/80 text-gray-400 border-white hover:bg-white hover:text-red-500'
+                      className={`absolute top-4 left-4 p-2 rounded-xl transition-all duration-300 shadow-md backdrop-blur-sm border z-10 
+                        active:scale-75 hover:scale-110 ${isFav
+                          ? 'bg-red-50 text-red-500 border-red-200 shadow-red-200/50'
+                          : 'bg-white/80 text-gray-400 border-white hover:bg-white hover:text-red-500'
                         }`}
                     >
-                      <Heart size={18} className={isFav ? 'fill-current' : ''} />
+                      <Heart size={18} className={`transition-transform duration-300 ${isFav ? 'fill-current scale-110' : 'scale-100'}`} />
                     </button>
                   )}
 

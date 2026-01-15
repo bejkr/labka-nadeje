@@ -51,7 +51,7 @@ const ShelterDashboard: React.FC = () => {
 
     useEffect(() => {
         if (!currentUser) {
-            navigate('/login');
+            navigate('/auth');
             return;
         }
         if (currentUser.role !== 'shelter') {
@@ -125,7 +125,7 @@ const ShelterDashboard: React.FC = () => {
 
     const handleLogout = async () => {
         await logout();
-        navigate('/');
+        navigate('/auth');
     };
 
     if (!currentUser || currentUser.role !== 'shelter') return null;

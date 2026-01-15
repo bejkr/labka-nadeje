@@ -99,7 +99,7 @@ const PublicRoutes = () => {
       <AuthListener />
       <RedirectListener />
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow animate-in fade-in slide-in-from-bottom-2 duration-300" key={useLocation().pathname}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthPage />} />
