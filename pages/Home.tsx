@@ -17,6 +17,7 @@ import { api } from '../services/api';
 import { formatSlovakAge } from '../utils/formatters';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
+import SEOHead from '../components/SEOHead';
 
 // Visual styles configuration to maintain the aesthetic design
 const SLIDE_STYLES = [
@@ -217,7 +218,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="overflow-x-hidden">
-      <SEO />
+      <SEOHead
+        title="Domov"
+        description="Nájdite svojho nového najlepšieho priateľa. Prehľadávajte tisíce psov a mačiek z útulkov po celom Slovensku."
+      />
+
       {/* Modern Hero Section */}
       <section className="relative bg-gradient-to-br from-brand-50 via-white to-brand-50 pt-16 pb-32 overflow-hidden">
         {/* Abstract Background Blobs */}
@@ -232,7 +237,7 @@ const HomePage: React.FC = () => {
             {/* Left Column: Text & CTA */}
             <div className="text-center lg:text-left animate-in slide-in-from-bottom-10 duration-700">
 
-              <h1 className="text-4xl lg:text-7xl font-black text-gray-900 tracking-tighter mb-8 leading-[1.1]">
+              <h1 className="text-4xl lg:text-6xl font-black text-gray-900 tracking-tighter mb-8 leading-[1.1] whitespace-pre-line">
                 {t('home.heroTitleStart')} <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-orange-500 to-amber-500">
                   {t('home.heroTitleEnd')}
                   <svg className="absolute w-full h-4 -bottom-2 left-0 text-brand-200/50 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
@@ -428,7 +433,7 @@ const HomePage: React.FC = () => {
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-3xl font-bold text-gray-900">{t('home.featured.title')}</h2>
-              <p className="mt-2 text-gray-600">{t('home.featured.subtitle')}</p>
+              <p className="mt-2 text-gray-600 whitespace-pre-line">{t('home.featured.subtitle')}</p>
             </div>
             <Link to="/pets" className="hidden sm:flex items-center text-brand-600 font-bold hover:text-brand-700 bg-white px-4 py-2 rounded-full shadow-sm hover:shadow transition">
               {t('home.featured.viewAll')} <ArrowRight size={20} className="ml-1" />

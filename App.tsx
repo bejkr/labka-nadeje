@@ -23,7 +23,11 @@ import ShelterListPage from './pages/ShelterList';
 import BlogPage from './pages/Blog';
 import BlogDetailPage from './pages/BlogDetail';
 import SupportPage from './pages/Support';
+import SupportSheltersPage from './pages/SupportShelters';
+import VirtualAdoptionPage from './pages/VirtualAdoption';
 import UserProfilePage from './pages/UserProfile';
+import ForShelters from './pages/ForShelters';
+import InternalSystem from './pages/InternalSystem';
 import AuthPage from './pages/Auth';
 import AdminDashboard from './pages/AdminDashboard';
 import PaymentSuccess from './pages/PaymentSuccess';
@@ -33,6 +37,7 @@ import AdoptionAssistant from './components/AdoptionAssistant';
 import GDPRConsent from './components/GDPRConsent';
 import ScrollToTop from './components/ScrollToTop';
 import SmartMatch from './pages/SmartMatch';
+import NotFoundPage from './pages/NotFound';
 
 
 
@@ -102,16 +107,22 @@ const PublicRoutes = () => {
           <Route path="/pets/:id" element={<PetDetailPage />} />
           <Route path="/shelter" element={<ShelterDashboard />} />
           <Route path="/shelters" element={<ShelterListPage />} />
+          <Route path="/for-shelters" element={<ForShelters />} />
+          <Route path="/internal-system" element={<InternalSystem />} />
           <Route path="/shelters/:id" element={<ShelterDetailPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:id" element={<BlogDetailPage />} />
+          <Route path="/blog/:id" element={<BlogDetailPage />} />
           <Route path="/support" element={<SupportPage />} />
+          <Route path="/support-shelters" element={<SupportSheltersPage />} />
+          <Route path="/virtual-adoption" element={<VirtualAdoptionPage />} />
           <Route path="/profile" element={<UserProfilePage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfUse />} />
           <Route path="/match" element={<SmartMatch />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <Footer />

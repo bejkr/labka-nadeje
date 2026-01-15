@@ -1,8 +1,10 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Filter, MapPin, Calendar, Ruler, Tag, X, Heart, Activity, ArrowRight, Dog, Cat, ChevronDown, ChevronUp, Sparkles as SparklesIcon, ExternalLink } from 'lucide-react';
+import { Filter, MapPin, Calendar, Ruler, Tag, X, Heart, Activity, ArrowRight, Dog, Cat, ChevronDown, ChevronUp, Sparkles as SparklesIcon, ExternalLink, Bell } from 'lucide-react';
 import PetCardSkeleton from '../components/skeletons/PetCardSkeleton';
+import PetAlertForm from '../components/PetAlertForm';
+import SEOHead from '../components/SEOHead';
 import { PetType, Size, Gender } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { usePets } from '../contexts/PetContext';
@@ -109,8 +111,34 @@ const PetListPage: React.FC = () => {
     gender === Gender.MALE ? <span className="text-blue-500">♂</span> : <span className="text-pink-500">♀</span>
   );
 
+  const [showAlertModal, setShowAlertModal] = useState(false);
+
+  const handleOpenAlert = () => {
+    if (!currentUser) {
+      showToast("Pre vytvorenie upozornenia sa musíte prihlásiť.", "info");
+      return;
+    }
+    setShowAlertModal(true);
+  };
+
+  const getActiveFiltersForAlert = () => {
+    return {
+      name: `${filterType !== 'all' ? filterType : 'Zvieratká'} ${filterLocation ? `v ${filterLocation}` : ''}`.trim(),
+      filters: {
+        types: filterType !== 'all' ? [filterType as PetType] : undefined,
+        locations: filterLocation ? [filterLocation] : undefined,
+        sizes: filterSize !== 'all' ? [filterSize as Size] : undefined,
+        ageRange: filterAge !== 'all' ? [filterAge] : undefined,
+      }
+    };
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen py-8 md:py-12">
+      <SEOHead
+        title="Zvieratká na adopciu"
+        description="Prezrite si aktuálnu ponuku psov a mačiek z útulkov, ktorí hľadajú nový domov."
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 md:mb-10 text-center">
           <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl tracking-tight">Naši zverenci</h1>
@@ -142,11 +170,20 @@ const PetListPage: React.FC = () => {
               </button>
             </div>
 
-            {activeFiltersCount > 0 && (
-              <button onClick={resetFilters} className="hidden md:flex text-xs text-red-500 hover:text-red-700 items-center gap-1 font-black bg-red-50 px-3 py-1.5 rounded-xl transition">
-                <X size={16} /> Vymazať filtre
+            <div className="hidden md:flex items-center gap-3">
+              {activeFiltersCount > 0 && (
+                <button onClick={resetFilters} className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1 font-black bg-red-50 px-3 py-1.5 rounded-xl transition">
+                  <X size={16} /> Vymazať filtre
+                </button>
+              )}
+              <button
+                onClick={handleOpenAlert}
+                className="text-xs text-brand-600 hover:text-brand-700 flex items-center gap-1 font-black bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-xl transition"
+                title="Vytvoriť upozornenie pre toto vyhľadávanie"
+              >
+                <Bell size={16} /> Upozorniť ma
               </button>
-            )}
+            </div>
           </div>
 
           <div className={`grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 ${isFiltersOpen ? 'grid' : 'hidden'} md:grid`}>
@@ -225,6 +262,16 @@ const PetListPage: React.FC = () => {
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
                 <Tag size={16} />
               </div>
+            </div>
+
+            {/* Mobile Notify Me Button */}
+            <div className="col-span-2 md:hidden">
+              <button
+                onClick={handleOpenAlert}
+                className="w-full py-2.5 bg-brand-50 text-brand-600 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-brand-100 transition"
+              >
+                <Bell size={16} /> Upozorniť ma na nové inzeráty
+              </button>
             </div>
           </div>
         </div>
@@ -326,9 +373,21 @@ const PetListPage: React.FC = () => {
             <h2 className="text-2xl font-black text-gray-900">Nenašli sme žiadnych chlpáčov</h2>
             <p className="text-gray-500 mt-2 max-w-sm mx-auto">Skúste zmeniť filtre alebo vymazať vyhľadávanie.</p>
             <button onClick={resetFilters} className="mt-8 px-8 py-3 bg-brand-600 text-white font-bold rounded-2xl hover:bg-brand-700 transition shadow-lg shadow-brand-200">Resetovať filtre</button>
+            <button onClick={handleOpenAlert} className="mt-4 block mx-auto text-brand-600 font-bold hover:underline">Upozorniť ma keď sa objavia</button>
           </div>
         )}
       </div>
+
+      {showAlertModal && (
+        <PetAlertForm
+          onClose={() => setShowAlertModal(false)}
+          onSuccess={() => {
+            setShowAlertModal(false);
+            showToast("Upozornenie bolo úspešne vytvorené!", "success");
+          }}
+          initialValues={getActiveFiltersForAlert()}
+        />
+      )}
     </div>
   );
 };

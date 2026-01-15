@@ -80,7 +80,7 @@ const QUESTIONS = [
 
 const SmartMatch: React.FC = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(0); // 0 = Intro, 1-7 = Questions, 8 = Results
+    const [step, setStep] = useState(1); // 0 = Intro, 1-7 = Questions, 8 = Results
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [matches, setMatches] = useState<{ pet: Pet; score: number; reasons: string[] }[]>([]);
@@ -263,24 +263,72 @@ const SmartMatch: React.FC = () => {
     if (step === 0) {
         // INTRO SCREEN
         return (
-            <div className="min-h-screen bg-gradient-to-br from-brand-50 to-orange-50 flex items-center justify-center p-4">
-                <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden">
-                    <div className="p-8 md:p-12 text-center">
-                        <div className="bg-brand-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <Sparkles className="text-brand-600" size={40} />
+            <div className="min-h-[85vh] flex items-center justify-center p-4 relative overflow-hidden">
+                {/* Background Blobs */}
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+                    <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-100/50 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-orange-50 rounded-full blur-3xl"></div>
+                </div>
+
+                <div className="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
+                    {/* Left Content */}
+                    <div className="text-center md:text-left space-y-8 animate-in slide-in-from-left-8 duration-700">
+                        <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm text-brand-600 font-bold text-sm border border-brand-100">
+                            <Sparkles size={16} />
+                            <span>AI Powered Matchmaking</span>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
-                            Nájdite parťáka, <span className="text-brand-600">ktorý k vám sadne</span>
+
+                        <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
+                            Váš dokonalý parťák <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-orange-500">na jeden klik.</span>
                         </h1>
-                        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                            Zabudnite na zdĺhavé hľadanie. Odpovedzte na <strong className="text-brand-600">7 jednoduchých otázok</strong> o vašom životnom štýle a my vám ukážeme psíkov, ktorí by u vás boli najšťastnejší.
+
+                        <p className="text-xl text-gray-500 leading-relaxed max-w-lg mx-auto md:mx-0">
+                            Zabudnite na nekonečné scrollovanie. Naša umelá inteligencia analyzuje váš životný štýl a odporučí vám psíka, ktorý k vám sadne ako uliaty.
                         </p>
-                        <button
-                            onClick={() => setStep(1)}
-                            className="bg-brand-600 text-white text-xl font-bold py-4 px-10 rounded-full hover:bg-brand-700 shadow-lg shadow-brand-200 hover:-translate-y-1 transition transform flex items-center mx-auto gap-3"
-                        >
-                            Spustiť kvíz <ArrowRight size={24} />
-                        </button>
+
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                            <button
+                                onClick={() => setStep(1)}
+                                className="group bg-brand-600 text-white text-xl font-bold py-4 px-10 rounded-full hover:bg-brand-700 shadow-xl shadow-brand-500/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden"
+                            >
+                                <span className="relative z-10">Spustiť Labka Match</span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-brand-500 to-brand-700 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                                <ArrowRight className="relative z-10 group-hover:translate-x-1 transition-transform" size={24} />
+                            </button>
+                        </div>
+
+                        <div className="flex items-center justify-center md:justify-start gap-8 pt-4 grayscale opacity-60">
+                            <div className="flex items-center gap-2">
+                                <CheckCircle size={20} /> <span>7 rýchlych otázok</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <CheckCircle size={20} /> <span>Okamžitý výsledok</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Visual */}
+                    <div className="relative hidden md:block animate-in zoom-in duration-1000">
+                        <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white rotate-2 hover:rotate-0 transition-transform duration-500">
+                            <img
+                                src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=800"
+                                alt="Happy Dog"
+                                className="w-full h-auto object-cover"
+                            />
+                            {/* Floating Badge */}
+                            <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-lg flex items-center gap-3">
+                                <div className="bg-green-100 p-2 rounded-full text-green-600">
+                                    <Sparkles size={20} />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 font-bold uppercase">Zhoda</p>
+                                    <p className="text-lg font-black text-gray-900">98% Match</p>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Decorative elements behind */}
+                        <div className="absolute top-10 right-10 w-full h-full border-4 border-brand-200 rounded-[3rem] -z-10 translate-x-4 translate-y-4"></div>
                     </div>
                 </div>
             </div>
@@ -370,26 +418,45 @@ const SmartMatch: React.FC = () => {
     const progress = ((step - 1) / QUESTIONS.length) * 100;
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4">
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4 relative overflow-hidden">
+            {/* Decorative Background */}
+            <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-brand-50 to-transparent -z-10"></div>
+
             {/* Header */}
-            <div className="w-full max-w-2xl mb-8 flex items-center justify-between pt-4">
-                <button onClick={() => { if (step > 1) setStep(s => s - 1); else setStep(0); }} className="p-2 hover:bg-gray-200 rounded-full text-gray-500 transition">
+            <div className="w-full max-w-2xl mb-8 flex items-center justify-between pt-8">
+                <button
+                    onClick={() => { if (step > 1) setStep(s => s - 1); else setStep(0); }}
+                    className="p-3 hover:bg-white hover:shadow-md rounded-full text-gray-500 hover:text-brand-600 transition-all duration-300"
+                >
                     <ArrowLeft size={24} />
                 </button>
-                <div className="h-2 flex-1 mx-6 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-brand-500 transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
+
+                <div className="flex-1 mx-8">
+                    <div className="flex justify-between text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                        <span>Pokrok</span>
+                        <span>{Math.round(progress)}%</span>
+                    </div>
+                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                        <div
+                            className="h-full bg-gradient-to-r from-brand-400 to-brand-600 transition-all duration-700 ease-out rounded-full"
+                            style={{ width: `${progress}%` }}
+                        ></div>
+                    </div>
                 </div>
-                <div className="text-sm font-bold text-gray-400 w-8 text-right">{step}/{QUESTIONS.length}</div>
+
+                <div className="bg-white px-4 py-2 rounded-full shadow-sm text-sm font-black text-brand-600 border border-gray-100">
+                    {step} / {QUESTIONS.length}
+                </div>
             </div>
 
             {/* Card */}
-            <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
-                <div className="p-8 md:p-10">
-                    <div className="flex flex-col items-center text-center mb-8">
-                        <div className="bg-brand-50 p-4 rounded-full mb-4 ring-8 ring-brand-50/50">
+            <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl shadow-brand-900/5 border border-white overflow-hidden animate-in slide-in-from-bottom-8 duration-700">
+                <div className="p-8 md:p-12">
+                    <div className="flex flex-col items-center text-center mb-10">
+                        <div className="bg-brand-50 p-5 rounded-3xl mb-6 ring-8 ring-brand-50/50 text-brand-600 shadow-sm">
                             {currentQ.icon}
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">{currentQ.question}</h2>
+                        <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2 leading-tight">{currentQ.question}</h2>
                     </div>
 
                     <div className="grid gap-4">
@@ -397,17 +464,19 @@ const SmartMatch: React.FC = () => {
                             <button
                                 key={option.id}
                                 onClick={() => handleOptionSelect(option.id)}
-                                className="group relative flex items-center p-4 md:p-5 border-2 border-gray-100 rounded-2xl hover:border-brand-500 hover:bg-brand-50 transition-all duration-200 text-left"
+                                className="group relative flex items-center p-5 md:p-6 border-2 border-gray-100 rounded-2xl hover:border-brand-500 hover:bg-brand-50/50 hover:shadow-lg hover:shadow-brand-500/10 transition-all duration-300 text-left transform hover:-translate-y-1"
                             >
-                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-gray-500 group-hover:text-brand-600 shadow-sm border border-gray-100 group-hover:scale-110 transition mr-5 shrink-0">
+                                <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-brand-600 shadow-sm border border-gray-100 group-hover:scale-110 transition duration-300 mr-5 shrink-0">
                                     {option.icon}
                                 </div>
-                                <div>
-                                    <div className="font-bold text-lg text-gray-900 group-hover:text-brand-800">{option.label}</div>
-                                    <div className="text-sm text-gray-500 group-hover:text-brand-600/80">{option.description}</div>
+                                <div className="flex-1">
+                                    <div className="font-bold text-xl text-gray-900 group-hover:text-brand-900 mb-1">{option.label}</div>
+                                    <div className="text-sm text-gray-500 group-hover:text-brand-700/80 font-medium">{option.description}</div>
                                 </div>
-                                <div className="absolute right-5 opacity-0 group-hover:opacity-100 transition transform translate-x-2 group-hover:translate-x-0">
-                                    <ArrowRight className="text-brand-500" size={20} />
+                                <div className="ml-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                                    <div className="bg-brand-600 text-white p-2 rounded-full shadow-md">
+                                        <ArrowRight size={20} />
+                                    </div>
                                 </div>
                             </button>
                         ))}

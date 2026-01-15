@@ -1,21 +1,41 @@
-import React, { useState } from 'react';
-import { PetType, Gender, Size } from '../types';
-import { X, Bell, Check, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { PetType, Gender, Size, PetAlert } from '../types';
+import { X, Bell, Check, Save, Ruler, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 
 interface PetAlertFormProps {
     onClose: () => void;
     onSuccess: () => void;
+    initialValues?: {
+        name?: string;
+        filters?: PetAlert['filters'];
+    };
 }
 
-const PetAlertForm: React.FC<PetAlertFormProps> = ({ onClose, onSuccess }) => {
+const PetAlertForm: React.FC<PetAlertFormProps> = ({ onClose, onSuccess, initialValues }) => {
     const { currentUser } = useAuth();
     const [name, setName] = useState('');
     const [selectedType, setSelectedType] = useState<PetType | ''>('');
     const [breed, setBreed] = useState('');
     const [location, setLocation] = useState('');
+    const [selectedSize, setSelectedSize] = useState<Size | ''>('');
+    const [ageRange, setAgeRange] = useState('');
+
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (initialValues) {
+            if (initialValues.name) setName(initialValues.name);
+            if (initialValues.filters) {
+                if (initialValues.filters.types && initialValues.filters.types.length > 0) setSelectedType(initialValues.filters.types[0]);
+                if (initialValues.filters.breeds && initialValues.filters.breeds.length > 0) setBreed(initialValues.filters.breeds[0]);
+                if (initialValues.filters.locations && initialValues.filters.locations.length > 0) setLocation(initialValues.filters.locations[0]);
+                if (initialValues.filters.sizes && initialValues.filters.sizes.length > 0) setSelectedSize(initialValues.filters.sizes[0]);
+                if (initialValues.filters.ageRange && initialValues.filters.ageRange.length > 0) setAgeRange(initialValues.filters.ageRange[0]);
+            }
+        }
+    }, [initialValues]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,10 +47,10 @@ const PetAlertForm: React.FC<PetAlertFormProps> = ({ onClose, onSuccess }) => {
                 types: selectedType ? [selectedType] : undefined,
                 breeds: breed ? [breed] : undefined,
                 locations: location ? [location] : undefined,
+                sizes: selectedSize ? [selectedSize] : undefined,
+                ageRange: ageRange ? [ageRange] : undefined,
             };
 
-            // Call API to save alert (We need to add this method to api.ts later)
-            // For now, assume direct supabase call or extend api
             await api.createPetAlert({ name, filters });
             onSuccess();
         } catch (error) {
@@ -43,7 +63,7 @@ const PetAlertForm: React.FC<PetAlertFormProps> = ({ onClose, onSuccess }) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl p-8 relative animate-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl p-8 relative animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-2 bg-gray-50 rounded-full text-gray-400 hover:bg-gray-100 transition-colors"
@@ -93,6 +113,40 @@ const PetAlertForm: React.FC<PetAlertFormProps> = ({ onClose, onSuccess }) => {
                                 placeholder="Napr. Košice"
                                 className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold focus:bg-white focus:border-brand-500 outline-none transition-all"
                             />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-wider pl-1">Veľkosť</label>
+                            <div className="relative">
+                                <select
+                                    value={selectedSize}
+                                    onChange={(e) => setSelectedSize(e.target.value as Size)}
+                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold focus:bg-white focus:border-brand-500 outline-none transition-all appearance-none"
+                                >
+                                    <option value="">Všetky</option>
+                                    {Object.values(Size).map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                                <Ruler className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-wider pl-1">Vek</label>
+                            <div className="relative">
+                                <select
+                                    value={ageRange}
+                                    onChange={(e) => setAgeRange(e.target.value)}
+                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl font-bold focus:bg-white focus:border-brand-500 outline-none transition-all appearance-none"
+                                >
+                                    <option value="">Všetky</option>
+                                    <option value="baby">Šteňa/Mača</option>
+                                    <option value="young">Mladý</option>
+                                    <option value="adult">Dospelý</option>
+                                    <option value="senior">Senior</option>
+                                </select>
+                                <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                            </div>
                         </div>
                     </div>
 

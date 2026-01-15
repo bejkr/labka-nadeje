@@ -290,6 +290,7 @@ export interface PetAlert {
     breeds?: string[];
     locations?: string[];
     ageRange?: string[];
+    sizes?: Size[];
     genders?: Gender[];
   };
   createdAt: string;

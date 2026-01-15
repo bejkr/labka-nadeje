@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Map, BookOpen, Heart, ShieldAlert, Building2, User as UserIcon, LogIn, Menu, X, Sparkles } from 'lucide-react';
+import { Home, Search, Map, BookOpen, Heart, ShieldAlert, Building2, User as UserIcon, LogIn, Menu, X, Sparkles, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
@@ -19,21 +19,58 @@ const NotificationBadge: React.FC<{ count: number }> = ({ count }) => {
 const Navbar: React.FC = () => {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = React.useState(false);
+    const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
     const location = useLocation();
     const { currentUser, userRole } = useAuth();
     const { unreadCount } = useApp();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setOpenDropdown(null);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const navLinks = [
         { name: t('nav.home'), path: '/', icon: Home },
         { name: 'Labka Match', path: '/match', icon: Sparkles },
         { name: t('nav.pets'), path: '/pets', icon: Search },
-        { name: t('nav.shelters'), path: '/shelters', icon: Map },
+        {
+            name: t('nav.shelters'),
+            path: '/shelters',
+            icon: Map,
+            children: [
+                { name: t('nav.shelterList'), path: '/shelters' },
+                { name: t('nav.shelterBenefits'), path: '/for-shelters' }
+            ]
+        },
         { name: t('nav.blog'), path: '/blog', icon: BookOpen },
-        { name: t('nav.support'), path: '/support', icon: Heart },
+        {
+            name: t('nav.support'),
+            path: '/support',
+            icon: Heart,
+            children: [
+                { name: t('nav.supportPlatform'), path: '/support' },
+                { name: t('nav.supportShelters'), path: '/support-shelters' },
+                { name: t('nav.virtualAdoption'), path: '/virtual-adoption' }
+            ]
+        },
     ];
 
     const isShelter = userRole === 'shelter' || (currentUser as any)?.role === 'shelter';
     const isSuperAdmin = (currentUser as any)?.isSuperAdmin;
+
+    const toggleDropdown = (name: string, e: React.MouseEvent) => {
+        e.preventDefault();
+        setOpenDropdown(openDropdown === name ? null : name);
+    };
 
     return (
         <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
@@ -45,9 +82,46 @@ const Navbar: React.FC = () => {
                         </Link>
                     </div>
 
-                    <div className="hidden md:flex items-center space-x-1">
+                    <div className="hidden md:flex items-center space-x-1" ref={dropdownRef}>
                         {navLinks.map((link) => {
-                            const isActive = location.pathname === link.path;
+                            const isActive = location.pathname === link.path || (link.children && link.children.some(child => location.pathname === child.path));
+                            const hasChildren = !!link.children;
+
+                            if (hasChildren) {
+                                return (
+                                    <div key={link.name} className="relative group">
+                                        <button
+                                            onClick={(e) => toggleDropdown(link.name, e)}
+                                            className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                                                ? 'text-brand-600 bg-brand-50'
+                                                : 'text-gray-600 hover:text-brand-600 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            {link.name}
+                                            <ChevronDown size={14} className={`transition-transform duration-200 ${openDropdown === link.name ? 'rotate-180' : ''}`} />
+                                        </button>
+
+                                        {/* Dropdown Menu */}
+                                        {openDropdown === link.name && (
+                                            <div className="absolute left-0 mt-2 w-56 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none animate-in fade-in zoom-in-95 duration-200 origin-top-left overflow-hidden">
+                                                <div className="py-1">
+                                                    {link.children?.map((child) => (
+                                                        <Link
+                                                            key={child.path}
+                                                            to={child.path}
+                                                            onClick={() => setOpenDropdown(null)}
+                                                            className={`block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-600 transition-colors ${location.pathname === child.path ? 'bg-brand-50 text-brand-600 font-bold' : ''}`}
+                                                        >
+                                                            {child.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            }
+
                             return (
                                 <Link
                                     key={link.path}
@@ -154,22 +228,54 @@ const Navbar: React.FC = () => {
             </div>
 
             {isOpen && (
-                <div className="md:hidden bg-white border-t border-gray-100 shadow-xl">
+                <div className="md:hidden bg-white border-t border-gray-100 shadow-xl overflow-y-auto max-h-[80vh]">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                onClick={() => setIsOpen(false)}
-                                className={`flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium transition-colors ${location.pathname === link.path
-                                    ? 'bg-brand-50 text-brand-600'
-                                    : 'text-gray-700 hover:text-brand-600 hover:bg-gray-50'
-                                    }`}
-                            >
-                                <link.icon size={20} />
-                                {link.name}
-                            </Link>
+                            <React.Fragment key={link.name}>
+                                {link.children ? (
+                                    <div className="space-y-1">
+                                        <button
+                                            onClick={() => setOpenDropdown(openDropdown === link.name ? null : link.name)}
+                                            className={`w-full flex items-center justify-between px-3 py-3 rounded-md text-base font-medium transition-colors ${openDropdown === link.name ? 'bg-gray-50 text-brand-600' : 'text-gray-700 hover:text-brand-600 hover:bg-gray-50'}`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <link.icon size={20} />
+                                                {link.name}
+                                            </div>
+                                            <ChevronDown size={16} className={`transition-transform ${openDropdown === link.name ? 'rotate-180' : ''}`} />
+                                        </button>
+
+                                        {openDropdown === link.name && (
+                                            <div className="pl-10 pr-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                                {link.children.map(child => (
+                                                    <Link
+                                                        key={child.path}
+                                                        to={child.path}
+                                                        onClick={() => setIsOpen(false)}
+                                                        className={`block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-brand-600 hover:bg-gray-50 ${location.pathname === child.path ? 'text-brand-600 bg-brand-50' : ''}`}
+                                                    >
+                                                        {child.name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link
+                                        to={link.path}
+                                        onClick={() => setIsOpen(false)}
+                                        className={`flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium transition-colors ${location.pathname === link.path
+                                            ? 'bg-brand-50 text-brand-600'
+                                            : 'text-gray-700 hover:text-brand-600 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <link.icon size={20} />
+                                        {link.name}
+                                    </Link>
+                                )}
+                            </React.Fragment>
                         ))}
+
 
                         {isSuperAdmin && (
                             <Link

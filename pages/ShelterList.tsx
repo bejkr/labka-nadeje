@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { Shelter } from '../types';
 import { MapPin, Phone, Mail, ArrowRight, Building2, Loader2, Search, CheckCircle2, Users, Heart, ExternalLink, ChevronRight, Dog, Sparkles, ShieldCheck, PawPrint } from 'lucide-react';
 import ShelterCardSkeleton from '../components/skeletons/ShelterCardSkeleton';
+import SEOHead from '../components/SEOHead';
 
 import { CITY_COORDS, getCoordinates } from '../utils/geoUtils';
 
@@ -128,6 +129,10 @@ const ShelterListPage: React.FC = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen">
+            <SEOHead
+                title="Útulky"
+                description="Zoznam útulkov a karanténnych staníc na Slovensku. Nájdite útulok vo vašom okolí."
+            />
             <div className="bg-white border-b border-gray-200">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-2">

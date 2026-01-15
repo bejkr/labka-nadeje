@@ -187,6 +187,19 @@ export const api = {
             options: { data: metadata }
         });
         if (error) throw error;
+
+        // Trigger welcome email (fire and forget)
+        if (data.user) {
+            const name = metadata?.name || data.user.user_metadata?.name || 'Užívateľ';
+            const role = metadata?.role || data.user.user_metadata?.role || 'user';
+
+            supabase.functions.invoke('welcome-email', {
+                body: { email, name, role }
+            }).then(({ error }) => {
+                if (error) console.error('Welcome email error:', error);
+            }).catch(err => console.warn('Failed to send welcome email:', err));
+        }
+
         if (data.user) {
             const profile = await this.getCurrentSession(data.session);
             return { user: profile, verificationRequired: !data.session };

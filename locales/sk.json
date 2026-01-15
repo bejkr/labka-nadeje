@@ -5,12 +5,141 @@
         "shelters": "Útulky",
         "blog": "Blog",
         "support": "Podpora",
+        "supportPlatform": "Podporte nás",
+        "supportShelters": "Podporte útulky",
+        "virtualAdoption": "Virtuálna adopcia",
         "admin": "Admin Panel",
         "myShelter": "Môj Útulok",
         "forShelters": "Pre útulky",
         "myAccount": "Môj účet",
         "login": "Prihlásiť",
-        "adopt": "Chcem adoptovať"
+        "adopt": "Chcem adoptovať",
+        "shelterList": "Zoznam útulkov",
+        "shelterBenefits": "Výhody registrácie"
+    },
+    "internalSystemPage": {
+        "title": "Váš nový digitálny domov",
+        "subtitle": "Moderný, rýchly a intuitívny systém pre správu útulku, ktorý šetrí čas a peniaze.",
+        "features": {
+            "records": {
+                "title": "Digitálna kartotéka",
+                "desc": "Kompletná evidencia zvierat, zdravotných záznamov a histórie očkovania na jednom mieste."
+            },
+            "adoptions": {
+                "title": "Manažment adopcií",
+                "desc": "Sledujte stav každej adopcie od podania žiadosti až po podpis zmluvy."
+            },
+            "sync": {
+                "title": "Automatická synchronizácia",
+                "desc": "Zmeny v systéme sa okamžite prejavia na vašom webe a sociálnych sieťach."
+            },
+            "analytics": {
+                "title": "Štatistiky a hľadanie",
+                "desc": "Získajte prehľad o prijatých a adoptovaných zvieratách pomocou pokročilých reportov."
+            }
+        },
+        "cta": "Mám záujem o testovanie"
+    },
+    "forSheltersPage": {
+        "hero": {
+            "title": "Viac šancí na domov.\nMenej starostí pre útulok.",
+            "subtitle": "Labka Nádeje pomáha útulkom dostať zvieratá k ľuďom, ktorí ich hľadajú – s dôrazom na tie, ktoré čakajú najdlhšie.",
+            "ctaRegister": "Registrovať útulok",
+            "ctaContact": "Viac informácií"
+        },
+        "audience": {
+            "shelters": {
+                "title": "Útulky a OZ",
+                "desc": "psy, mačky, iné zvieratá"
+            },
+            "volunteers": {
+                "title": "Dobrovoľníci",
+                "desc": "pomoc s adopciami"
+            },
+            "adopters": {
+                "title": "Ľudia",
+                "desc": "ktorí chcú pomôcť alebo adoptovať"
+            }
+        },
+        "benefits": {
+            "title": "Prečo sa pridať?",
+            "items": {
+                "visibility": {
+                    "badge": "Väčšia viditeľnosť",
+                    "title": "Vaše zvieratá uvidia správni ľudia",
+                    "desc": "Zvieratá z vášho útulku dostanú priestor v prostredí, kde ľudia nehľadajú len „pekné fotky“, ale skutočný domov."
+                },
+                "admin": {
+                    "badge": "Menej administratívy",
+                    "title": "Menej práce, viac času na zvieratá",
+                    "desc": "Pomáhame s prezentáciou a komunikáciou, aby ste nemuseli odpovedať na tie isté otázky stále dookola."
+                },
+                "assistance": {
+                    "badge": "Pomoc s adopciami",
+                    "title": "Nechávame vás v tom samých? Nie.",
+                    "desc": "Záujemcov navigujeme, vysvetľujeme proces adopcie a pripravujeme ich ešte pred kontaktom s vami."
+                },
+                "longWait": {
+                    "badge": "Dôraz na „dlho čakajúcich“",
+                    "title": "Pomáhame aj tým, na ktorých sa zabúda",
+                    "desc": "Platforma cielene zvýrazňuje zvieratá, ktoré čakajú najdlhšie a potrebujú extra pozornosť."
+                },
+                "socials": {
+                    "badge": "Podpora na sociálnych sieťach",
+                    "title": "Pomáhame šíriť príbehy",
+                    "desc": "Vybrané zvieratá a príbehy zdieľame na našich sociálnych sieťach a pomáhame tak rozšíriť ich dosah."
+                },
+                "partnership": {
+                    "badge": "Partnerstvo, nie záväzok",
+                    "title": "Bez poplatkov. Bez tlaku.",
+                    "desc": "Registrácia je nezáväzná. Neviažeme vás zmluvami ani poplatkami."
+                }
+            }
+        },
+        "process": {
+            "title": "Ako to funguje?",
+            "step1": {
+                "title": "Registrácia útulku",
+                "desc": "Základné údaje a kontakt"
+            },
+            "step2": {
+                "title": "Pridanie zvierat",
+                "desc": "Pomôžeme s prvými profilmi"
+            },
+            "step3": {
+                "title": "Pomáhame hľadať domovy",
+                "desc": "Zvieratá začnú byť viditeľné pre záujemcov"
+            }
+        },
+        "internalSystem": {
+            "title": "V príprave: Váš nový digitálny domov",
+            "subtitle": "Pracujeme na internom systéme, ktorý zmení spôsob, akým fungujete. Všetko, čo potrebujete, na jednom mieste.",
+            "features": {
+                "records": {
+                    "title": "Digitálna kartotéka",
+                    "desc": "Zabudnite na papiere. Všetky údaje o zvieratách, očkovaniach a histórii dostupná online 24/7."
+                },
+                "adoptions": {
+                    "title": "Manažment adopcií",
+                    "desc": "Prehľad o žiadateľoch, automatické generovanie zmlúv a sledovanie stavu adopcie."
+                },
+                "sync": {
+                    "title": "Jeden klik, všade online",
+                    "desc": "Pridajte zviera do systému a automaticky sa objaví na webe, Facebooku aj Instagrame."
+                }
+            },
+            "cta": "Mám záujem o testovanie",
+            "moreInfo": "Viac informácií"
+        },
+        "testimonial": {
+            "text": "Vďaka Labke Nádeje sa o našich zvieratách dozvedelo viac ľudí.",
+            "author": "Spokojný útulok"
+        },
+        "finalCta": {
+            "text": "Každé zviera si zaslúži šancu.\nPomôžeme ju zväčšiť spolu.",
+            "register": "Registrovať útulok",
+            "contact": "Máte otázky? Napíšte nám"
+        }
     },
     "footer": {
         "tagline": "Spájame opustené srdcia s milujúcimi domovmi. Pomáhame útulkom po celom Slovensku.",
@@ -25,10 +154,10 @@
         "betaNotice": "Platforma je v štádiu vývoja. Chyby prosím hláste na info@labkanadeje.sk"
     },
     "home": {
-        "heroTitleStart": "Nájdite svojho",
-        "heroTitleEnd": "verného priateľa",
-        "heroSubtitle": "Tisíce psíkov v útulkoch čakajú na druhú šancu. Adoptujte si lásku na celý život.",
-        "heroButton": "Zobraziť psíkov",
+        "heroTitleStart": "Nie každá\nlabka má šťastie.",
+        "heroTitleEnd": "My jej pomáhame nájsť človeka.",
+        "heroSubtitle": "Labka Nádeje spája zvieratá z útulkov s ľuďmi, ktorí im chcú dať šancu – najmä tým, na ktoré sa čaká najdlhšie.",
+        "heroButton": "Pozrieť labky",
         "stats": {
             "adopted": "Adoptovaných",
             "shelters": "Útulkov",
@@ -41,8 +170,8 @@
             "all": "Všetky"
         },
         "featured": {
-            "title": "Hľadajú domov urgentne",
-            "subtitle": "Tieto zvieratká čakajú už príliš dlho.",
+            "title": "Labky, na ktoré sa čaká",
+            "subtitle": "Niektoré zvieratá si domov nájdu rýchlo. Iné čakajú mesiace. Niekedy roky.\nTu sú tie, ktoré teraz potrebujú najviac pomoci.",
             "viewAll": "Zobraziť všetky",
             "reserved": "Rezervovaný"
         },
@@ -70,9 +199,9 @@
             "subtitle": "Doprajte svojim miláčikom to najlepšie a podporte našu komunitu."
         },
         "virtualAdoption": {
-            "badge": "Pomoc na diaľku",
+            "badge": "Kým čaká na domov",
             "title": "Nemôžete si vziať zvieratko domov?",
-            "description": "Staňte sa virtuálnym rodičom a zmeňte osud tichého prosebníka z útulku.",
+            "description": "Aj bez adopcie mu môžeš zmeniť dni v útulku a byť súčasťou jeho príbehu.",
             "bowl": "Plná miska",
             "bowlDesc": "Kvalitná strava pre pevné zdravie.",
             "doctor": "Lekár",
@@ -117,7 +246,7 @@
         "backToList": "Späť na zoznam",
         "interestButton": "Poslať žiadosť útulku",
         "applicationSent": "Žiadosť odoslaná",
-        "virtualAdopt": "Už čoskoro",
+        "virtualAdopt": "Virtuálne adoptovať",
         "ownerEdit": "Váš inzerát. Upraviť",
         "loginAsUser": "Prihláste sa ako používateľ.",
         "adoptionFee": "Adopčný poplatok",
@@ -171,8 +300,10 @@
         "training": "Výchova",
         "toiletTrained": "Hygienické návyky",
         "leash": "Chôdza na vodítku",
+        "traits": "Povaha",
         "car": "Zvláda cestu autom",
         "alone": "Zvláda samotu",
+        "unsuitableFor": "Nevhodný pre:",
         "specialNeeds": "Špeciálne potreby",
         "allergy": "Alergia:",
         "meds": "Lieky:",
@@ -204,6 +335,17 @@
             "step3Desc": "Zoznámte sa so zvieratkom osobne.",
             "step4": "Nový domov",
             "step4Desc": "Podpis zmluvy a prevzatie."
+        },
+        "faq": {
+            "title": "Časté otázky k adopcii",
+            "q1": "Aké sú podmienky adopcie?",
+            "a1": "Základom je plnoletosť, podpis adopčnej zmluvy a úhrada adopčného poplatku. Hľadáme zodpovedných ľudí, ktorí vedia, čo starostlivosť o zviera obnáša.",
+            "q2": "Musím si pre zvieratko prísť osobne?",
+            "a2": "Áno. Je pre nás kľúčové, aby ste sa so zvieratkom zoznámili a aby sme sa spoznali aj my s vami. Transporty 'naslepo' nerobíme.",
+            "q3": "Čo ak si so zvieratkom nesadneme?",
+            "a3": "Stáva sa to. V zmluve je zakotvená skúšobná lehota. Ak to nebude fungovať, zvieratko sa vracia k nám – nikdy ho neposúvajte ďalej bez nášho vedomia.",
+            "q4": "Je zvieratko zdravé a očkované?",
+            "a4": "Zvieratá odchádzajú veterinárne ošetrené, čipované a ak to vek dovoľuje, aj kastrované. O zdravotnom stave vás vždy pravdivo informujeme."
         }
     },
     "shelterDetail": {
@@ -269,5 +411,148 @@
     "petStatus": {
         "reserved": "Rezervovaný",
         "adopted": "Adoptovaný"
+    },
+    "virtualAdoptionPage": {
+        "hero": {
+            "title": "Láska nepozná vzdialenosť",
+            "subtitle": "Nemôžete mať zvieratko doma? Adoptujte si ho na diaľku a staňte sa jeho hrdinom.",
+            "cta": "Nájsť zvieratko na adopciu"
+        },
+        "why": {
+            "title": "Prečo je virtuálna adopcia dôležitá?",
+            "p1": "Mnohé zvieratá v útulkoch sú staršie, choré alebo majú špeciálne potreby, ktoré sťažujú ich adopciu. Často ostávajú v útulku roky.",
+            "p2": "Vaša pomoc im zabezpečí nielen prežitie, ale aj nadštandardnú starostlivosť, ktorú by si útulok inak nemohol dovoliť."
+        },
+        "impact": {
+            "title": "Čo dokáže vaše 1 €?",
+            "items": {
+                "food": {
+                    "title": "Plná miska",
+                    "desc": "Kvalitné krmivo pre psa na 1 deň."
+                },
+                "health": {
+                    "title": "Lieky a prevencia",
+                    "desc": "Odčervenie alebo lieky proti bolesti pre staršie zvieratá."
+                },
+                "comfort": {
+                    "title": "Teplo a pohodlie",
+                    "desc": "Nové deky a vyhrievacie podložky na zimu."
+                }
+            }
+        },
+        "benefits": {
+            "title": "Čo získate vy?",
+            "items": {
+                "fame": {
+                    "title": "Sieň slávy",
+                    "desc": "Vaše meno bude uvedené pri profile zvieratka ako jeho hrdinu."
+                },
+                "certificate": {
+                    "title": "Certifikát adopcie",
+                    "desc": "Oficiálny digitálny certifikát o vašej podpore, ktorým sa môžete pochváliť."
+                },
+                "updates": {
+                    "title": "Exkluzívne novinky",
+                    "desc": "Pravidelné fotky a videá o tom, ako sa vášmu chlpáčovi darí."
+                }
+            }
+        },
+        "faq": {
+            "title": "Najčastejšie otázky",
+            "q1": "Môžem jednorazovo prispieť?",
+            "a1": "Áno, ale virtuálna adopcia je primárne o pravidelnej mesačnej podpore, ktorá dáva útulku istotu.",
+            "q2": "Dostanem potvrdenie o dare?",
+            "a2": "Samozrejme. Každý útulok vám na požiadanie vystaví potvrdenie pre daňové účely.",
+            "q3": "Môžem zvieratko navštíviť?",
+            "a3": "Určite! Útulky vítajú virtuálnych rodičov. Je to skvelý spôsob, ako si vytvoriť puto."
+        },
+        "testimonials": {
+            "title": "Príbehy virtuálnych rodičov",
+            "t1": {
+                "text": "Bývam v podnájme a psa mať nemôžem. Virtuálna adopcia mi umožnila pomôcť aspoň na diaľku. Rexa chodím venčiť každý víkend.",
+                "author": "Michaela, Bratislava"
+            }
+        }
+    },
+    "supportPage": {
+        "hero": {
+            "title": "Spoločne meníme osudy",
+            "subtitle": "Labka Nádeje je nezisková iniciatíva. Pomôžte nám udržať portál pri živote a spájať opustené zvieratá s novými domovmi.",
+            "cta": "Podporiť platformu"
+        },
+        "transparency": {
+            "title": "Kam putujú vaše dary?",
+            "items": {
+                "tech": {
+                    "title": "Technická prevádzka",
+                    "desc": "Hosting, servery, domény a bezpečnosť dát."
+                },
+                "marketing": {
+                    "title": "Marketing adopcií",
+                    "desc": "Platená reklama pre zvieratá, ktoré čakajú najdlhšie."
+                },
+                "verify": {
+                    "title": "Overovanie útulkov",
+                    "desc": "Administratíva a kontrola registrovaných organizácií."
+                }
+            }
+        },
+        "ways": {
+            "title": "Vyberte si spôsob pomoci",
+            "oneTime": {
+                "title": "Jednorazový dar",
+                "desc": "Rýchla pomoc, ktorá nám pomôže s aktuálnymi nákladmi.",
+                "cta": "Darovať teraz"
+            },
+            "monthly": {
+                "title": "Pravidelná podpora",
+                "desc": "Staňte sa naším pilierom. Pravidelné dary nám dávajú istotu.",
+                "cta": "Nastaviť trvalý príkaz",
+                "badge": "Najväčšia pomoc"
+            },
+            "corporate": {
+                "title": "Firemný partner",
+                "desc": "Chcete pomáhať ako firma? Staňte sa oficiálnym sponzorom.",
+                "cta": "Kontaktovať pre partnerstvo"
+            }
+        },
+        "impact": {
+            "title": "Čo sme spolu dokázali?",
+            "adopted": "Adoptovaných zvierat",
+            "shelters": "Zapojených útulkov"
+        }
+    },
+    "supportSheltersPage": {
+        "hero": {
+            "title": "Pomoc tam, kde je najviac potrebná",
+            "subtitle": "Útulky bojujú každý deň o prežitie svojich zverencov. Vaša pomoc pre nich znamená rozdiel medzi zúfalstvom a nádejou.",
+            "cta": "Nájsť útulok v okolí"
+        },
+        "methods": {
+            "money": {
+                "title": "Finančná podpora",
+                "desc": "Priamy dar na účet útulku. Pomáha hradiť veterinárne zákroky, energie a krmivo.",
+                "cta": "Darovať financie"
+            },
+            "material": {
+                "title": "Materiálna pomoc",
+                "desc": "Deky, krmivo, čistiace prostriedky. Veci, ktoré už nepotrebujete, môžu zachrániť život.",
+                "cta": "Zoznam potrieb"
+            },
+            "volunteer": {
+                "title": "Dobrovoľníctvo",
+                "desc": "Váš čas je ten najcennejší dar. Venčenie, fotenie alebo pomoc pri opravách.",
+                "cta": "Chcem pomáhať"
+            }
+        },
+        "corporate": {
+            "title": "Ste firma a chcete pomôcť lokálne?",
+            "desc": "Podporte útulok vo vašom regióne. Zorganizujte zbierku, teambuilding pri venčení alebo sa staňte generálnym partnerom.",
+            "cta": "Firemná spolupráca"
+        },
+        "local": {
+            "title": "Nájdite útulok vo vašom okolí",
+            "subtitle": "Na Slovensku je viac ako 60 útulkov. Jeden z nich je možno bližšie, než si myslíte."
+        }
     }
 }

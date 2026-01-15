@@ -18,6 +18,7 @@ import { usePets } from '../contexts/PetContext';
 import { useApp } from '../contexts/AppContext';
 import { User, AdoptionInquiry, Shelter, Gender, Size, PetType } from '../types';
 import { api } from '../services/api';
+import SEOHead from '../components/SEOHead';
 import { getMatchAnalysis, translateText } from '../services/geminiService';
 import { formatSlovakAge, inflectNameToDative } from '../utils/formatters';
 import { useTranslation } from 'react-i18next';
@@ -98,13 +99,8 @@ const PetDetailPage: React.FC = () => {
             .slice(0, 4);
     }, [pets, pet]);
 
-    useEffect(() => {
-        if (!pet) return;
-        document.title = `${pet.name} hľadá domov - LabkaNádeje`;
-        return () => {
-            document.title = 'LabkaNádeje - Adopcia Zvierat';
-        };
-    }, [pet]);
+    // SEO Head is handled in return
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -528,13 +524,13 @@ const PetDetailPage: React.FC = () => {
                                     : 'bg-brand-600 text-white hover:bg-brand-700 shadow-brand-200'
                                 }`}
                         >
-                            {hasAlreadyApplied ? <><CheckCircle size={20} /> {t('petDetail.applicationSent')}</> : t('petDetail.interestButton')}
+                            {hasAlreadyApplied ? <><CheckCircle size={20} /> {t('petDetail.applicationSent')}</> : <><Send size={20} className="mr-1" /> {t('petDetail.interestButton')}</>}
                         </button>
-                        {!isAlreadyAdopted && pet.adoptionStatus === 'Available' && (
+                        {/* {!isAlreadyAdopted && pet.adoptionStatus === 'Available' && (
                             <button disabled className="w-full py-3 px-6 rounded-2xl font-bold text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed flex items-center justify-center gap-2">
                                 <Heart size={18} /> {t('petDetail.virtualAdopt')}
                             </button>
-                        )}
+                        )} */}
                     </div>
                 ) : (
                     <div className="bg-gray-50 p-4 rounded-xl text-center text-sm text-gray-500 border border-gray-100">
@@ -569,6 +565,43 @@ const PetDetailPage: React.FC = () => {
                     <span className="truncate">{shelter?.location || pet.location}</span>
                 </div>
             </Link>
+
+            {/* NEW VIRTUAL ADOPTION SECTION */}
+            {!isAlreadyAdopted && pet.adoptionStatus === 'Available' && !isShelterUser && (
+                <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-violet-600 to-indigo-700 p-6 text-white shadow-xl shadow-indigo-200/50 group hover:shadow-2xl hover:shadow-indigo-300/50 transition-all duration-300 transform hover:-translate-y-1">
+                    {/* Decorative Background Elements */}
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-white/20 transition-colors duration-500"></div>
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/30 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none"></div>
+
+                    {/* Content */}
+                    <div className="relative z-10 text-center">
+                        <div className="mx-auto w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4 border border-white/20 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                            <HeartHandshake className="text-white" size={28} />
+                        </div>
+
+                        <h4 className="text-xl font-black mb-2 tracking-tight">
+                            {t('home.virtualAdoption.badge')}
+                        </h4>
+
+                        <p className="text-indigo-100 text-sm mb-6 leading-relaxed font-medium opacity-90">
+                            {t('home.virtualAdoption.description')}
+                        </p>
+                        <button
+                            onClick={handleVirtualAdoptionClick}
+                            className="w-full py-3.5 px-4 rounded-xl font-bold text-indigo-900 bg-white hover:bg-indigo-50 shadow-lg shadow-black/10 transition flex items-center justify-center gap-2 group-hover:gap-3"
+                        >
+                            <span>{t('petDetail.virtualAdopt')}</span>
+                            <Heart size={18} className="fill-indigo-900/20 text-indigo-700 transition-transform group-hover:scale-110" />
+                        </button>
+
+                        <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-bold text-indigo-200 uppercase tracking-widest opacity-60">
+                            <SparklesIcon size={10} />
+                            <span>Pomoc ktorú je cítiť</span>
+                            <SparklesIcon size={10} />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="mb-6 mt-6">
                 <MiniMap location={shelter?.location || pet.location} className="w-full h-48" />
@@ -619,15 +652,11 @@ const PetDetailPage: React.FC = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20 pt-6">
-            <Helmet>
-                <title>{pet.name} hľadá domov | LabkaNádeje</title>
-                <meta name="description" content={`Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description.substring(0, 150)}...`} />
-                <meta property="og:title" content={`${pet.name} hľadá domov | LabkaNádeje`} />
-                <meta property="og:description" content={`Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description.substring(0, 150)}...`} />
-                <meta property="og:image" content={pet.imageUrl} />
-                <meta property="og:url" content={window.location.href} />
-                <meta property="og:type" content="website" />
-            </Helmet>
+            <SEOHead
+                title={pet.name}
+                description={`Adoptujte si ${pet.name}! ${pet.breed}, ${pet.age} rokov. ${pet.description ? pet.description.substring(0, 150) : ''}...`}
+                image={pet.imageUrl}
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between mb-6">
                     <Link to="/pets" className="inline-flex items-center text-gray-500 hover:text-brand-600 font-bold transition">
@@ -651,36 +680,95 @@ const PetDetailPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-20">
                     <div className="lg:col-span-2 space-y-8">
-                        <div className={`grid gap-6 ${hasVideo ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
-                            <div className={`bg-white rounded-3xl p-4 shadow-sm border border-gray-100 ${hasVideo ? '' : ''}`}>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {uniquePhotos.map((img, idx) => (
-                                        <div
-                                            key={idx}
-                                            className={`relative rounded-2xl overflow-hidden cursor-zoom-in group shadow-sm ${
-                                                // STRICT RULE: If more than 1 photo, EVERYTHING is a square. NO columns spanning.
-                                                // If exactly 1 photo, it spans 2 cols and is wide (4/3).
-                                                uniquePhotos.length === 1 ? 'col-span-2 aspect-[4/3]' : 'aspect-square'
-                                                }`}
-                                            onClick={() => setLightboxIndex(idx)}
-                                        >
-                                            <img
-                                                src={img}
-                                                alt=""
-                                                className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-                                            />
-                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-300"></div>
-                                        </div>
-                                    ))}
+                        <div className="space-y-4">
+                            {/* Main Cinema Stage */}
+                            <div
+                                className="relative w-full aspect-[4/3] bg-gray-100 rounded-3xl overflow-hidden shadow-sm border border-gray-100 cursor-zoom-in group"
+                                onClick={() => setLightboxIndex(activePhotoIndex)}
+                            >
+                                {/* Blurred Background for Ambience */}
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center blur-2xl opacity-60 scale-110 transition-all duration-700"
+                                    style={{ backgroundImage: `url(${uniquePhotos[activePhotoIndex]})` }}
+                                ></div>
+
+                                {/* Main Image (No Crop) */}
+                                <div className="absolute inset-0 flex items-center justify-center p-2">
+                                    <img
+                                        src={uniquePhotos[activePhotoIndex]}
+                                        alt={pet.name}
+                                        className="w-full h-full object-contain relative z-10 drop-shadow-xl transition-transform duration-500 group-hover:scale-[1.02]"
+                                    />
                                 </div>
+
+                                {/* Overlay Hint */}
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-20 flex items-center justify-center pointer-events-none">
+                                    <div className="bg-black/50 text-white px-4 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md text-sm font-bold">
+                                        Zväčšiť fotografiu
+                                    </div>
+                                </div>
+
+                                {/* Navigation Arrows (only if multiple) */}
+                                {uniquePhotos.length > 1 && (
+                                    <>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActivePhotoIndex(prev => (prev - 1 + uniquePhotos.length) % uniquePhotos.length);
+                                            }}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-gray-800 rounded-full shadow-lg backdrop-blur transition z-30 opacity-0 group-hover:opacity-100"
+                                        >
+                                            <ChevronLeft size={24} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActivePhotoIndex(prev => (prev + 1) % uniquePhotos.length);
+                                            }}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-gray-800 rounded-full shadow-lg backdrop-blur transition z-30 opacity-0 group-hover:opacity-100"
+                                        >
+                                            <ChevronRight size={24} />
+                                        </button>
+                                    </>
+                                )}
                             </div>
+
+                            {/* Thumbnails */}
+                            {uniquePhotos.length > 1 && (
+                                <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide">
+                                    {uniquePhotos.map((photo, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setActivePhotoIndex(idx)}
+                                            className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 ${activePhotoIndex === idx ? 'border-brand-500 ring-2 ring-brand-200 ring-offset-2 scale-105' : 'border-transparent opacity-70 hover:opacity-100'
+                                                }`}
+                                        >
+                                            <img src={photo} alt="" className="w-full h-full object-cover" />
+                                        </button>
+                                    ))}
+                                    {hasVideo && pet.videoUrl && (
+                                        <button
+                                            onClick={() => {
+                                                const videoElement = document.getElementById('pet-video-section');
+                                                videoElement?.scrollIntoView({ behavior: 'smooth' });
+                                            }}
+                                            className="relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 border-gray-200 bg-black flex items-center justify-center group"
+                                        >
+                                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition"></div>
+                                            <Video className="text-white relative z-10" />
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
                             {hasVideo && pet.videoUrl && (
-                                <div className="flex flex-col h-full justify-start">
-                                    <div className="relative w-full rounded-3xl overflow-hidden shadow-lg border border-gray-200 bg-black aspect-[3/4] max-h-[500px]">
+                                <div id="pet-video-section" className="mt-8">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Video size={20} className="text-brand-600" /> Video</h3>
+                                    <div className="relative w-full rounded-3xl overflow-hidden shadow-lg border border-gray-200 bg-black aspect-video">
                                         {pet.videoUrl.includes('youtube') || pet.videoUrl.includes('youtu.be') || pet.videoUrl.includes('vimeo') ? (
                                             <iframe src={getVideoEmbedUrl(pet.videoUrl)} title="Video" className="w-full h-full absolute inset-0" frameBorder="0" allow="autoplay; playsinline" allowFullScreen></iframe>
                                         ) : (
-                                            <video controls autoPlay muted loop playsInline className="w-full h-full absolute inset-0 object-contain bg-black"><source src={pet.videoUrl} type="video/mp4" /></video>
+                                            <video controls muted loop playsInline className="w-full h-full absolute inset-0 object-contain bg-black"><source src={pet.videoUrl} type="video/mp4" /></video>
                                         )}
                                     </div>
                                 </div>
@@ -775,31 +863,63 @@ const PetDetailPage: React.FC = () => {
                             </div>
                         )}
 
+
+
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
                                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2"><HomeIcon size={20} className="text-brand-600" /> {t('petDetail.home')}</h3>
                                 <div className="space-y-6">
                                     <div>
-                                        <div className="text-xs font-bold text-green-600 mb-2 flex items-center gap-1"><CheckCircle size={12} /> {t('petDetail.status.suitable')}</div>
+
                                         <div className="flex flex-wrap gap-2">
                                             {pet.requirements?.suitableFor?.map(tag => <span key={tag} className="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-[10px] font-bold">{tag}</span>)}
-                                            {(!pet.requirements?.suitableFor || pet.requirements?.suitableFor.length === 0) && <span className="text-xs text-gray-400">{t('petDetail.unspecified')}</span>}
+
                                         </div>
                                     </div>
-                                    <div className="pt-4 border-t border-gray-50 flex justify-between items-center text-sm">
-                                        <span className="text-gray-600">{t('petDetail.activity')}</span>
-                                        <span className="font-bold text-brand-600">{getActivityLabel(pet.requirements?.activityLevel)}</span>
+
+
+                                    <div className="space-y-1 pt-4 border-t border-gray-50">
+                                        <BooleanItem label={t('petDetail.toiletTrained')} value={!!pet.training?.toiletTrained} icon={Footprints} />
+                                        <BooleanItem label={t('petDetail.alone')} value={!!pet.training?.aloneTime} icon={Moon} />
                                     </div>
+
+                                    {pet.requirements?.unsuitableFor && pet.requirements.unsuitableFor.length > 0 && (
+                                        <div className="pt-4 border-t border-gray-50">
+                                            <div className="text-xs font-bold text-red-500 mb-2 flex items-center gap-1"><XCircle size={12} /> {t('petDetail.unsuitableFor')}</div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {pet.requirements.unsuitableFor.map(tag => (
+                                                    <span key={tag} className="px-3 py-1.5 bg-red-50 text-red-700 rounded-lg text-[10px] font-bold border border-red-100">
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
                                 <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2"><Footprints size={20} className="text-brand-600" /> {t('petDetail.training')}</h3>
                                 <div className="space-y-1">
-                                    <BooleanItem label={t('petDetail.toiletTrained')} value={!!pet.training?.toiletTrained} icon={Footprints} />
+                                    <div className="pb-4 mb-4 border-b border-gray-50 flex justify-between items-center text-sm">
+                                        <span className="text-gray-600 font-medium">{t('petDetail.activity')}</span>
+                                        <span className="font-bold text-brand-600 px-3 py-1 bg-brand-50 rounded-lg text-xs">{getActivityLabel(pet.requirements?.activityLevel)}</span>
+                                    </div>
                                     <BooleanItem label={t('petDetail.leash')} value={!!pet.training?.leashTrained} icon={Dog} />
                                     <BooleanItem label={t('petDetail.car')} value={!!pet.training?.carTravel} icon={Car} />
-                                    <BooleanItem label={t('petDetail.alone')} value={!!pet.training?.aloneTime} icon={Moon} />
+
+                                    {pet.tags && pet.tags.length > 0 && (
+                                        <div className="pt-4 mt-2 border-t border-gray-50">
+                                            <div className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">{t('petDetail.traits', 'Povaha')}</div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {pet.tags.map(tag => (
+                                                    <span key={tag} className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-md text-[10px] font-bold border border-gray-200">
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -852,6 +972,26 @@ const PetDetailPage: React.FC = () => {
                                         )}
                                     </div>
                                 )}
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mt-8 mb-8">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                                <div className="p-2 bg-blue-100 text-blue-600 rounded-xl"><Info size={24} /></div>
+                                {t('petDetail.faq.title')}
+                            </h2>
+                            <div className="grid gap-4">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="bg-blue-50/50 rounded-2xl p-6 hover:bg-blue-50 transition border border-blue-100/50">
+                                        <h3 className="font-bold text-gray-900 mb-2 flex items-start gap-2">
+                                            <span className="text-brand-600 mt-1"><SparklesIcon size={14} /></span>
+                                            {t(`petDetail.faq.q${i}`)}
+                                        </h3>
+                                        <p className="text-gray-600 text-sm leading-relaxed pl-6">
+                                            {t(`petDetail.faq.a${i}`)}
+                                        </p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>

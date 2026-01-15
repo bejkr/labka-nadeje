@@ -1,200 +1,143 @@
-import React, { useState } from 'react';
-import { CreditCard, Gift, HeartHandshake, Database, CheckCircle, AlertTriangle, ShieldAlert, RefreshCw, Search, Rocket, Server, Megaphone, Laptop } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { api } from '../services/api';
-import { useApp } from '../contexts/AppContext';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Rocket, Server, Megaphone, ShieldAlert, Heart, Zap, Building2, TrendingUp, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import SEOHead from '../components/SEOHead';
 
 const SupportPage: React.FC = () => {
-  const { userRole, currentUser } = useAuth();
-  const { showToast } = useApp();
-
-  const isSuperAdmin = (currentUser as any)?.isSuperAdmin;
+  const { t } = useTranslation();
 
   return (
-    <div className="bg-gray-50 min-h-screen py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-50 min-h-screen">
+      <SEOHead
+        title={t('nav.supportPlatform')}
+        description={t('supportPage.hero.subtitle')}
+      />
 
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-6">Spoločne meníme osudy</h1>
-          <p className="text-lg text-gray-600">
-            Sme nezisková iniciatíva. Aby sme mohli spájať zvieratá s novými domovmi, potrebujeme pomoc pre chod portálu aj pre samotné útulky.
-          </p>
-        </div>
+      {/* Modern Hero Section */}
+      <div className="relative bg-[#1a1c2e] text-white overflow-hidden rounded-b-[4rem] shadow-2xl">
+        {/* Abstract Background */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-600 rounded-full blur-[120px] opacity-20 -mr-40 -mt-40"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600 rounded-full blur-[100px] opacity-20 -ml-20 -mb-20"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10"></div>
 
-        {/* 1. SUPPORT THE PLATFORM SECTION (FIRST) */}
-        <div className="bg-gradient-to-br from-brand-600 to-brand-700 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl mb-24 relative overflow-hidden border border-brand-500">
-          {/* Background Decorations */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-400 opacity-10 rounded-full blur-3xl -ml-10 -mb-10"></div>
-
-          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-brand-50 text-sm font-bold mb-6 backdrop-blur-md">
-                <Rocket size={16} className="text-yellow-300" />
-                Podporte rozvoj platformy
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-200 text-sm font-bold mb-8 backdrop-blur-md shadow-lg">
+                <Heart size={16} className="text-red-400 fill-red-400 animate-pulse" />
+                {t('nav.supportPlatform')}
               </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight">
-                Pomôžte nám udržať <br /> LabkuNádeje pri živote
-              </h2>
-              <p className="text-brand-100 text-lg mb-8 leading-relaxed max-w-xl">
-                Prevádzka moderného portálu niečo stojí. Váš dar pre platformu nám umožňuje platiť servery, vyvíjať nové funkcie pre útulky a propagovať adopcie na sociálnych sieťach, aby sa o zvieratkách dozvedelo čo najviac ľudí.
+              <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-[1.1] bg-clip-text text-transparent bg-gradient-to-r from-white via-brand-100 to-brand-200">
+                {t('supportPage.hero.title')}
+              </h1>
+              <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-light">
+                {t('supportPage.hero.subtitle')}
               </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button className="bg-white text-brand-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-brand-50 transition shadow-lg shadow-brand-900/20 transform hover:-translate-y-1">
-                  Darovať na chod portálu
-                </button>
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+                <a href="#ways" className="bg-brand-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-brand-600 transition shadow-lg shadow-brand-500/40 hover:-translate-y-1 transform">
+                  {t('supportPage.hero.cta')}
+                </a>
               </div>
             </div>
 
-            {/* Visual Stats / Usage */}
-            <div className="w-full lg:w-5/12 bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-              <h3 className="font-bold text-xl mb-6 flex items-center gap-2">
-                <Laptop size={24} className="text-brand-200" />
-                Kam putujú vaše dary?
-              </h3>
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-brand-500/30 flex items-center justify-center flex-shrink-0 text-white">
-                    <Server size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-lg">Technická prevádzka</h4>
-                    <p className="text-brand-100 text-sm">Hosting, databázy, bezpečnosť dát a údržba systému.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-brand-500/30 flex items-center justify-center flex-shrink-0 text-white">
-                    <Megaphone size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-lg">Marketing adopcií</h4>
-                    <p className="text-brand-100 text-sm">Platená reklama pre ťažko adoptovateľné zvieratá a osveta.</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-brand-500/30 flex items-center justify-center flex-shrink-0 text-white">
-                    <ShieldAlert size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-lg">Overovanie útulkov</h4>
-                    <p className="text-brand-100 text-sm">Administratíva spojená s preverovaním organizácií.</p>
+            <div className="w-full lg:w-5/12">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-brand-600 to-purple-600 rounded-[3rem] rotate-6 opacity-30 blur-xl"></div>
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-8 md:p-10 relative z-10 shadow-2xl">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="bg-white/5 rounded-2xl p-6 text-center border border-white/10">
+                      <Users className="w-8 h-8 text-brand-300 mx-auto mb-3" />
+                      <div className="text-3xl font-black text-white">1250+</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider font-bold">{t('supportPage.impact.adopted')}</div>
+                    </div>
+                    <div className="bg-white/5 rounded-2xl p-6 text-center border border-white/10">
+                      <Building2 className="w-8 h-8 text-purple-300 mx-auto mb-3" />
+                      <div className="text-3xl font-black text-white">85+</div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider font-bold">{t('supportPage.impact.shelters')}</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* 2. SUPPORT SHELTERS SECTION (SECOND) */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <span className="text-brand-600 font-bold text-sm mb-2 block">Pomoc v teréne</span>
-            <h2 className="text-4xl font-bold text-gray-900">Ako podporiť priamo útulky?</h2>
-            <p className="text-xl text-gray-500 mt-4 max-w-2xl mx-auto">
-              Môžete si vybrať konkrétny útulok zo zoznamu alebo podporiť zvieratá globálne týmito spôsobmi.
-            </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-32">
+
+        {/* Transparency Section */}
+        <div className="relative">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">{t('supportPage.transparency.title')}</h2>
+            <div className="h-1.5 w-24 bg-brand-500 mx-auto rounded-full"></div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Card 1 */}
-            <div className="bg-white rounded-3xl shadow-sm p-8 text-center border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 group">
-              <div className="mx-auto w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-6 group-hover:scale-110 transition border border-green-100">
-                <CreditCard size={36} />
+            {[
+              { icon: Server, color: "text-blue-500", bg: "bg-blue-50", key: "tech" },
+              { icon: Megaphone, color: "text-purple-500", bg: "bg-purple-50", key: "marketing" },
+              { icon: ShieldAlert, color: "text-green-500", bg: "bg-green-50", key: "verify" }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-brand-500/10 transition duration-300 group">
+                <div className={`w-16 h-16 ${item.bg} ${item.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition`}>
+                  <item.icon size={32} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-brand-600 transition">
+                  {t(`supportPage.transparency.items.${item.key}.title`)}
+                </h3>
+                <p className="text-gray-500 leading-relaxed font-medium">
+                  {t(`supportPage.transparency.items.${item.key}.desc`)}
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Finančný dar útulku</h3>
-              <p className="text-gray-500 mb-8 leading-relaxed">
-                Peniaze na veterinárne úkony, operácie a kvalitnú stravu. Darujete priamo na účet vybraného útulku.
-              </p>
-              <Link to="/shelters" className="block w-full bg-white text-gray-900 border-2 border-gray-100 font-bold py-3 rounded-xl hover:border-green-500 hover:text-green-600 transition">
-                Vybrať útulok
-              </Link>
-            </div>
-
-            {/* Card 2 */}
-            <div className="bg-white rounded-3xl shadow-sm p-8 text-center border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 group">
-              <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition border border-blue-100">
-                <Gift size={36} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Materiálna pomoc</h3>
-              <p className="text-gray-500 mb-8 leading-relaxed">
-                Staré deky, uteráky, hračky, čistiace prostriedky alebo krmivo. Útulky majú zoznamy vecí, ktoré im chýbajú.
-              </p>
-              <Link to="/shelters" className="block w-full bg-white text-gray-900 border-2 border-gray-100 font-bold py-3 rounded-xl hover:border-blue-500 hover:text-blue-600 transition">
-                Pozrieť zoznamy potrieb
-              </Link>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-white rounded-3xl shadow-sm p-8 text-center border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition duration-300 group">
-              <div className="mx-auto w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition border border-purple-100">
-                <HeartHandshake size={36} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Dobrovoľníctvo</h3>
-              <p className="text-gray-500 mb-8 leading-relaxed">
-                Najcennejšie čo máte, je váš čas. Venčenie psov, pomoc pri upratovaní alebo fotenie zvierat na adopciu.
-              </p>
-              <Link to="/shelters" className="block w-full bg-white text-gray-900 border-2 border-gray-100 font-bold py-3 rounded-xl hover:border-purple-500 hover:text-purple-600 transition">
-                Stať sa dobrovoľníkom
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* 3. VIRTUAL ADOPTION SECTION */}
-        <div className="mb-24 py-12 border-t border-gray-200">
+        {/* Ways to Help Section */}
+        <div id="ways" className="scroll-mt-24">
           <div className="text-center mb-16">
-            <span className="text-brand-600 font-bold text-sm mb-2 block">Pomoc na diaľku</span>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Ako funguje virtuálna adopcia?</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Nemôžete si vziať zvieratko domov, ale chcete pomôcť konkrétnemu chlpáčovi?
-              Virtuálna adopcia je ideálne riešenie.
-            </p>
+            <h2 className="text-4xl font-black text-gray-900 mb-4">{t('supportPage.ways.title')}</h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-brand-100 -z-10"></div>
-
-            {/* Step 1 */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center relative group hover:-translate-y-1 transition duration-300">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-brand-50 shadow-sm group-hover:border-brand-200 transition">
-                <span className="text-4xl font-extrabold text-brand-600">1</span>
+          <div className="grid lg:grid-cols-3 gap-8 items-start">
+            {/* One Time */}
+            <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-lg relative group hover:-translate-y-2 transition duration-300">
+              <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-6 text-gray-600">
+                <Zap size={24} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Vyberte si lásku</h3>
-              <p className="text-gray-500 leading-relaxed">
-                Nájdite v zozname zvieratko, ktoré vás chytí za srdce. Často sú to staršie psy alebo mačky, ktoré dlhšie čakajú na domov.
-              </p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('supportPage.ways.oneTime.title')}</h3>
+              <p className="text-gray-500 mb-8 min-h-[3rem]">{t('supportPage.ways.oneTime.desc')}</p>
+              <button className="w-full py-4 rounded-xl border-2 border-gray-900 font-bold text-gray-900 hover:bg-gray-900 hover:text-white transition">
+                {t('supportPage.ways.oneTime.cta')}
+              </button>
             </div>
 
-            {/* Step 2 */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center relative group hover:-translate-y-1 transition duration-300">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-brand-50 shadow-sm group-hover:border-brand-200 transition">
-                <span className="text-4xl font-extrabold text-brand-600">2</span>
+            {/* Monthly (Highlight) */}
+            <div className="bg-brand-600 p-10 rounded-[2.5rem] border border-brand-500 shadow-2xl shadow-brand-500/40 relative transform lg:-mt-6 group hover:-translate-y-2 transition duration-300 text-white">
+              <div className="absolute top-0 right-0 bg-[#FFD700] text-brand-900 text-xs font-black uppercase tracking-widest py-2 px-6 rounded-bl-2xl rounded-tr-2xl">
+                {t('supportPage.ways.monthly.badge')}
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Nastavte príspevok</h3>
-              <p className="text-gray-500 leading-relaxed">
-                Zvoľte si ľubovoľnú mesačnú sumu (už od 5 €). Vaše peniaze pôjdu priamo na krmivo, lieky a starostlivosť o dané zvieratko.
-              </p>
+              <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-6 text-white backdrop-blur-sm">
+                <TrendingUp size={24} />
+              </div>
+              <h3 className="text-2xl font-bold mb-4">{t('supportPage.ways.monthly.title')}</h3>
+              <p className="text-brand-100 mb-8 min-h-[3rem]">{t('supportPage.ways.monthly.desc')}</p>
+              <button className="w-full py-4 rounded-xl bg-white text-brand-900 font-bold hover:bg-brand-50 transition shadow-lg">
+                {t('supportPage.ways.monthly.cta')}
+              </button>
             </div>
 
-            {/* Step 3 */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center relative group hover:-translate-y-1 transition duration-300">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-brand-50 shadow-sm group-hover:border-brand-200 transition">
-                <span className="text-4xl font-extrabold text-brand-600">3</span>
+            {/* Corporate */}
+            <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-lg relative group hover:-translate-y-2 transition duration-300">
+              <div className="w-14 h-14 bg-purple-50 rounded-full flex items-center justify-center mb-6 text-purple-600">
+                <Building2 size={24} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Sledujte jeho cestu</h3>
-              <p className="text-gray-500 leading-relaxed">
-                Virtuálnu adopciu uvidíte vo svojom profile. Budete mať dobrý pocit, že vďaka vám má konkrétne zvieratko lepší život.
-              </p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('supportPage.ways.corporate.title')}</h3>
+              <p className="text-gray-500 mb-8 min-h-[3rem]">{t('supportPage.ways.corporate.desc')}</p>
+              <button className="w-full py-4 rounded-xl border-2 border-purple-600 font-bold text-purple-600 hover:bg-purple-50 transition">
+                {t('supportPage.ways.corporate.cta')}
+              </button>
             </div>
-          </div>
-
-          <div className="mt-12 text-center">
-            <Link to="/pets" className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-700 transition shadow-lg shadow-brand-200 transform hover:-translate-y-1">
-              <Search size={20} /> Nájsť zvieratko na adopciu
-            </Link>
           </div>
         </div>
 

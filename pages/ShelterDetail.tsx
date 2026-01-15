@@ -11,6 +11,7 @@ import { Shelter, Pet, ShelterSupply } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
 import { useTranslation } from 'react-i18next';
+import SEOHead from '../components/SEOHead';
 
 const ShelterDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -131,6 +132,13 @@ const ShelterDetailPage: React.FC = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20 font-sans">
+            {shelter && (
+                <SEOHead
+                    title={shelter.name}
+                    description={shelter.description ? shelter.description.substring(0, 160) : `Profil útulku ${shelter.name} na Labka Nádeje.`}
+                    image={shelter.logoUrl}
+                />
+            )}
 
             {/* 1. HERO HEADER */}
             <div className="relative bg-white pb-8">

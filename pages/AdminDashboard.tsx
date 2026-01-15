@@ -185,6 +185,7 @@ const AdminDashboard: React.FC = () => {
                     <AdminAnalytics
                         shelters={users.filter(u => u.role === 'shelter') as Shelter[]}
                         pets={pets}
+                        onVerify={handleVerifyShelter}
                     />
                 )}
 
