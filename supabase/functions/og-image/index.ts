@@ -8,7 +8,7 @@ export default async function handler(req: Request) {
 
     const name = params.get('name') || 'Labka';
     const breed = params.get('breed') || 'Hľadá domov';
-    const imageUrl = params.get('image');
+    const imageUrl = params.get('image') ? decodeURIComponent(params.get('image')!) : null;
     const shelterName = params.get('shelter') || 'Labka Nádeje';
 
     const h = React.createElement;

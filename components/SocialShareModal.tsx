@@ -21,7 +21,25 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
     if (!isOpen) return null;
 
     const handleFacebookShare = () => {
-        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        // Use Share Proxy for Facebook to ensure Meta Tags are read correctly
+        // The proxy will then redirect the user back to the app
+        let petId = '';
+        try {
+            // Safely extract ID regardless of URL structure
+            const urlObj = new URL(url);
+            const pathParts = urlObj.pathname.split('/').filter(p => p);
+            petId = pathParts[pathParts.length - 1] || ''; // Last part is usually ID
+        } catch (e) {
+            console.error('Error parsing URL', e);
+        }
+
+        const supabaseUrl = 'https://qcwoyklifcekulkhrqmz.supabase.co';
+        // Fallback to home if no ID found, though typically we shouldn't share without ID
+        const proxyUrl = petId
+            ? `${supabaseUrl}/functions/v1/share-proxy?id=${petId}`
+            : url;
+
+        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(proxyUrl)}`;
         window.open(shareUrl, '_blank', 'width=600,height=400');
     };
 
@@ -33,7 +51,22 @@ const SocialShareModal: React.FC<SocialShareModalProps> = ({
     };
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText(url);
+        // Copy Proxy URL so pasted links in Messenger/WhatsApp etc work too
+        let petId = '';
+        try {
+            const urlObj = new URL(url);
+            const pathParts = urlObj.pathname.split('/').filter(p => p);
+            petId = pathParts[pathParts.length - 1] || '';
+        } catch (e) {
+            console.error('Error parsing URL', e);
+        }
+
+        const supabaseUrl = 'https://qcwoyklifcekulkhrqmz.supabase.co';
+        const proxyUrl = petId
+            ? `${supabaseUrl}/functions/v1/share-proxy?id=${petId}`
+            : url;
+
+        navigator.clipboard.writeText(proxyUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };

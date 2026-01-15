@@ -22,9 +22,10 @@ import PetManager from '../components/dashboard/PetManager';
 import InquiryManager from '../components/dashboard/InquiryManager';
 import UpdatesManager from '../components/dashboard/UpdatesManager';
 import InternalSettings from './internal/InternalSettings';
+import InternalDocuments from './internal/InternalDocuments';
 
 // Define Dashboard Tabs
-type TabType = 'overview' | 'pets' | 'inquiries' | 'updates' | 'settings';
+type TabType = 'overview' | 'pets' | 'inquiries' | 'updates' | 'settings' | 'documents';
 
 const ShelterDashboard: React.FC = () => {
     const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -139,6 +140,7 @@ const ShelterDashboard: React.FC = () => {
         { id: 'pets', label: 'Správa zvierat', icon: Dog },
         { id: 'inquiries', label: 'Dopyty', icon: MessageSquare },
         { id: 'updates', label: 'Novinky', icon: Sparkles },
+        { id: 'documents', label: 'Dokumenty', icon: Building },
     ];
 
     return (
@@ -283,6 +285,10 @@ const ShelterDashboard: React.FC = () => {
 
                         {activeTab === 'updates' && (
                             <UpdatesManager pets={shelterPets} />
+                        )}
+
+                        {activeTab === 'documents' && (
+                            <InternalDocuments />
                         )}
 
                         {activeTab === 'settings' && (
