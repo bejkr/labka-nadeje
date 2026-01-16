@@ -366,8 +366,9 @@ export const api = {
     async getPets(): Promise<Pet[]> {
         try {
             const { data, error } = await supabase.from('pets')
-                .select('id, slug, shelter_id, name, type, breed, age, gender, size, location, image_url, description, adoption_fee, adoption_status, is_visible, needs_foster, tags, posted_date, views, details, pet_updates(*)')
-                .order('posted_date', { ascending: false });
+                .select('id, slug, shelter_id, name, type, breed, age, gender, size, location, image_url, description, adoption_fee, adoption_status, is_visible, needs_foster, tags, posted_date, views, details, pet_updates(*), profiles!inner(name)')
+                .order('posted_date', { ascending: false })
+                .not('profiles.name', 'ilike', '%testovac%');
             if (error) throw error;
             return data?.map(mapPetFromDB) || [];
         } catch (e) { return []; }
@@ -535,7 +536,10 @@ export const api = {
 
             if (data) {
                 const profile = mapProfileFromDB(data);
-                if (profile.role === 'shelter') return profile as Shelter;
+                if (profile.role === 'shelter') {
+                    if (profile.name.toLowerCase().includes('testovac')) return null;
+                    return profile as Shelter;
+                }
             }
         } catch (e) { }
         return null;
@@ -543,7 +547,10 @@ export const api = {
 
     async getAllShelters(): Promise<Shelter[]> {
         try {
-            const { data: profiles, error } = await supabase.from('profiles').select('*').eq('role', 'shelter');
+            const { data: profiles, error } = await supabase.from('profiles')
+                .select('*')
+                .eq('role', 'shelter')
+                .not('name', 'ilike', '%testovac%');
             if (error) throw error;
 
             // Fetch all pets to calculate stats dynamically
