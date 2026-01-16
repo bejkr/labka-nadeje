@@ -45,6 +45,30 @@ const PetDetailPage: React.FC = () => {
     const [applicationSuccess, setApplicationSuccess] = useState(false);
     const [applicationMessage, setApplicationMessage] = useState('');
     const [isSubmittingApp, setIsSubmittingApp] = useState(false);
+    const [guestName, setGuestName] = useState('');
+    const [guestEmail, setGuestEmail] = useState('');
+
+    const [guestPhone, setGuestPhone] = useState('');
+
+    // Detailed Questionnaire State
+    const [housingType, setHousingType] = useState<'byt' | 'dom'>('byt');
+    const [ownership, setOwnership] = useState<'vlastne' | 'prenajom'>('vlastne');
+    const [landlordPermission, setLandlordPermission] = useState(false); // "Má zviera povolené bývanie?"
+    const [hasGarden, setHasGarden] = useState(false);
+
+    const [hoursAlone, setHoursAlone] = useState('');
+    const [careAbility, setCareAbility] = useState<'ano' | 'nie'>('ano'); // "Máte čas na venčenie..."
+    const [caregiver, setCaregiver] = useState(''); // "Kto sa bude starať"
+
+    const [experience, setExperience] = useState<'ziadne' | 'pes' | 'macka' | 'ine'>('ziadne');
+    const [experienceDetails, setExperienceDetails] = useState(''); // "Ak áno, akú?" + "Máš skúsenosti s výchovou?"
+
+    const [childrenInHousehold, setChildrenInHousehold] = useState('');
+    const [otherPets, setOtherPets] = useState('');
+    const [familyAgreement, setFamilyAgreement] = useState(false);
+
+    const [motivation, setMotivation] = useState(''); // "Prečo chceš adoptovať?"
+    const [expectations, setExpectations] = useState<string[]>([]); // "Čo očakávaš?"
 
     // Virtual Adoption Selection State
     // Virtual Adoption Selection State
@@ -82,7 +106,9 @@ const PetDetailPage: React.FC = () => {
     const isOwner = currentUser?.id === pet?.shelterId;
     const isAdmin = (currentUser as any)?.isSuperAdmin;
     const isVisible = pet?.isVisible;
-    const canView = isVisible || isOwner || isAdmin;
+    const normalizedShelterName = shelter?.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") || "";
+    const isTestShelter = normalizedShelterName.includes('testovaci utulok');
+    const canView = isVisible || isOwner || isAdmin || isTestShelter;
 
     // Suggested Pets Logic
     const suggestedPets = useMemo(() => {
@@ -203,12 +229,7 @@ const PetDetailPage: React.FC = () => {
         }
     }, [pet?.id]);
 
-    useEffect(() => {
-        if (isApplicationModalOpen) {
-            setApplicationSuccess(false);
-            setApplicationMessage('');
-        }
-    }, [isApplicationModalOpen]);
+
 
     const photos = useMemo(() => {
         if (!pet) return [];
@@ -280,6 +301,14 @@ const PetDetailPage: React.FC = () => {
     }, [schemaData]);
 
 
+    if (pet && !isVisible && !shelter) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
+            </div>
+        );
+    }
+
     if (!pet || !canView) {
         return <div className="p-20 text-center text-gray-500 font-medium">{t('petDetail.notFound')} <br /><Link to="/pets" className="text-brand-600 underline mt-4 inline-block">{t('petDetail.backToList')}</Link></div>;
     }
@@ -305,11 +334,7 @@ const PetDetailPage: React.FC = () => {
     };
 
     const handleInterestClick = () => {
-        if (!currentUser) {
-            setIsLoginPromptOpen(true);
-        } else {
-            setIsApplicationModalOpen(true);
-        }
+        navigate(`/pets/${pet.id}/inquiry`);
     };
 
     const handleVirtualAdoptionClick = () => {
@@ -336,31 +361,7 @@ const PetDetailPage: React.FC = () => {
         }
     };
 
-    const handleApplicationSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!currentUser || !pet) return;
-        setIsSubmittingApp(true);
-        const newInquiry: AdoptionInquiry = {
-            id: `inq-${Date.now()}`,
-            shelterId: pet.shelterId,
-            petId: pet.id,
-            petName: pet.name,
-            applicantName: currentUser.name,
-            email: currentUser.email,
-            phone: currentUser.phone || '',
-            date: new Date().toISOString(),
-            status: 'Nová',
-            message: applicationMessage
-        };
-        try {
-            await addInquiry(newInquiry);
-            setApplicationSuccess(true);
-        } catch (e) {
-            showToast(t('petDetail.errorSending'), "error");
-        } finally {
-            setIsSubmittingApp(false);
-        }
-    };
+
 
     // Payment handler moved to modal component
 
@@ -1136,88 +1137,7 @@ const PetDetailPage: React.FC = () => {
 
 
 
-            {/* --- REDESIGNED ADOPTION APPLICATION MODAL --- */}
-            {
-                isApplicationModalOpen && (
-                    <div className="fixed inset-0 z-[120] overflow-y-auto bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div className="bg-white rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                            {applicationSuccess ? (
-                                <div className="p-12 flex flex-col items-center text-center">
-                                    <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-8 border border-green-100 shadow-inner">
-                                        <CheckCircle size={56} />
-                                    </div>
-                                    <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Úspešne odoslané!</h3>
-                                    <p className="text-gray-500 mb-8 max-sm leading-relaxed">
-                                        Vaša žiadosť o adopciu {pet.name} bola doručená útulku. Celú konverzáciu nájdete vo svojom profile.
-                                    </p>
-                                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                                        <button onClick={() => navigate('/profile')} className="flex-1 bg-brand-600 text-white font-black py-4 rounded-2xl hover:bg-brand-700 shadow-lg shadow-brand-100 transition transform hover:-translate-y-0.5">
-                                            Prejsť do profilu
-                                        </button>
-                                        <button onClick={() => setIsApplicationModalOpen(false)} className="flex-1 bg-gray-100 text-gray-700 font-black py-4 rounded-2xl hover:bg-gray-200 transition">
-                                            Zavrieť
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <form onSubmit={handleApplicationSubmit}>
-                                    <div className="p-8 pb-4 border-b border-gray-50 bg-gray-50/50">
-                                        <div className="flex justify-between items-start mb-6">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm border-2 border-white">
-                                                    <img src={pet.imageUrl} className="w-full h-full object-cover" alt="" />
-                                                </div>
-                                                <div>
-                                                    <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">Mám záujem o {pet.name}</h3>
-                                                    <p className="text-sm text-gray-500 font-medium">Pošlite útulku vašu nezáväznú žiadosť.</p>
-                                                </div>
-                                            </div>
-                                            <button type="button" onClick={() => setIsApplicationModalOpen(false)} className="p-2 bg-white rounded-full text-gray-400 hover:text-gray-900 shadow-sm border border-gray-100 transition">
-                                                <X size={20} />
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <div className="p-8 space-y-6">
-                                        <div>
-                                            <label className="block text-xs font-black text-gray-400 mb-2 ml-1">{t('petDetail.yourMessage')}</label>
-                                            <textarea
-                                                required
-                                                className="w-full border border-gray-200 rounded-[1.5rem] p-4 h-40 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none text-sm font-medium transition-all bg-gray-50/30"
-                                                placeholder={t('petDetail.messagePlaceholder')}
-                                                value={applicationMessage}
-                                                onChange={(e) => setApplicationMessage(e.target.value)}
-                                            ></textarea>
-                                        </div>
-
-                                        <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex-shrink-0">
-                                                    {(currentUser as User).avatarUrl ? <img src={(currentUser as User).avatarUrl} className="w-full h-full object-cover" /> : <UserIcon className="p-2 text-gray-300" />}
-                                                </div>
-                                                <div>
-                                                    <div className="text-sm font-black text-gray-800">{(currentUser as User).name}</div>
-                                                    <div className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
-                                                        <Mail size={10} /> {(currentUser as User).email}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button
-                                                type="submit"
-                                                disabled={isSubmittingApp || !applicationMessage.trim()}
-                                                className="w-full sm:w-auto bg-brand-600 text-white font-black px-10 py-4 rounded-2xl hover:bg-brand-700 shadow-xl shadow-brand-100 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:transform-none"
-                                            >
-                                                {isSubmittingApp ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
-                                                {t('petDetail.submit')}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            )}
-                        </div>
-                    </div>
-                )
-            }
 
             {/* --- REDESIGNED VIRTUAL ADOPTION MODAL --- */}
             <VirtualAdoptionModal

@@ -128,9 +128,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setCurrentUser(result.user);
       setUserRole('user');
       // Send welcome email (fire and forget)
-      supabase.functions.invoke('welcome-email', {
-        body: { email, name, role: 'user' }
-      }).catch(err => console.error("Failed to send welcome email:", err));
+
     }
     return result;
   };
@@ -143,9 +141,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setCurrentUser(updatedUser);
       setUserRole('shelter');
       // Send welcome email (fire and forget)
-      supabase.functions.invoke('welcome-email', {
-        body: { email, name, role: 'shelter', organizationType }
-      }).catch(err => console.error("Failed to send welcome email:", err));
+
       return { ...result, user: updatedUser };
     }
     return result;

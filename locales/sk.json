@@ -244,7 +244,7 @@
     "petDetail": {
         "notFound": "Zvieratko sa nenašlo.",
         "backToList": "Späť na zoznam",
-        "interestButton": "Poslať žiadosť útulku",
+        "interestButton": "Poslať správu útulku",
         "applicationSent": "Žiadosť odoslaná",
         "virtualAdopt": "Virtuálne adoptovať",
         "ownerEdit": "Váš inzerát. Upraviť",

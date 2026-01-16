@@ -176,7 +176,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                             <div key={msg.id || index} className={`flex items-end gap-2 ${justifyClass} animate-in fade-in slide-in-from-bottom-1 duration-300`}>
                                 {renderAvatar(avatarUrl)}
                                 <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${bubbleStyle}`}>
-                                    <p className="leading-relaxed break-words">{msg.content}</p>
+                                    <p className="leading-relaxed break-words whitespace-pre-wrap">{msg.content}</p>
                                     <span className={`text-[10px] block mt-1 ${isMe ? 'text-brand-200' : 'text-gray-400'}`}>
                                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         {msg.id === 'initial-msg' && ` • ${new Date(msg.createdAt).toLocaleDateString()}`}

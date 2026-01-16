@@ -144,8 +144,8 @@ const InquiryManager: React.FC<InquiryManagerProps> = ({ inquiries, updateStatus
                         {/* BIO / Message Summary */}
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <h3 className="text-gray-900 font-bold mb-4 flex items-center gap-2"><Quote size={20} className="text-brand-500" /> O kandidátovi</h3>
-                            <div className="prose prose-sm text-gray-600 italic bg-gray-50 p-4 rounded-xl">
-                                "{applicant?.bio || selectedInquiry.message}"
+                            <div className="prose prose-sm text-gray-600 italic bg-gray-50 p-4 rounded-xl whitespace-pre-wrap font-sans not-italic">
+                                {applicant?.bio || selectedInquiry.message}
                             </div>
                         </div>
 
@@ -246,9 +246,9 @@ const InquiryManager: React.FC<InquiryManagerProps> = ({ inquiries, updateStatus
                                         <td className="px-6 py-4"><span className="text-brand-600 font-bold">{inq.petName}</span></td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2.5 py-1 rounded-full text-xs font-black border ${inq.status === 'Nová' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                    inq.status === 'Schválená' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                        inq.status === 'Zamietnutá' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                            'bg-gray-100 text-gray-600 border-gray-200'
+                                                inq.status === 'Schválená' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                    inq.status === 'Zamietnutá' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                        'bg-gray-100 text-gray-600 border-gray-200'
                                                 }`}>{inq.status.toUpperCase()}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right"><ArrowUpRight size={20} className="text-gray-300 group-hover:text-brand-600 inline transition-colors" /></td>

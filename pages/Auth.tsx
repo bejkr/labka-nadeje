@@ -338,14 +338,23 @@ const AuthPage: React.FC = () => {
                     <div className="space-y-4">
                       <div>
                         <div className="flex justify-between items-center mb-2 ml-1">
-                          <label className="block text-[10px] font-black text-gray-400">{mode === 'update-password' ? 'Nové heslo' : 'Heslo'}</label>
-                          {mode === 'login' && <button type="button" onClick={() => setMode('forgot')} className="text-[10px] font-black text-brand-600">Zabudli ste heslo?</button>}
+                          <label className="block text-[10px] font-black text-gray-400 mt-1">
+                            {mode === 'update-password' ? 'Nové heslo' : 'Heslo'}
+                          </label>
+                          {mode === 'login' && (
+                            <button type="button" onClick={() => setMode('forgot')} className="text-[10px] font-black text-brand-600 block">Zabudli ste heslo?</button>
+                          )}
                         </div>
                         <div className="relative group">
                           <div className={`absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors ${role === 'shelter' && mode === 'register' ? 'group-focus-within:text-indigo-500' : 'group-focus-within:text-brand-500'}`}><Lock size={20} /></div>
                           <input type={showPassword ? "text" : "password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:ring-2 focus:ring-brand-500/20 font-bold transition-all" placeholder="••••••••" />
                           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
                         </div>
+                        {mode === 'login' && (
+                          <p className="text-[9px] text-gray-400 mt-2 text-right leading-tight ml-2">
+                            Ak ešte nemáte heslo (napr. automatická registrácia), použite možnosť <b>Zabudli ste heslo?</b> vyššie.
+                          </p>
+                        )}
                       </div>
                       {(mode === 'register' || mode === 'update-password') && (
                         <div>
@@ -383,7 +392,7 @@ const AuthPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

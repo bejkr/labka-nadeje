@@ -287,6 +287,29 @@ const InternalSettings: React.FC = () => {
                     </div>
                 </div>
 
+                {/* 2.5 Email Notifications */}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <Mail size={20} className="text-brand-600 dark:text-brand-400" /> Notifikácie
+                    </h2>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="font-medium text-gray-900 dark:text-white">E-mailové upozornenia</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Dostávať upozornenia o nových dopytoch e-mailom</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                name="emailNotificationsEnabled"
+                                checked={formData.emailNotificationsEnabled !== false}
+                                onChange={(e) => setFormData(prev => ({ ...prev, emailNotificationsEnabled: e.target.checked }))}
+                                className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 dark:peer-focus:ring-brand-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-600"></div>
+                        </label>
+                    </div>
+                </div>
+
                 {/* 3. Socials & Web */}
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">

@@ -201,7 +201,33 @@ export const api = {
         }
 
         if (data.user) {
-            const profile = await this.getCurrentSession(data.session);
+            let profile = await this.getCurrentSession(data.session);
+
+            // FALLBACK: If profile is missing (e.g. Trigger failed), try to create it manually
+            if (!profile) {
+                console.warn("Profile trigger failed. Attempting manual creation...");
+                const name = metadata?.name || data.user.user_metadata?.name || 'Užívateľ';
+                const role = metadata?.role || data.user.user_metadata?.role || 'user';
+                // Generate a simple slug
+                const slug = `${role}-${data.user.id.substring(0, 8)}`;
+
+                const { error: insertError } = await supabase.from('profiles').insert({
+                    id: data.user.id,
+                    email: email,
+                    name: name,
+                    role: role,
+                    slug: slug,
+                    created_at: new Date().toISOString()
+                });
+
+                if (insertError) {
+                    console.error("Manual profile creation failed:", insertError);
+                } else {
+                    // Retry fetch
+                    profile = await this.getCurrentSession(data.session);
+                }
+            }
+
             return { user: profile, verificationRequired: !data.session };
         }
         return { user: null, verificationRequired: true };
@@ -653,8 +679,25 @@ export const api = {
 
     async createInquiry(inq: AdoptionInquiry) {
         const { data: { session } } = await supabase.auth.getSession();
-        const { error } = await supabase.from('inquiries').insert({ shelter_id: inq.shelterId, pet_id: inq.petId, applicant_id: session?.user?.id || null, applicant_name: inq.applicantName, email: inq.email, phone: inq.phone, message: inq.message, status: 'Nová', created_at: new Date().toISOString() });
+        const inquiryData = {
+            shelter_id: inq.shelterId,
+            pet_id: inq.petId,
+            applicant_id: session?.user?.id || null,
+            applicant_name: inq.applicantName,
+            email: inq.email,
+            phone: inq.phone,
+            message: inq.message,
+            status: 'Nová',
+            created_at: new Date().toISOString()
+        };
+        const { error } = await supabase.from('inquiries').insert(inquiryData);
         if (error) { if (error.code === '23505') throw new Error("Žiadosť pre toto zviera už bola odoslaná."); throw error; }
+
+        // Trigger email notification (fire and forget)
+        // Pass complete data payload to avoid RLS fetch issues for anonymous users
+        supabase.functions.invoke('notify-inquiry', {
+            body: { inquiry_data: inquiryData }
+        }).catch(err => console.warn("Inquiry notification failed:", err));
     },
 
     async updateInquiryStatus(id: string, status: string) {

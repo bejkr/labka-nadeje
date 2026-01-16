@@ -32,14 +32,15 @@ const ShelterDashboard: React.FC = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Data States
+    // Data States
     const { pets, refreshPets, deletePet } = usePets();
     const { currentUser, logout, refreshUser } = useAuth();
-    const { showToast } = useApp();
+    const { showToast, inquiries: globalInquiries, seenInquiryIds, markInquiryAsRead } = useApp();
     const navigate = useNavigate();
 
     // Specific Data
-    const [inquiries, setInquiries] = useState<AdoptionInquiry[]>([]);
-    const [seenInquiryIds, setSeenInquiryIds] = useState<string[]>([]);
+    // Filter inquiries for this shelter just in case, though API likely handles it
+    const inquiries = globalInquiries.filter(i => i.shelterId === currentUser?.id);
     const [virtualParentsCount, setVirtualParentsCount] = useState(0);
     const [isLoadingData, setIsLoadingData] = useState(true);
 
@@ -63,10 +64,7 @@ const ShelterDashboard: React.FC = () => {
         const loadData = async () => {
             setIsLoadingData(true);
             try {
-                // 1. Inquiries
-                const inqs = await api.getInquiries();
-                const shelterInqs = inqs.filter(i => i.shelterId === currentUser.id);
-                setInquiries(shelterInqs);
+                // 1. Inquiries are handled by AppContext
 
                 // 2. Virtual Parents Stats
                 const vpCount = await api.getShelterVirtualAdoptionsCount(currentUser.id);
@@ -84,23 +82,10 @@ const ShelterDashboard: React.FC = () => {
         loadData();
     }, [currentUser, navigate]);
 
-    // Handle session storage for seen inquiries
-    useEffect(() => {
-        try {
-            const seen = JSON.parse(sessionStorage.getItem('seenInquiryIds') || '[]');
-            setSeenInquiryIds(seen);
-        } catch (e) { }
-    }, []);
-
+    // Handle session storage for seen inquiries - REMOVED (Handled by AppContext)
     // --- Actions ---
 
-    const markInquiryAsRead = (id: string) => {
-        if (!seenInquiryIds.includes(id)) {
-            const newSeen = [...seenInquiryIds, id];
-            setSeenInquiryIds(newSeen);
-            sessionStorage.setItem('seenInquiryIds', JSON.stringify(newSeen));
-        }
-    };
+    // markInquiryAsRead - REMOVED (Handled by AppContext)
 
     const handleEditPet = (pet: Pet) => {
         setEditingPet(pet);
@@ -170,11 +155,17 @@ const ShelterDashboard: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100 mb-6">
-                        <img
-                            src={shelter.logoUrl || "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100"}
-                            alt="Logo"
-                            className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-                        />
+                        {shelter.logoUrl ? (
+                            <img
+                                src={shelter.logoUrl}
+                                alt="Logo"
+                                className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
+                            />
+                        ) : (
+                            <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center border-2 border-white shadow-sm text-brand-700 font-black text-xs">
+                                {shelter.name.substring(0, 2).toUpperCase()}
+                            </div>
+                        )}
                         <div className="min-w-0">
                             <div className="font-bold text-sm truncate">{shelter.name}</div>
                             <div className="text-xs text-brand-600 font-medium truncate">Online</div>

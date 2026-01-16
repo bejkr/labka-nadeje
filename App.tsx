@@ -17,6 +17,7 @@ import Footer from './components/Footer';
 import HomePage from './pages/Home';
 import PetListPage from './pages/PetList';
 import PetDetailPage from './pages/PetDetailPage';
+import AdoptionInquiryPage from './pages/AdoptionInquiryPage';
 import ShelterDashboard from './pages/ShelterDashboard';
 import ShelterDetailPage from './pages/ShelterDetail';
 import ShelterListPage from './pages/ShelterList';
@@ -105,6 +106,7 @@ const PublicRoutes = () => {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/pets" element={<PetListPage />} />
           <Route path="/pets/:id" element={<PetDetailPage />} />
+          <Route path="/pets/:id/inquiry" element={<AdoptionInquiryPage />} />
           <Route path="/shelter" element={<ShelterDashboard />} />
           <Route path="/shelters" element={<ShelterListPage />} />
           <Route path="/for-shelters" element={<ForShelters />} />
